@@ -41,3 +41,5 @@ LOG-039,task,TASK-GITHUB-002,in_progress,passed,benton-lead-orchestrator,2026-07
 LOG-040,task,TASK-GITHUB-002,ready,passed,benton-lead-orchestrator,2026-07-18T15:15:00Z,Repo made public and GitHub Pages enabled,EVID-GITHUB-003
 LOG-041,task,TASK-TRAIN-002,in_progress,passed,code-puppy,2026-07-21T12:15:00Z,Training guide enhanced with diagrams and full content,EVID-TRAIN-002
 LOG-042,verification,TASK-TRAIN-002,ready,passed,benton-lead-orchestrator,2026-07-21T12:15:00Z,Local E2E validation passed on user's machine,EVID-TRAIN-002
+LOG-043,task,TASK-DEPLOY-002,in_progress,passed,code-puppy,2026-07-21T17:30:00Z,Railway deployment config and guide added,EVID-DEPLOY-001
+LOG-044,verification,TASK-DEPLOY-002,ready,passed,benton-lead-orchestrator,2026-07-21T17:30:00Z,Docker build and container smoke test passed,EVID-DEPLOY-001
