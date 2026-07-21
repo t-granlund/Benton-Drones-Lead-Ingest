@@ -39,3 +39,5 @@ LOG-037,task,TASK-POLISH-002,in_progress,passed,code-puppy,2026-07-18T13:30:00Z,
 LOG-038,verification,TASK-POLISH-002,ready,passed,benton-lead-orchestrator,2026-07-18T13:30:00Z,3 rounds QA passed after premium visual refinement,EVID-POLISH-003
 LOG-039,task,TASK-GITHUB-002,in_progress,passed,benton-lead-orchestrator,2026-07-18T14:30:00Z,Codebase pushed to GitHub; hosting guide added,EVID-GITHUB-002
 LOG-040,task,TASK-GITHUB-002,ready,passed,benton-lead-orchestrator,2026-07-18T15:15:00Z,Repo made public and GitHub Pages enabled,EVID-GITHUB-003
+LOG-041,task,TASK-TRAIN-002,in_progress,passed,code-puppy,2026-07-21T12:15:00Z,Training guide enhanced with diagrams and full content,EVID-TRAIN-002
+LOG-042,verification,TASK-TRAIN-002,ready,passed,benton-lead-orchestrator,2026-07-21T12:15:00Z,Local E2E validation passed on user's machine,EVID-TRAIN-002
