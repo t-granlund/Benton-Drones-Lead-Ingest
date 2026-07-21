@@ -4,8 +4,10 @@
 # Build:  docker build -t benton-drones .
 # Run:    docker run -p 8000:8000 -e ADMIN_PASSWORD=secret benton-drones
 #
-# The app is pure Python stdlib + SQLite.  The only pip dependency is
-# the optional fpdf2 (for true PDF export), listed in requirements.txt.
+# The app is pure Python stdlib with SQLite (default) or PostgreSQL
+# (when DATABASE_URL is set).  The pip dependencies are the optional fpdf2
+# (for true PDF export) and psycopg2-binary (for PostgreSQL), listed in
+# requirements.txt.
 
 FROM python:3.11-slim
 
@@ -18,6 +20,13 @@ ENV PYTHONUNBUFFERED=1 \
     HOST=0.0.0.0
 
 WORKDIR /app
+
+# Install PostgreSQL client libraries (needed if switching from psycopg2-binary
+# to source-built psycopg2; psycopg2-binary bundles its own libpq but this keeps
+# the image flexible).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies first for better layer caching.
 COPY requirements.txt .

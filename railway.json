@@ -11,5 +11,11 @@
       "type": "ON_FAILURE",
       "maxRetries": 10
     }
+  },
+  "variables": {
+    "DATABASE_URL": {
+      "description": "PostgreSQL connection string (e.g. Neon postgresql://user:pass@host/db?sslmode=require). Required for production with multiple instances. Leave empty to use built-in SQLite.",
+      "required": false
+    }
   }
 }

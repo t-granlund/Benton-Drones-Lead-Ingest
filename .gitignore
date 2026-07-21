@@ -18,6 +18,9 @@ Thumbs.db
 # Local runtime data (SQLite, etc.)
 data/
 
+# Source extractions (not committed)
+.waiver_source.txt
+
 # Local tools and Dolt database storage
 .tools/
 .dolt/

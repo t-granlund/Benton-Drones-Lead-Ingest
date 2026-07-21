@@ -746,6 +746,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
           <li><b>Deploy it to Fly.io</b> &mdash; An alternative host with a <code>fly.toml</code> example in the deployment guide.</li>
         </ol>
         <p>GitHub Pages cannot run Python or SQLite, so the dynamic routes (<code>/signup</code>, <code>/admin</code>, <code>/export/*</code>) only work when the app is running locally or on a hosted platform like Railway or Fly.io.</p>
+        <p><b>Database:</b> The app uses SQLite by default (zero config, single file). For production with multiple instances, set the <code>DATABASE_URL</code> environment variable to a PostgreSQL connection string (e.g. <a href="https://neon.tech">Neon</a>) and the app switches automatically &mdash; no code changes needed. See <code>docs/railway-deployment-guide.md</code> for the Neon setup walkthrough.</p>
       </div>
 
       <div class="diagram-wrap">
@@ -803,7 +804,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
 
     <section id="datamodel">
       <h2><span class="num">8.</span>What gets stored (data model)</h2>
-      <p>All data lives in a single SQLite file at <code>data/lead_ingest.sqlite3</code>. The three tables below form the auditable core; the rest support variants, clustering, and JIRA.</p>
+      <p>All data lives in a single SQLite file at <code>data/lead_ingest.sqlite3</code> (or PostgreSQL when <code>DATABASE_URL</code> is set). The three tables below form the auditable core; the rest support variants, clustering, and JIRA.</p>
       <div class="dm-grid">
         <div class="dm-table core">
           <h4>signups</h4>

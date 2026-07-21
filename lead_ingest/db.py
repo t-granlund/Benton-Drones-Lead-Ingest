@@ -15,6 +15,7 @@ from lead_ingest.models import (
     utc_now_iso,
 )
 from lead_ingest.validation import validate_signup
+from lead_ingest.db_compat import IS_POSTGRES, pg_connect
 
 DEFAULT_DB_PATH = Path("data/lead_ingest.sqlite3")
 
@@ -119,7 +120,64 @@ CREATE TABLE IF NOT EXISTS jira_tickets (
 """
 
 
-def connect(path: Path | str = DEFAULT_DB_PATH) -> sqlite3.Connection:
+def _pg_schema() -> str:
+    """Derive PostgreSQL DDL from the SQLite SCHEMA.
+
+    Replaces AUTOINCREMENT with SERIAL and strips PRAGMA directives so the
+    same schema definition serves both backends (DRY).
+    """
+    schema = SCHEMA.replace(
+        "INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY"
+    )
+    lines = [
+        line
+        for line in schema.splitlines()
+        if not line.strip().upper().startswith("PRAGMA")
+    ]
+    return "\n".join(lines)
+
+
+_DEFAULT_VARIANT_VALUES = (
+    "default",
+    "Join Benton Drones Delivery Simulations",
+    "Help us plan safe, local drone delivery simulation routes.",
+    "Sign up for updates",
+    "default",
+    "local",
+)
+
+
+def _seed_default_variant(conn) -> None:
+    """Insert the default landing-page variant idempotently."""
+    if IS_POSTGRES:
+        conn.execute(
+            """
+            INSERT INTO landing_page_variants
+            (slug, title, subtitle, cta_text, campaign, source, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, 1)
+            ON CONFLICT (slug) DO NOTHING
+            """,
+            _DEFAULT_VARIANT_VALUES,
+        )
+    else:
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO landing_page_variants
+            (slug, title, subtitle, cta_text, campaign, source, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, 1)
+            """,
+            _DEFAULT_VARIANT_VALUES,
+        )
+
+
+def connect(path: Path | str = DEFAULT_DB_PATH):
+    """Return a database connection.
+
+    Uses PostgreSQL (via psycopg2) when ``DATABASE_URL`` is set, otherwise
+    falls back to SQLite.
+    """
+    if IS_POSTGRES:
+        return pg_connect()
     db_path = Path(path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(db_path)
@@ -131,28 +189,16 @@ def connect(path: Path | str = DEFAULT_DB_PATH) -> sqlite3.Connection:
     return conn
 
 
-def init_db(conn: sqlite3.Connection) -> None:
-    conn.executescript(SCHEMA)
+def init_db(conn) -> None:
+    conn.executescript(_pg_schema() if IS_POSTGRES else SCHEMA)
     ensure_signup_columns(conn)
-    conn.execute(
-        """
-        INSERT OR IGNORE INTO landing_page_variants
-        (slug, title, subtitle, cta_text, campaign, source, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, 1)
-        """,
-        (
-            "default",
-            "Join Benton Drones Delivery Simulations",
-            "Help us plan safe, local drone delivery simulation routes.",
-            "Sign up for updates",
-            "default",
-            "local",
-        ),
-    )
+    _seed_default_variant(conn)
     conn.commit()
 
 
-def ensure_signup_columns(conn: sqlite3.Connection) -> None:
+def ensure_signup_columns(conn) -> None:
+    if IS_POSTGRES:
+        return  # Schema is complete; no migrations needed.
     existing = {row["name"] for row in conn.execute("PRAGMA table_info(signups)")}
     desired = {
         "shopify_shop_domain": "TEXT DEFAULT ''",
@@ -165,7 +211,7 @@ def ensure_signup_columns(conn: sqlite3.Connection) -> None:
 
 
 def create_signup(
-    conn: sqlite3.Connection,
+    conn,
     data: SignupInput,
     ip_address: str = "",
     user_agent: str = "",
@@ -244,41 +290,49 @@ def create_signup(
     return signup_id
 
 
-def list_signups(conn: sqlite3.Connection) -> list[sqlite3.Row]:
+def list_signups(conn) -> list:
     return list(conn.execute("SELECT * FROM signups ORDER BY created_at DESC, id DESC"))
 
 
-def get_variant(conn: sqlite3.Connection, slug: str) -> sqlite3.Row | None:
+def get_variant(conn, slug: str):
     return conn.execute(
         "SELECT * FROM landing_page_variants WHERE slug = ? AND is_active = 1",
         (slug,),
     ).fetchone()
 
 
-def get_signup(conn: sqlite3.Connection, signup_id: int) -> sqlite3.Row | None:
+def get_signup(conn, signup_id: int):
     return conn.execute("SELECT * FROM signups WHERE id = ?", (signup_id,)).fetchone()
 
 
-def get_consent_record(conn: sqlite3.Connection, signup_id: int) -> sqlite3.Row | None:
+def get_consent_record(conn, signup_id: int):
     return conn.execute(
         "SELECT * FROM consent_records WHERE signup_id = ?", (signup_id,)
     ).fetchone()
 
 
-def get_signature_record(conn: sqlite3.Connection, signup_id: int) -> sqlite3.Row | None:
+def get_signature_record(conn, signup_id: int):
     return conn.execute(
         "SELECT * FROM signatures WHERE signup_id = ?", (signup_id,)
     ).fetchone()
 
 
-def analytics_summary(conn: sqlite3.Connection) -> dict:
+def analytics_summary(conn) -> dict:
     total = conn.execute("SELECT COUNT(*) AS count FROM signups").fetchone()["count"]
-    today = conn.execute(
-        "SELECT COUNT(*) AS count FROM signups WHERE DATE(created_at) = DATE('now', 'localtime')"
-    ).fetchone()["count"]
-    week = conn.execute(
-        "SELECT COUNT(*) AS count FROM signups WHERE created_at >= datetime('now', '-7 days', 'localtime')"
-    ).fetchone()["count"]
+    if IS_POSTGRES:
+        today = conn.execute(
+            "SELECT COUNT(*) AS count FROM signups WHERE created_at::date = CURRENT_DATE"
+        ).fetchone()["count"]
+        week = conn.execute(
+            "SELECT COUNT(*) AS count FROM signups WHERE created_at >= NOW() - INTERVAL '7 days'"
+        ).fetchone()["count"]
+    else:
+        today = conn.execute(
+            "SELECT COUNT(*) AS count FROM signups WHERE DATE(created_at) = DATE('now', 'localtime')"
+        ).fetchone()["count"]
+        week = conn.execute(
+            "SELECT COUNT(*) AS count FROM signups WHERE created_at >= datetime('now', '-7 days', 'localtime')"
+        ).fetchone()["count"]
     pending_geocodes = conn.execute(
         "SELECT COUNT(*) AS count FROM signups WHERE geocode_status = 'pending'"
     ).fetchone()["count"]
@@ -311,7 +365,7 @@ def analytics_summary(conn: sqlite3.Connection) -> dict:
     }
 
 
-def recent_leads(conn: sqlite3.Connection, limit: int = 50) -> list[sqlite3.Row]:
+def recent_leads(conn, limit: int = 50) -> list:
     return list(
         conn.execute(
             "SELECT * FROM signups ORDER BY created_at DESC, id DESC LIMIT ?",
@@ -320,7 +374,7 @@ def recent_leads(conn: sqlite3.Connection, limit: int = 50) -> list[sqlite3.Row]
     )
 
 
-def get_export_rows(conn: sqlite3.Connection) -> list[sqlite3.Row]:
+def get_export_rows(conn) -> list:
     return list(
         conn.execute(
             """
@@ -341,7 +395,7 @@ def get_export_rows(conn: sqlite3.Connection) -> list[sqlite3.Row]:
     )
 
 
-def queue_jira_ticket(conn: sqlite3.Connection, signup_id: int, error_message: str = "") -> int:
+def queue_jira_ticket(conn, signup_id: int, error_message: str = "") -> int:
     """Queue a signup for later JIRA ticket creation.
 
     Called when JIRA config is missing or a creation attempt fails.
@@ -360,7 +414,7 @@ def queue_jira_ticket(conn: sqlite3.Connection, signup_id: int, error_message: s
 
 
 def mark_jira_ticket_created(
-    conn: sqlite3.Connection,
+    conn,
     signup_id: int,
     ticket_key: str,
     jira_issue_url: str = "",
@@ -371,7 +425,7 @@ def mark_jira_ticket_created(
         """
         INSERT INTO jira_tickets (signup_id, ticket_key, jira_issue_url, created_at)
         VALUES (?, ?, ?, ?)
-        ON CONFLICT(signup_id) DO UPDATE SET ticket_key = ?, jira_issue_url = ?, created_at = ?
+        ON CONFLICT (signup_id) DO UPDATE SET ticket_key = ?, jira_issue_url = ?, created_at = ?
         """,
         (signup_id, ticket_key, jira_issue_url, now, ticket_key, jira_issue_url, now),
     )
@@ -385,14 +439,14 @@ def mark_jira_ticket_created(
     conn.commit()
 
 
-def get_jira_ticket(conn: sqlite3.Connection, signup_id: int) -> sqlite3.Row | None:
+def get_jira_ticket(conn, signup_id: int):
     """Return the jira_tickets row for a signup, or None."""
     return conn.execute(
         "SELECT * FROM jira_tickets WHERE signup_id = ?", (signup_id,)
     ).fetchone()
 
 
-def get_jira_queue_entry(conn: sqlite3.Connection, signup_id: int) -> sqlite3.Row | None:
+def get_jira_queue_entry(conn, signup_id: int):
     """Return the most recent jira_queue row for a signup, or None."""
     return conn.execute(
         "SELECT * FROM jira_queue WHERE signup_id = ? ORDER BY id DESC LIMIT 1",
@@ -400,7 +454,7 @@ def get_jira_queue_entry(conn: sqlite3.Connection, signup_id: int) -> sqlite3.Ro
     ).fetchone()
 
 
-def list_lead_points(conn: sqlite3.Connection) -> list[LeadPoint]:
+def list_lead_points(conn) -> list[LeadPoint]:
     rows = conn.execute(
         """
         SELECT id, first_name, last_name, latitude, longitude

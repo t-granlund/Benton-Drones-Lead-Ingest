@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: benton-drones-lead-ingest
+Version: 0.2.0
+Summary: Local-first Shopify-aware lead ingest MVP for Benton Drones
+License: MIT
+Requires-Python: >=3.11
+Provides-Extra: pdf
+Requires-Dist: fpdf2>=2.8.0; extra == "pdf"
+Provides-Extra: dev
+Requires-Dist: fpdf2>=2.8.0; extra == "dev"

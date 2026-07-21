@@ -4,3 +4,7 @@
 # PDF export: enables true PDF download at /admin/lead/<id>/pdf
 # Without it, the server falls back to an HTML print view.
 fpdf2>=2.8.0
+
+# PostgreSQL support: enables Neon (or any Postgres) when DATABASE_URL is set.
+# Without it, the app falls back to the built-in SQLite engine.
+psycopg2-binary>=2.9.0

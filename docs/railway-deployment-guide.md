@@ -3,8 +3,9 @@
 This guide covers deploying the Benton Drones Lead Ingest app to Railway, with
 alternatives (Fly.io) and a future path to Neon Postgres.
 
-The app is pure Python stdlib + SQLite.  No Node, no npm, no external services.
-The only pip dependency is the optional `fpdf2` for true PDF export.
+The app is pure Python stdlib with SQLite (default) or PostgreSQL (when
+`DATABASE_URL` is set).  No Node, no npm.  The pip dependencies are the
+optional `fpdf2` (PDF export) and `psycopg2-binary` (PostgreSQL support).
 
 ---
 
@@ -14,13 +15,13 @@ The only pip dependency is the optional `fpdf2` for true PDF export.
 |---|---|---|
 | **Railway** | Recommended for this MVP | Simplest deploy from GitHub, free trial tier, persistent volume for SQLite, automatic HTTPS, health checks |
 | **Fly.io** | More control / global edge | Good free tier, requires `fly.toml`, slightly more ops complexity, native volumes |
-| **Neon** | Database only | Serverless PostgreSQL. Use with Railway/Fly/Render if you outgrow SQLite. Not an app host by itself. |
+| **Neon** | Database (now supported) | Serverless PostgreSQL. Use with Railway/Fly when you need a shared database. Set `DATABASE_URL` to switch from SQLite to Postgres. |
 | **Render** | Simple alternative | Free tier, easy web service + disk, but slower cold starts and fewer regions |
 
 **Recommendation:** Railway for the app host because it is the fastest path from a
-GitHub repo to a public URL with the least configuration.  Add Neon later if you
-need PostgreSQL instead of SQLite (see the [Neon section](#neon-integration-future)
-below).
+GitHub repo to a public URL with the least configuration.  Use SQLite (default) for
+a single-instance MVP.  Add Neon PostgreSQL when you need a shared database (see
+the [Neon section](#neon-postgresql-setup) below).
 
 ---
 
@@ -61,6 +62,7 @@ In the Railway dashboard, go to your service **Variables** tab and add:
 | `JIRA_PROJECT_KEY` | e.g. `BDS` | No |
 | `JIRA_ISSUE_TYPE` | e.g. `Task` | No |
 | `SHOPIFY_APP_SECRET` | Shopify app secret | No |
+| `DATABASE_URL` | Neon Postgres connection string (with `?sslmode=require`) | No (recommended for multi-instance) |
 
 When `ENV=production` the app refuses to start unless `ADMIN_SESSION_SECRET`
 and `CSRF_SECRET` are each at least 32 characters.  Generate them with:
@@ -71,9 +73,11 @@ python -c "import secrets; print(secrets.token_urlsafe(32))"
 
 Run that twice — once for each secret.
 
-### 3. Add a persistent volume for SQLite
+### 3. Add a persistent volume for SQLite (skip if using PostgreSQL)
 
 Without a volume, the SQLite database is lost every time Railway redeploys.
+**If you set `DATABASE_URL` to use Neon Postgres, skip this step** — the
+database lives in Neon, not on a local volume.
 
 1. In the Railway dashboard, go to your service **Settings** tab.
 2. Click **Volumes** and add a new volume.
@@ -132,6 +136,7 @@ matching the SSL/TLS mode to Full.
 | `JIRA_PROJECT_KEY` | No | JIRA project key (e.g. `BDS`). |
 | `JIRA_ISSUE_TYPE` | No | Issue type name (default: `Task`). |
 | `SHOPIFY_APP_SECRET` | No | Shopify app secret for HMAC validation. |
+| `DATABASE_URL` | No (prod recommended) | PostgreSQL connection string. When set, the app uses PostgreSQL (e.g. Neon). When empty, it falls back to SQLite. Example: `postgresql://user:pass@host/db?sslmode=require`. |
 
 ---
 
@@ -278,12 +283,13 @@ Fly.io handles TLS termination and provides a `*.fly.dev` domain automatically.
 
 ---
 
-## Neon integration (future)
+## Neon PostgreSQL setup
 
-Neon is a serverless PostgreSQL provider. The app currently uses SQLite, which
-is perfect for a single-instance MVP. You do not need Neon right now.
+Neon is a serverless PostgreSQL provider. The app supports PostgreSQL
+natively — when the `DATABASE_URL` environment variable is set, it switches
+from SQLite to PostgreSQL automatically. No code changes are needed.
 
-### When to move from SQLite to Neon Postgres
+### When to use Neon instead of SQLite
 
 - You are running **multiple app instances** and need a shared database.
 - You need **high-concurrency writes** that exceed SQLite's WAL throughput.
@@ -291,46 +297,98 @@ is perfect for a single-instance MVP. You do not need Neon right now.
 - You need **team access to the database** (multiple humans querying the same DB).
 - You want **branching** for preview/staging databases (Neon's key feature).
 
-### How to migrate
+For a single-instance MVP, SQLite is fast, reliable, and operationally
+simple. You do not need Neon until you hit one of the cases above.
 
-Migrating from SQLite to Postgres is an application-level change, not a hosting
-change. Here is the outline:
+### Step 1: Create a Neon project
 
-1. Create a Neon project at <https://neon.tech> and get the connection string.
-2. Add the connection string as a Railway/Fly environment variable (e.g.
-   `DATABASE_URL`).
-3. Replace the `sqlite3` connection layer in `lead_ingest/db.py` with
-   `psycopg2` or `psycopg` (async).
-4. Update SQL syntax differences (e.g. `AUTOINCREMENT` to `SERIAL`,
-   `?` placeholders to `%s`).
-5. Run a one-time data migration from the SQLite file to Postgres.
-6. Test thoroughly before switching traffic.
+1. Go to <https://neon.tech> and sign up (free tier includes 0.5 GB storage).
+2. Create a new project and select a region close to your Railway deployment.
+3. Neon gives you a connection string that looks like:
+   ```
+   postgresql://neondb:AbCdEfGh@ep-cool-db-123456.us-east-2.aws.neon.tech/neondb?sslmode=require
+   ```
+4. Copy this connection string — you will paste it into Railway.
 
-This is a meaningful code change. Do not attempt it until you have a concrete
-reason from the list above. SQLite is fast, reliable, and operationally simple
-for a single-instance app.
+> **Important:** Neon requires SSL. The connection string must include
+> `?sslmode=require` (or `sslmode=verify-full` for stricter validation).
+> The app does not add this automatically — it must be in the `DATABASE_URL`.
 
-### Using Neon with Railway
+### Step 2: Add DATABASE_URL to Railway
 
-You can host the app on Railway and the database on Neon simultaneously:
+1. In the Railway dashboard, go to your service **Variables** tab.
+2. Click **New Variable** and set the name to `DATABASE_URL`.
+3. Paste the Neon connection string as the value.
+4. Railway automatically redeploys when variables change.
 
-1. Deploy the app on Railway (as described above).
-2. Create a Neon Postgres database.
-3. Add the `DATABASE_URL` from Neon as a Railway environment variable.
-4. Update the app's database layer to use Postgres.
-5. Redeploy.
+When `DATABASE_URL` is set, the app:
 
-Neon's free tier includes 0.5 GB of storage and a single compute endpoint, which
-is enough for early production.
+- Connects to PostgreSQL via `psycopg2` instead of `sqlite3`.
+- Creates all tables with `SERIAL` primary keys (instead of `AUTOINCREMENT`).
+- Uses `RealDictCursor` so row access (`row["column"]`) works the same as
+  `sqlite3.Row`.
+- Normalises `?` placeholders to `%s` automatically.
+- Handles `lastrowid` via `RETURNING id`.
+
+When `DATABASE_URL` is **not** set, the app falls back to SQLite with zero
+configuration — perfect for local development and testing.
+
+### Step 3: Skip the persistent volume
+
+When using Neon, you do **not** need a Railway volume for the database.
+The database lives in Neon's cloud, not on the container's filesystem.
+The volume step (Section 3 above) can be skipped entirely.
+
+You may still want a small volume for `/app/data` if you ever switch back
+to SQLite, but it is not required for PostgreSQL operation.
+
+### Step 4: Verify
+
+After redeploy, check:
+
+- `GET /healthz` returns `{"status": "ok"}` — the DB ping works.
+- Submit a test signup at `/signup` — it writes to PostgreSQL.
+- Log in at `/admin-login` and check the admin dashboard shows the test lead.
+- Export CSV/GeoJSON/KML — all reads come from PostgreSQL.
+
+### Local development with SQLite (no DATABASE_URL)
+
+For local development, simply do not set `DATABASE_URL`:
+
+```bash
+# SQLite is used automatically — no DATABASE_URL needed
+ADMIN_PASSWORD=local-dev make run
+```
+
+The app creates `data/lead_ingest.sqlite3` and runs exactly as before.
+All 281 tests run against SQLite in memory — no PostgreSQL required for
+testing.
+
+### Migrating existing data from SQLite to Neon
+
+If you have existing leads in SQLite and want to move them to Neon:
+
+1. Export your SQLite data: `make export-csv` (or use the `/export/csv` endpoint).
+2. Create the Neon database and set `DATABASE_URL`.
+3. Start the app so it creates the schema in PostgreSQL.
+4. Write a small import script (or use `psql \copy`) to load the CSV into
+   the `signups` table.
+5. Recreate consent and signature records manually if needed (they are
+   keyed by `signup_id`).
+
+This is a one-time operation. For a fresh deployment with no existing data,
+skip this step.
 
 ---
 
 ## Security notes
 
-1. **Waiver text:** The current waiver is a placeholder. Have it reviewed by
-   legal counsel before accepting real signups. The audit trail mechanism
-   (typed name, timestamp, IP, user agent, versioned text) is sound, but the
-   words are not.
+1. **Waiver text:** The waiver is based on a provided consent form PDF and
+   must be reviewed by legal counsel before production use. The audit trail
+   mechanism (typed name, timestamp, IP, user agent, versioned text) is sound,
+   but the words need legal sign-off. The `[PRIVACY POLICY URL — REPLACE
+   BEFORE USE]` and `[VISION POLICY URL — REPLACE BEFORE USE]` placeholders
+   in the waiver text must be replaced with real URLs before going live.
 2. **Secrets:** Never commit secrets to the repo. Use Railway's Variables tab
    or `fly secrets`. The `.gitignore` excludes `.env` and `data/`.
 3. **HTTPS:** Railway and Fly both provide automatic HTTPS. Set
@@ -352,7 +410,7 @@ is enough for early production.
 | Internal port | 8000 (Railway injects PORT at runtime) |
 | Health check | `GET /healthz` |
 | Volume mount path | `/app/data` |
-| Database file | `/app/data/lead_ingest.sqlite3` |
+| Database file | `/app/data/lead_ingest.sqlite3` (SQLite) or `DATABASE_URL` (Postgres) |
 | Start command | `python -m lead_ingest.server` |
 | GitHub repo | `https://github.com/t-granlund/Benton-Drones-Lead-Ingest` |
 | Railway dashboard | <https://railway.com> |
