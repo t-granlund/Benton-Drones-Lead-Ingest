@@ -1,5 +1,9 @@
 # Benton Drones Lead Ingest — Railway Deployment Guide
 
+> **Using Render instead of Railway?** See
+> [`docs/render-deployment-guide.md`](render-deployment-guide.md) for the
+> Render Blueprint walkthrough with Neon PostgreSQL.
+
 This guide covers deploying the Benton Drones Lead Ingest app to Railway, with
 alternatives (Fly.io) and a future path to Neon Postgres.
 

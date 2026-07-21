@@ -743,9 +743,10 @@ ADMIN_PASSWORD=yourpass make run</pre>
         <ol class="steps">
           <li><b>Run it locally</b> &mdash; <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code>. Best for development and testing.</li>
           <li><b>Deploy it to Railway</b> &mdash; The repo includes a <code>Dockerfile</code> and <code>railway.json</code>. Railway gives you a public HTTPS URL with persistent SQLite storage. See <code>docs/railway-deployment-guide.md</code> for the full walkthrough.</li>
+          <li><b>Deploy it to Render</b> &mdash; The repo includes a <code>render.yaml</code> Blueprint. Pair it with a Neon PostgreSQL database (<code>DATABASE_URL</code>) for stateless, no-disk deployment. See <code>docs/render-deployment-guide.md</code> for the full walkthrough.</li>
           <li><b>Deploy it to Fly.io</b> &mdash; An alternative host with a <code>fly.toml</code> example in the deployment guide.</li>
         </ol>
-        <p>GitHub Pages cannot run Python or SQLite, so the dynamic routes (<code>/signup</code>, <code>/admin</code>, <code>/export/*</code>) only work when the app is running locally or on a hosted platform like Railway or Fly.io.</p>
+        <p>GitHub Pages cannot run Python or SQLite, so the dynamic routes (<code>/signup</code>, <code>/admin</code>, <code>/export/*</code>) only work when the app is running locally or on a hosted platform like Railway, Render, or Fly.io.</p>
         <p><b>Database:</b> The app uses SQLite by default (zero config, single file). For production with multiple instances, set the <code>DATABASE_URL</code> environment variable to a PostgreSQL connection string (e.g. <a href="https://neon.tech">Neon</a>) and the app switches automatically &mdash; no code changes needed. See <code>docs/railway-deployment-guide.md</code> for the Neon setup walkthrough.</p>
       </div>
 

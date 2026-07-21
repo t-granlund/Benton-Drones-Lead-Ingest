@@ -1,0 +1,39 @@
+# Render Blueprint for Benton Drones Lead Ingest
+# Spec: https://render.com/docs/blueprint-spec
+#
+# How to use:
+#   1. Commit this file to the repo root (it is already there).
+#   2. In the Render dashboard: New > Blueprint > select this repo.
+#   3. Render reads this file and creates the web service.
+#   4. Variables marked `sync: false` are NOT set by the blueprint.
+#      Go to the service's Environment tab and set them manually
+#      before the first deploy (see docs/render-deployment-guide.md).
+#
+# The app is pure Python stdlib with SQLite (default) or PostgreSQL
+# (when DATABASE_URL is set to a Neon connection string).  No persistent
+# disk is needed because the database lives in Neon.
+
+services:
+  - type: web
+    name: benton-drones-lead-ingest
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free              # upgrade to "starter" for always-on (no spin-down)
+    region: oregon
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      # --- Secrets (set manually in the Render dashboard) ---
+      - key: ADMIN_PASSWORD
+        sync: false         # strong, unique password for admin login
+      - key: ADMIN_SESSION_SECRET
+        sync: false         # 32+ random chars; signs session cookies
+      - key: CSRF_SECRET
+        sync: false         # 32+ random chars; signs CSRF tokens
+      - key: DATABASE_URL
+        sync: false         # Neon connection string with ?sslmode=require
+      # --- Non-secret defaults (set by the blueprint) ---
+      - key: COOKIE_SECURE
+        value: "1"          # Render serves HTTPS, so cookies need the Secure flag
+      - key: ENV
+        value: production   # enforces strict 32+ char secret checks on boot

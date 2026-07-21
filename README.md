@@ -119,6 +119,20 @@ docker build -t benton-drones .
 docker run -p 8000:8000 -e ADMIN_PASSWORD=your-password benton-drones
 ```
 
+## Deploy to Render
+
+The repo also ships with a `render.yaml` Blueprint for one-click deployment to Render. Render handles HTTPS, health checks, and Docker builds. Pair it with a Neon PostgreSQL database (set `DATABASE_URL`) -- no persistent disk is needed because the database lives in Neon.
+
+Quick summary:
+
+1. Sign up at <https://render.com> with GitHub.
+2. Create a new Blueprint service from the `t-granlund/Benton-Drones-Lead-Ingest` repo.
+3. Render reads `render.yaml` and builds the Docker image automatically.
+4. Set environment variables in the Render dashboard (`ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `CSRF_SECRET`, `COOKIE_SECURE=1`, `ENV=production`, `DATABASE_URL`).
+5. No persistent disk needed -- the database lives in Neon.
+
+For the full step-by-step guide, environment variable reference, Neon setup, and verification steps, see [`docs/render-deployment-guide.md`](docs/render-deployment-guide.md).
+
 ## Production path
 
 1. Set `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `CSRF_SECRET` to strong values.
