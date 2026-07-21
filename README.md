@@ -4,6 +4,7 @@ Local-first Shopify-aware MVP for replacing Google Forms + PDFfiller + Sheets + 
 
 Repository: https://github.com/t-granlund/Benton-Drones-Lead-Ingest  
 GitHub Pages: https://t-granlund.github.io/Benton-Drones-Lead-Ingest/  
+Live app (Render + Neon): https://benton-drones-lead-ingest.onrender.com  
 Hosting options: see [`docs/hosting-guide.md`](docs/hosting-guide.md)
 
 ## What it is
