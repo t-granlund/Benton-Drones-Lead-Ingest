@@ -28,6 +28,8 @@ data/
 # QA artifacts
 qa_screenshots/
 
-# Build / dist
+# Build / dist / packaging
 dist/
 build/
+*.egg-info/
+uv.lock
