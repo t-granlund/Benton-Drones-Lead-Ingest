@@ -98,13 +98,34 @@ Optional dependencies for tests:
 make install            # pip install -r requirements.txt (installs fpdf2)
 ```
 
+## Deploy to Railway
+
+The app ships with a `Dockerfile` and `railway.json` for one-click deployment to Railway. Railway handles HTTPS, health checks, and persistent volumes for SQLite.
+
+Quick summary:
+
+1. Sign up at <https://railway.com> with GitHub.
+2. Deploy from the `t-granlund/Benton-Drones-Lead-Ingest` repo.
+3. Add environment variables (`ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `CSRF_SECRET`, `COOKIE_SECURE=1`, `ENV=production`).
+4. Mount a volume at `/app/data` for SQLite persistence.
+5. Railway builds from the Dockerfile and gives you a public URL.
+
+For the full step-by-step guide, environment variable reference, post-deployment checklist, Fly.io alternative, and Neon migration notes, see [`docs/railway-deployment-guide.md`](docs/railway-deployment-guide.md).
+
+To test the Docker image locally:
+
+```bash
+docker build -t benton-drones .
+docker run -p 8000:8000 -e ADMIN_PASSWORD=your-password benton-drones
+```
+
 ## Production path
 
 1. Set `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `CSRF_SECRET` to strong values.
 2. Set `SHOPIFY_APP_SECRET` if using Shopify app proxy.
 3. Set JIRA env vars if using JIRA ticket creation.
 4. Install `fpdf2` for true PDF export: `pip install fpdf2`.
-5. Deploy behind HTTPS with a reverse proxy (nginx, Caddy, etc.).
+5. Deploy to Railway (see above) or behind HTTPS with a reverse proxy (nginx, Caddy, etc.).
 6. See `docs/shopify-integration-plan.md` for Shopify integration options.
 7. See `docs/current-state-and-next-steps.md` for the full roadmap.
 

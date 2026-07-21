@@ -735,6 +735,19 @@ ADMIN_PASSWORD=yourpass make run</pre>
     <section id="deploy">
       <h2><span class="num">7.</span>Deployment</h2>
 
+      <div class="card" style="margin-bottom:20px;border-left:4px solid var(--md-sys-color-primary)">
+        <h3 style="margin-top:0">Local vs hosted vs deployed</h3>
+        <p><b>Static documentation pages</b> (this guide, the architecture diagram, the explainer guide, and the landing page) are hosted on GitHub Pages and work without any server:</p>
+        <pre>https://t-granlund.github.io/Benton-Drones-Lead-Ingest/</pre>
+        <p><b>The interactive app</b> (signup form, admin dashboard, exports, maps) requires the Python backend. You can either:</p>
+        <ol class="steps">
+          <li><b>Run it locally</b> &mdash; <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code>. Best for development and testing.</li>
+          <li><b>Deploy it to Railway</b> &mdash; The repo includes a <code>Dockerfile</code> and <code>railway.json</code>. Railway gives you a public HTTPS URL with persistent SQLite storage. See <code>docs/railway-deployment-guide.md</code> for the full walkthrough.</li>
+          <li><b>Deploy it to Fly.io</b> &mdash; An alternative host with a <code>fly.toml</code> example in the deployment guide.</li>
+        </ol>
+        <p>GitHub Pages cannot run Python or SQLite, so the dynamic routes (<code>/signup</code>, <code>/admin</code>, <code>/export/*</code>) only work when the app is running locally or on a hosted platform like Railway or Fly.io.</p>
+      </div>
+
       <div class="diagram-wrap">
         <svg class="svg-diagram" viewBox="0 0 420 354" role="img" aria-label="Deployment flow">
           <rect x="95" y="12" width="230" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>

@@ -1,0 +1,42 @@
+# Build artifacts and caches
+.git
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+dist/
+build/
+
+# Secrets and logs
+.env
+*.log
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Local runtime data (SQLite lives in a Railway volume, not the image)
+data/
+
+# Local tools and Dolt storage
+.tools/
+.dolt/
+
+# QA artifacts
+qa_screenshots/
+
+# Documentation and project management (served via GitHub Pages, not the app)
+docs/
+research/
+tracking/
+goals/
+judges/
+
+# Reverse proxy configs (Railway handles TLS termination)
+deploy/
+
+# Test suite (not needed at runtime)
+tests/

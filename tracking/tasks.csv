@@ -3,7 +3,8 @@ TASK-DNS-001,REQ-DNS-001,Create Cloudflare read-only inventory,not_started,P0,co
 TASK-NC-001,REQ-NC-001,Capture Namecheap current state,not_started,P0,manual,manual,docs/manual-platform-setup-walkthrough.md,Namecheap login,Screenshot nameservers and DNS records,,
 TASK-GW-001,REQ-GW-001,Verify Google Workspace records,not_started,P0,manual,manual,docs/manual-platform-setup-walkthrough.md,Google Admin access,Confirm MX SPF DKIM DMARC,,
 TASK-SHOP-001,REQ-SHOP-001,Create Shopify landing CTA,not_started,P0,manual,manual,docs/shopify-integration-plan.md,Shopify Admin access,Create or draft landing page,,
-TASK-DEPLOY-001,REQ-DEPLOY-001,Choose backend host,blocked,P0,code-puppy-da30e5,planning-agent,docs/api-cli-automation-preflight.md,Hosting decision,Select host for leads.bentondrones.com,,
+TASK-DEPLOY-001,REQ-DEPLOY-001,Choose backend host,passed,P0,benton-lead-orchestrator,benton-lead-orchestrator,docs/railway-deployment-guide.md,Hosting decision,"Recommend Railway for app hosting (simplest, free tier, persistent SQLite); Neon for PostgreSQL if scaling beyond SQLite",2026-07-21T12:30:00Z,2026-07-21T13:00:00Z
+TASK-DEPLOY-002,REQ-DEPLOY-001,Create Railway deployment config and guide,in_progress,P0,benton-lead-orchestrator,code-puppy,"Dockerfile railway.json docs/railway-deployment-guide.md README.md",deployment config,"Add Dockerfile, railway.json, and step-by-step Railway deployment guide for public Python app hosting",2026-07-21T13:00:00Z,
 TASK-DESIGN-001,REQ-DESIGN-001,Capture Shopify visual system,passed,P1,manual,manual,docs/design-system-preflight.md,Shopify or storefront access,Design findings applied to pages,,2026-07-13T15:58:06Z
 TASK-QA-001,REQ-QA-001,Run browser QA,passed,P0,qa-kitten,qa-kitten,docs/wiggum-loop-report.md,Local server running,Re-run after significant UI changes,,
 TASK-SCRIPT-001,REQ-SCRIPT-001,Run read-only preflight scripts,passed,P0,code-puppy-da30e5,code-puppy-da30e5,scripts/,None,Re-run after DNS/env changes,,
