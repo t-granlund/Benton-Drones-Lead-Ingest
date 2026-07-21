@@ -186,12 +186,12 @@
 <pre>
 Shopify storefront          Owned backend (this repo)              Cloudflare / DNS
 +----------------+          +---------------------------+           +------------------+
-| Landing page   |  CTA     |  /signup (variants)       |           | bentondrones.com |
-| CTA link       +--------->|  Waiver + typed signature |           | leads.benton...  |
-| source params  |          |  SQLite: leads/consent/   |           +---------+--------+
-+----------------+          |  signatures/variants      |                     |
+| Landing page   |  CTA     |  Render web service       |           | bentondrones.com |
+| CTA link       +--------->|  /signup (variants)       |           | leads.benton...  |
+| source params  |          |  Waiver + typed signature |           +---------+--------+
++----------------+          |  Neon PostgreSQL DB       |                     |
                             |  /admin dashboard + map   |                     v
-                            |  CSV / GeoJSON / KML      |            [future production host]
+                            |  CSV / GeoJSON / KML      |            [future custom domain]
                             +---------------------------+
                                        ^
                                        |
@@ -200,6 +200,12 @@ Shopify storefront          Owned backend (this repo)              Cloudflare / 
                             |  (production: real   |
                             |   geocoding provider)|
                             +----------------------+
+
+Local development:
++---------------------------+
+|  python -m lead_ingest.server   |
+|  SQLite: data/lead_ingest.sqlite3 |
++---------------------------+
 </pre>
     </div>
 
@@ -208,7 +214,7 @@ Shopify storefront          Owned backend (this repo)              Cloudflare / 
       <li>A visitor arrives from a Shopify CTA or direct link (<code>/signup</code> or <code>/signup/&lt;variant&gt;</code>).</li>
       <li>The page captures campaign/source/variant attribution and optional Shopify context.</li>
       <li>The visitor reads the waiver, checks agreement, and types their full legal name as an electronic signature.</li>
-      <li>On POST, the server validates input, checks CSRF and honeypot, geocodes the address, and stores the lead plus consent/signature audit records.</li>
+      <li>On POST, the server validates input, checks CSRF and honeypot, geocodes the address, and stores the lead plus consent/signature audit records in Neon PostgreSQL (or SQLite during local development).</li>
       <li>Admins log in at <code>/admin-login</code> to view analytics, a Leaflet map, recent leads, and drill-down details.</li>
       <li>Protected exports at <code>/export/csv</code>, <code>/export/geojson</code>, and <code>/export/kml</code> can be downloaded for planning.</li>
     </ol>
@@ -218,7 +224,7 @@ Shopify storefront          Owned backend (this repo)              Cloudflare / 
       <tr><th>Component</th><th>File(s)</th><th>Purpose</th></tr>
       <tr><td>Branded template</td><td><code>lead_ingest/branded_template.py</code></td><td>Jost font, Benton olive/cream/blue palette, logo, sharp buttons/forms.</td></tr>
       <tr><td>Models</td><td><code>lead_ingest/models.py</code></td><td><code>SignupInput</code>, <code>LeadPoint</code>, consent/signature text constants.</td></tr>
-      <tr><td>Database</td><td><code>lead_ingest/db.py</code></td><td>SQLite schema for signups, consent, signatures, variants, clusters.</td></tr>
+      <tr><td>Database</td><td><code>lead_ingest/db.py</code></td><td>SQLite locally; switches to Neon PostgreSQL automatically when <code>DATABASE_URL</code> is set.</td></tr>
       <tr><td>Server</td><td><code>lead_ingest/server.py</code></td><td>Routes, auth, static files, admin dashboard, exports.</td></tr>
       <tr><td>Exports</td><td><code>lead_ingest/exports.py</code></td><td>CSV, GeoJSON, KML generation.</td></tr>
       <tr><td>Security</td><td><code>lead_ingest/request_security.py</code>, <code>auth.py</code></td><td>CSRF, rate limiting, session cookies, honeypot.</td></tr>
@@ -244,6 +250,8 @@ Shopify storefront          Owned backend (this repo)              Cloudflare / 
 
     <h2>Run it locally</h2>
     <pre>
+git clone https://github.com/t-granlund/Benton-Drones-Lead-Ingest.git
+cd Benton-Drones-Lead-Ingest
 python scripts/init_db.py
 ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
     </pre>
@@ -257,16 +265,24 @@ ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
     <p>Run tests:</p>
     <pre>python -m unittest discover -s tests</pre>
 
+    <h2>Hosted app</h2>
+    <p>The production instance is deployed on <strong>Render</strong> with a <strong>Neon PostgreSQL</strong> database:</p>
+    <ul>
+      <li><strong>Live app:</strong> <a href="https://benton-drones-lead-ingest.onrender.com">https://benton-drones-lead-ingest.onrender.com</a></li>
+      <li><strong>Signup form:</strong> <code>/signup</code></li>
+      <li><strong>Admin login:</strong> <code>/admin-login</code></li>
+      <li><strong>Admin dashboard:</strong> <code>/admin</code></li>
+    </ul>
+    <p>For the full Render + Neon setup guide, see <code>docs/render-deployment-guide.md</code>.</p>
+
     <h2>Production deployment path</h2>
     <div class="card blue">
-      <p><span class="chip block">Blocked</span> Human decisions required:</p>
+      <p><span class="chip pass">Live</span> The backend is hosted on Render + Neon.</p>
       <ol>
-        <li>Choose a host for <code>leads.bentondrones.com</code> (Fly.io, Railway, Render, Hetzner, VPS, etc.).</li>
-        <li>Migrate DNS authority to Cloudflare and add the <code>leads</code> A/CNAME record.</li>
-        <li>Swap the mock geocoder for a real provider and add provider API keys as environment secrets.</li>
-        <li>Replace the placeholder waiver text with legally reviewed language.</li>
-        <li>Set strong <code>ADMIN_PASSWORD</code>, <code>CSRF_SECRET</code>, and <code>ADMIN_SESSION_SECRET</code> in production.</li>
-        <li>Configure HTTPS, backups, monitoring, and a persistent database strategy (Postgres/PostGIS recommended).</li>
+        <li><strong>Host:</strong> Render web service running the Docker image from this repo.</li>
+        <li><strong>Database:</strong> Neon PostgreSQL connected via <code>DATABASE_URL</code> with <code>?sslmode=require</code>.</li>
+        <li><strong>Custom domain:</strong> Migrate DNS authority to Cloudflare and add the <code>leads</code> A/CNAME record for <code>leads.bentondrones.com</code>.</li>
+        <li><strong>Remaining:</strong> swap the mock geocoder for a real provider, replace the placeholder waiver text with legally reviewed language, and configure backups/monitoring.</li>
       </ol>
     </div>
 
@@ -286,12 +302,12 @@ ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
       <tr><th>Area</th><th>Status</th></tr>
       <tr><td>Branded signup/admin pages</td><td><span class="chip pass">Pass</span></td></tr>
       <tr><td>Waiver + typed-name signature + audit trail</td><td><span class="chip pass">Pass</span> placeholder text</td></tr>
-      <tr><td>SQLite backend persistence</td><td><span class="chip pass">Pass</span></td></tr>
+      <tr><td>SQLite / Neon PostgreSQL persistence</td><td><span class="chip pass">Pass</span> SQLite local; Neon on Render</td></tr>
       <tr><td>Admin dashboard with maps, drill-down, analytics</td><td><span class="chip pass">Pass</span></td></tr>
       <tr><td>CSV / GeoJSON / KML exports</td><td><span class="chip pass">Pass</span></td></tr>
       <tr><td>Unit tests</td><td><span class="chip pass">Pass</span> 281 tests</td></tr>
       <tr><td>Browser QA</td><td><span class="chip pass">Pass</span></td></tr>
-      <tr><td>Production deployment</td><td><span class="chip block">Blocked</span> host / DNS / legal review</td></tr>
+      <tr><td>Production deployment</td><td><span class="chip pass">Live</span> on Render + Neon; custom domain pending</td></tr>
     </table>
 
     <h2>Files changed in this phase</h2>
@@ -310,7 +326,7 @@ ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
   </main>
 
   <footer>
-    Built by the Benton Drones agent swarm · Local MVP · Not production-deployed
+    Built by the Benton Drones agent swarm · Live on Render + Neon · Custom domain pending
   </footer>
 </body>
 </html>

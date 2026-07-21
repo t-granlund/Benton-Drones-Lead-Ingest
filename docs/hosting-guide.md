@@ -45,8 +45,9 @@ https://t-granlund.github.io/Benton-Drones-Lead-Ingest/
 
 Live pages:
 
-- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/ — root redirect to training guide
-- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/static/landing-page.html — landing page
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/ — landing page with links to all guides
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/friend-guide.html — **end-to-end friend setup guide**
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/static/landing-page.html — marketing landing page
 - https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/training-guide.html — training guide
 - https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/architecture-diagram.html — architecture diagram
 - https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/explainer-guide.html — explainer guide
@@ -56,7 +57,7 @@ Live pages:
 **Pros:** free for public repos, integrated with GitHub, automatic deploys on push, HTTPS.  
 **Cons:** public repo required (now satisfied), basic CDN.
 
-Pages is already configured with source `main` branch and root `/`.
+Pages is already configured with source `main` branch and root `/`. The live Render app runs the dynamic backend at https://benton-drones-lead-ingest.onrender.com.
 
 ### Option 2: Vercel
 

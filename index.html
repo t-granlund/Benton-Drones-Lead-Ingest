@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Benton Drones Lead Ingest</title>
-  <meta http-equiv="refresh" content="0; url=docs/training-guide.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,57 +11,85 @@
     :root {
       --olive: #809948;
       --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
       --cream: #fffce7;
       --page-bg: #f7f7f3;
       --white: #ffffff;
+      --pale-blue: #e7ecff;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Jost', sans-serif;
       font-weight: 500;
-      letter-spacing: 0.04rem;
+      letter-spacing: 0.02rem;
       background: var(--page-bg);
       color: var(--olive-dark);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
       padding: 24px;
     }
+    .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 48px); }
     .card {
       background: var(--white);
       border: 1px solid var(--olive);
       border-radius: 16px;
       padding: 48px 40px;
-      max-width: 480px;
+      width: 100%;
       box-shadow: 0 6px 12px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
     }
     img { height: 56px; width: auto; margin-bottom: 24px; }
     h1 { margin: 0 0 12px; font-size: 1.6rem; font-weight: 700; color: var(--olive); }
-    p { margin: 0 0 24px; line-height: 1.6; }
-    a {
-      display: inline-block;
-      padding: 14px 24px;
-      border-radius: 8px;
-      background: var(--olive);
-      color: var(--white);
-      text-decoration: none;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06rem;
-      font-size: 0.85rem;
+    .subtitle { margin: 0 0 28px; line-height: 1.6; color: var(--olive-deep); }
+    .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; text-align: left; margin-top: 8px; }
+    .link {
+      display: block; padding: 18px 20px; border-radius: 12px; border: 1px solid var(--olive);
+      background: var(--cream); color: var(--olive-deep); text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
-    a:hover { background: var(--olive-dark); }
+    .link:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: #fff8d1; }
+    .link strong { display: block; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06rem; margin-bottom: 4px; color: var(--olive); }
+    .link span { font-size: 0.9rem; color: var(--olive-deep); line-height: 1.45; }
+    .external { background: var(--pale-blue); border-color: #6184d8; color: #1a2a5a; }
+    .external:hover { background: #dbe4ff; }
+    .external strong { color: #6184d8; }
+    .footer { margin-top: 24px; font-size: 0.85rem; color: var(--olive-dark); opacity: 0.8; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo">
-    <h1>Lead Ingest System</h1>
-    <p>Redirecting to the training guide. If you are not redirected, click below.</p>
-    <a href="docs/training-guide.html">Open Training Guide</a>
+  <div class="wrap">
+    <div class="card">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo">
+      <h1>Lead Ingest System</h1>
+      <p class="subtitle">Hosted docs and guides for the Benton Drones lead capture pipeline. Live app on Render + Neon.</p>
+      <div class="links">
+        <a class="link" href="docs/friend-guide.html">
+          <strong>Friend's Setup Guide</strong>
+          <span>Clone to a Mac, run locally, and use the hosted app end-to-end.</span>
+        </a>
+        <a class="link" href="docs/training-guide.html">
+          <strong>Training Guide</strong>
+          <span>Deep dive into signup flow, admin dashboard, exports, security, and deployment.</span>
+        </a>
+        <a class="link" href="docs/architecture-diagram.html">
+          <strong>Architecture Diagram</strong>
+          <span>Interactive diagram of Render, Neon, Shopify, and the data flow.</span>
+        </a>
+        <a class="link" href="docs/explainer-guide.html">
+          <strong>Initiative Guide</strong>
+          <span>Why the system exists, what it replaces, and current status.</span>
+        </a>
+        <a class="link external" href="https://benton-drones-lead-ingest.onrender.com">
+          <strong>Live App on Render</strong>
+          <span>Public signup form and admin dashboard.</span>
+        </a>
+        <a class="link external" href="https://github.com/t-granlund/Benton-Drones-Lead-Ingest">
+          <strong>GitHub Repo</strong>
+          <span>Source code, README, and issue tracker.</span>
+        </a>
+      </div>
+      <p class="footer">GitHub Pages · Static guides · Dynamic app runs on Render + Neon</p>
+    </div>
   </div>
 </body>
 </html>

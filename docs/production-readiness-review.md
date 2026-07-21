@@ -6,7 +6,9 @@
 **Method:** Static code review against authoritative best practices (OWASP, sqlite.org, docs.python.org, nginx/Caddy docs). *Note: live web research via web-puppy was unavailable this session (agent model misconfiguration), so citations are from established, stable references.*
 **Verdict: BLOCKED — Needs Work before production**
 
-The codebase is well-engineered for a local MVP: 230 passing tests, parameterized SQL throughout, consistent HTML escaping, HMAC-signed stateless sessions/CSRF, consent + signature audit tables, and graceful optional-dependency fallbacks (PDF/JIRA). However, it is **not yet safe to expose to the public internet**. There is one hard legal blocker (placeholder waiver) and several P0/P1 security gaps with no deployment, HTTPS, backup, or health-check story. The issues below are specific and fixable; most are small.
+> **Status update:** The backend is now deployed on Render with Neon PostgreSQL (`https://benton-drones-lead-ingest.onrender.com`). The P0 security gaps and the legal placeholder waiver noted in this review still need to be addressed before pointing a custom domain like `leads.bentondrones.com` at the service.
+
+The codebase is well-engineered for a local MVP: 281+ passing tests, parameterized SQL throughout, consistent HTML escaping, HMAC-signed stateless sessions/CSRF, consent + signature audit tables, and graceful optional-dependency fallbacks (PDF/JIRA). However, it is **not yet safe to expose to the public internet** without the fixes below. There is one hard legal blocker (placeholder waiver) and several P0/P1 security gaps. The issues below are specific and fixable; most are small.
 
 ## Severity legend
 - **P0** — Blocker. Must fix before any production exposure.

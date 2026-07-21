@@ -348,7 +348,7 @@
       <div class="glance-grid">
         <div class="glance-item">
           <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></span>
-          <div><strong>Local Python + SQLite</strong><p>No cloud required. Runs on a laptop with the Python standard library and a single SQLite file.</p></div>
+          <div><strong>Python + SQLite or Neon PostgreSQL</strong><p>Runs locally with SQLite, or on Render with Neon PostgreSQL. The live app at benton-drones-lead-ingest.onrender.com uses Neon.</p></div>
         </div>
         <div class="glance-item">
           <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V4"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg></span>
@@ -737,17 +737,16 @@ ADMIN_PASSWORD=yourpass make run</pre>
 
       <div class="card" style="margin-bottom:20px;border-left:4px solid var(--md-sys-color-primary)">
         <h3 style="margin-top:0">Local vs hosted vs deployed</h3>
-        <p><b>Static documentation pages</b> (this guide, the architecture diagram, the explainer guide, and the landing page) are hosted on GitHub Pages and work without any server:</p>
+        <p><b>Static documentation pages</b> (this guide, the architecture diagram, the explainer guide, the friend guide, and the landing page) are hosted on GitHub Pages and work without any server:</p>
         <pre>https://t-granlund.github.io/Benton-Drones-Lead-Ingest/</pre>
         <p><b>The interactive app</b> (signup form, admin dashboard, exports, maps) requires the Python backend. You can either:</p>
         <ol class="steps">
-          <li><b>Run it locally</b> &mdash; <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code>. Best for development and testing.</li>
-          <li><b>Deploy it to Railway</b> &mdash; The repo includes a <code>Dockerfile</code> and <code>railway.json</code>. Railway gives you a public HTTPS URL with persistent SQLite storage. See <code>docs/railway-deployment-guide.md</code> for the full walkthrough.</li>
+          <li><b>Use the live hosted app</b> &mdash; already deployed on Render + Neon at <a href="https://benton-drones-lead-ingest.onrender.com">https://benton-drones-lead-ingest.onrender.com</a>. This is the easiest way to use the system.</li>
+          <li><b>Run it locally</b> &mdash; <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code>. Best for development and testing. See <code>docs/friend-guide.html</code> for the full Mac walkthrough.</li>
           <li><b>Deploy it to Render</b> &mdash; The repo includes a <code>render.yaml</code> Blueprint. Pair it with a Neon PostgreSQL database (<code>DATABASE_URL</code>) for stateless, no-disk deployment. See <code>docs/render-deployment-guide.md</code> for the full walkthrough.</li>
-          <li><b>Deploy it to Fly.io</b> &mdash; An alternative host with a <code>fly.toml</code> example in the deployment guide.</li>
         </ol>
-        <p>GitHub Pages cannot run Python or SQLite, so the dynamic routes (<code>/signup</code>, <code>/admin</code>, <code>/export/*</code>) only work when the app is running locally or on a hosted platform like Railway, Render, or Fly.io.</p>
-        <p><b>Database:</b> The app uses SQLite by default (zero config, single file). For production with multiple instances, set the <code>DATABASE_URL</code> environment variable to a PostgreSQL connection string (e.g. <a href="https://neon.tech">Neon</a>) and the app switches automatically &mdash; no code changes needed. See <code>docs/railway-deployment-guide.md</code> for the Neon setup walkthrough.</p>
+        <p>GitHub Pages cannot run Python or SQLite, so the dynamic routes (<code>/signup</code>, <code>/admin</code>, <code>/export/*</code>) only work when the app is running locally or on the hosted Render instance.</p>
+        <p><b>Database:</b> The app uses SQLite by default for local development (zero config, single file). The hosted instance uses <b>Neon PostgreSQL</b> via the <code>DATABASE_URL</code> environment variable. The app switches automatically &mdash; no code changes needed. See <code>docs/render-deployment-guide.md</code> for the Neon setup walkthrough.</p>
       </div>
 
       <div class="diagram-wrap">
@@ -926,7 +925,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
 
       <details class="faq">
         <summary><span class="faq-q">Where is data stored?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
-        <div class="faq-a"><p>All data is in a single SQLite file at <code>data/lead_ingest.sqlite3</code>. There is no external database server, no cloud database, and no SaaS dependency. You can copy, back up, or inspect the file with any SQLite tool.</p></div>
+        <div class="faq-a"><p>Locally, all data is in a single SQLite file at <code>data/lead_ingest.sqlite3</code>. The hosted production instance at <a href="https://benton-drones-lead-ingest.onrender.com">https://benton-drones-lead-ingest.onrender.com</a> uses Neon PostgreSQL instead. When the <code>DATABASE_URL</code> environment variable is set, the app switches to PostgreSQL automatically.</p></div>
       </details>
 
       <details class="faq">
@@ -985,7 +984,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
   </main>
 
   <footer>
-    Benton Drones Lead Ingest | Training Guide | Local MVP | Not production-deployed
+    Benton Drones Lead Ingest | Training Guide | Live on Render + Neon | Custom domain pending
   </footer>
 
   <script>

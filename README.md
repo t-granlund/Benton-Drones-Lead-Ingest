@@ -5,11 +5,12 @@ Local-first Shopify-aware MVP for replacing Google Forms + PDFfiller + Sheets + 
 Repository: https://github.com/t-granlund/Benton-Drones-Lead-Ingest  
 GitHub Pages: https://t-granlund.github.io/Benton-Drones-Lead-Ingest/  
 Live app (Render + Neon): https://benton-drones-lead-ingest.onrender.com  
+Friend setup guide: https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/friend-guide.html  
 Hosting options: see [`docs/hosting-guide.md`](docs/hosting-guide.md)
 
 ## What it is
 
-A Python stdlib + SQLite lead-ingest application that captures signups, consent, and waivers for Benton Drones aerial services. No Node, no npm, no external services required — just Python 3.11+.
+A Python stdlib + SQLite lead-ingest application that captures signups, consent, and waivers for Benton Drones aerial services. No Node, no npm, no external services required — just Python 3.11+. The hosted production instance runs on Render with a Neon PostgreSQL database.
 
 Features:
 
@@ -24,6 +25,8 @@ Features:
 - Fully stdlib Python — zero required pip dependencies
 
 ## Quick start
+
+For the full friend-facing walkthrough (clone to a Mac, run locally, and use the hosted Render app), see [`docs/friend-guide.html`](docs/friend-guide.html).
 
 ```bash
 git clone https://github.com/t-granlund/Benton-Drones-Lead-Ingest.git
@@ -122,9 +125,15 @@ docker run -p 8000:8000 -e ADMIN_PASSWORD=your-password benton-drones
 
 ## Deploy to Render
 
-The repo also ships with a `render.yaml` Blueprint for one-click deployment to Render. Render handles HTTPS, health checks, and Docker builds. Pair it with a Neon PostgreSQL database (set `DATABASE_URL`) -- no persistent disk is needed because the database lives in Neon.
+The repo ships with a `render.yaml` Blueprint for one-click deployment to Render. Render handles HTTPS, health checks, and Docker builds. Pair it with a Neon PostgreSQL database (set `DATABASE_URL`) -- no persistent disk is needed because the database lives in Neon.
 
-Quick summary:
+The live instance is already running at:
+
+```txt
+https://benton-drones-lead-ingest.onrender.com
+```
+
+Quick summary for a fresh deploy:
 
 1. Sign up at <https://render.com> with GitHub.
 2. Create a new Blueprint service from the `t-granlund/Benton-Drones-Lead-Ingest` repo.
