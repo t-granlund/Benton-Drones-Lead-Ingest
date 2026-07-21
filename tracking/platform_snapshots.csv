@@ -1,0 +1,8 @@
+snapshot_id,platform,snapshot_type,status,artifact_path,captured_by,captured_at,notes
+SNAP-NC-001,Namecheap,nameservers,needed,,manual,,Current nameservers before Cloudflare cutover
+SNAP-NC-002,Namecheap,dns-records,needed,,manual,,All host records including MX TXT redirects
+SNAP-GW-001,Google Workspace,email-auth,needed,,manual,,MX SPF DKIM DMARC from Google Admin
+SNAP-SHOP-001,Shopify,domain-settings,needed,,manual,,Required A/CNAME and SSL status
+SNAP-SHOP-002,Shopify,design-system,needed,,manual,,Logo colors fonts screenshots
+SNAP-CF-001,Cloudflare,dns-zone,needed,,code-puppy-da30e5,,Read-only inventory after zone import/token
+SNAP-DNS-001,Public DNS,host-resolution,captured,,code-puppy-da30e5,,bentondrones.com and www resolve; leads does not

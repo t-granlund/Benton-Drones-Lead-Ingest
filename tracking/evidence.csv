@@ -1,0 +1,29 @@
+evidence_id,type,source,command_or_url,result,artifact_path,created_at,notes
+EVID-TEST-001,test,local,python -m unittest discover -s tests,PASS,docs/wiggum-loop-report.md,,48 tests passed three consecutive runs
+EVID-QA-001,browser-qa,qa-kitten,/overview /shopify-preview /signup /admin-login,PASS,docs/wiggum-loop-report.md,,Browser smoke review passed after Playwright Chromium install
+EVID-DNS-001,dns,local,python scripts/check_dns.py,WARN,,,"Root and www resolve; leads.bentondrones.com not resolving yet"
+EVID-CF-001,cloudflare,local,python scripts/check_cloudflare_zone.py,WARN,,,"Cloudflare token not set yet"
+EVID-SCRIPT-001,automation,local,python scripts/check_dns.py and python scripts/preflight_report.py and python scripts/check_cloudflare_zone.py,PASS,,,"Scripts run read-only; Cloudflare check warns without token"
+EVID-QA-002,browser-qa,qa-kitten,/overview /goals /judges /api-preflight,PASS,,,"Goals and judges routes load and navigation works"
+EVID-DOLT-001,tracking,local,"./scripts/dolt.ps1 status and sql count checks",PASS,,,"Dolt portable install initialized; tables imported and committed"
+EVID-DOC-001,docs,local,"docs/current-state-and-next-steps.md + /current-state route",PASS,,,"Single source of truth for built/next/blocked state"
+EVID-BRAND-001,brand-research,web-puppy,bentondrones.com + YouTube + Shopify CSS,PASS,research/benton-drones-brand/,2026-07-13T15:58:09Z,"Captured colors, fonts, logo URL, imagery style, button/form styling"
+EVID-PLAN-001,plan,benton-lead-orchestrator,review of docs/current-state-and-next-steps.md + README.md,PASS,tracking/tasks.csv,2026-07-13T15:58:09Z,Concise build plan created; brand research complete; waiver placeholder accepted
+EVID-BUILD-001,build,code-puppy,branded pages + waiver/signature + dashboard maps,PASS,lead_ingest/branded_template.py lead_ingest/server.py lead_ingest/db.py lead_ingest/models.py,2026-07-14T18:30:00Z,"Implemented Benton-branded signup/admin, waiver + typed-name signature, admin dashboard with Leaflet map, drill-down, analytics"
+EVID-TEST-002,test,local,python -m unittest discover -s tests,PASS,,2026-07-14T18:30:00Z,64 tests pass after branded build and QA fixes
+EVID-TEST-003,test,local,python -m unittest discover -s tests x3,PASS,,2026-07-14T19:45:00Z,"189 tests pass 3 consecutive runs; fixed SQLite connection leak in server.py; fixed tracking CSV header test"
+EVID-TEST-004,test,local,python -m unittest discover -s tests x3,PASS,,2026-07-14T20:30:00Z,"230 tests pass 3 consecutive runs after JIRA/PDF/landing-page/GitHub-ready additions"
+EVID-GITHUB-001,repo-readiness,code-puppy,README.md requirements.txt Makefile pyproject.toml .gitignore,PASS,README.md,2026-07-14T20:30:00Z,"Project ready to clone and run: make install/init-db/run/test"
+EVID-JIRA-001,integration-test,local,tests/test_jira.py + manual E2E,PASS,lead_ingest/jira.py,2026-07-14T20:30:00Z,"JIRA ticket creation and local queue fallback tested"
+EVID-PDF-001,feature-test,local,tests/test_pdf.py + manual E2E,PASS,lead_ingest/pdf.py,2026-07-14T20:30:00Z,"HTML print view + PDF fallback tested"
+EVID-LANDING-001,feature-test,local,tests/test_landing_page.py + manual E2E,PASS,static/landing-page.html,2026-07-14T20:30:00Z,"Standalone landing page serves and renders"
+EVID-ARCH-001,docs,code-puppy,docs/architecture-diagram.html,PASS,docs/architecture-diagram.html,2026-07-17T20:00:00Z,"Material 3 + Benton branded interactive architecture diagram"
+EVID-UAT-001,test,e2e-testing-expert,tests/test_uat.py,PASS,tests/test_uat.py,2026-07-17T20:00:00Z,"19 UAT tests covering lead capture, admin review, exports, JIRA, PDF, security"
+EVID-PROD-001,hardening,code-puppy,tests/test_production_hardening.py + deploy/,PASS,lead_ingest/server.py,2026-07-17T20:00:00Z,"32 production fitness tests pass: headers, healthz, cookies, body limit, XSS fix, WAL"
+EVID-TEST-005,test,local,python -m unittest discover -s tests x3,PASS,,2026-07-17T20:30:00Z,"281 tests pass 3 consecutive runs after architecture/UAT/production-hardening additions"
+EVID-QA-003,browser-qa,qa-kitten,/signup /admin-login /admin /admin/lead/<id>,PASS,,2026-07-14T18:35:00Z,"Re-QA verified logo on signup/login, local Leaflet map loads, View links work, no console errors"
+EVID-GUIDE-001,docs,local,docs/explainer-guide.html,PASS,docs/explainer-guide.html,2026-07-14T18:40:00Z,"Flat HTML explainer guide created with Benton design system, architecture, agent choreography, human gates"
+EVID-TRAIN-001,docs,local,docs/training-guide.html,PASS,docs/training-guide.html,2026-07-17T21:00:00Z,"Training guide created: public signup, admin dashboard, exports/PDF, JIRA, dev workflow, deployment, security, troubleshooting"
+EVID-POLISH-001,design,code-puppy,Material 3 polish verification,PASS,lead_ingest/branded_template.py,2026-07-17T22:15:00Z,"Material 3 tokens applied to all HTML pages and generated templates; no emoji/unicode symbols; 281 tests pass 3x"
+EVID-POLISH-003,design,code-puppy,Premium visual refinement verification,PASS,docs/architecture-diagram.html,2026-07-18T13:30:00Z,"Premium heroes, glass nav, gradient buttons, cleaner spacing/typography across all pages; fixed tasks.csv CSV quoting issue; 281 tests pass 3x"
+EVID-VERIFY-001,verification,benton-lead-orchestrator,Route + functional + test verification,PASS,,2026-07-17T22:45:00Z,"15 server routes OK, 4 static HTML files present, full signup-to-export E2E OK, 281 tests pass 3x, 9 pages opened in Chrome"

@@ -1,0 +1,6 @@
+# Core app uses only Python stdlib + sqlite3 — no pip install needed.
+# The following are OPTIONAL dependencies:
+
+# PDF export: enables true PDF download at /admin/lead/<id>/pdf
+# Without it, the server falls back to an HTML print view.
+fpdf2>=2.8.0

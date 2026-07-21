@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benton Drones Lead Ingest — Training Guide</title>
+  <meta name="description" content="Training guide for Benton Drones lead ingest system: public signup, admin dashboard, exports, PDFs, JIRA, and deployment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --md-sys-color-primary: #809948;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f0f7f4;
+      --md-sys-color-on-primary-container: #1b1b1b;
+      --md-sys-color-secondary: #6184d8;
+      --md-sys-color-on-secondary: #ffffff;
+      --md-sys-color-tertiary: #0000ff;
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-container-low: #fbfbf8;
+      --md-sys-color-surface-container: #f5f5f0;
+      --md-sys-color-surface-container-high: #efefe9;
+      --md-sys-color-background: #f7f7f3;
+      --md-sys-color-on-surface: #1b1b1b;
+      --md-sys-color-on-surface-variant: #44464f;
+      --md-sys-color-outline: #d7d3c5;
+      --md-sys-color-outline-variant: #ede8d8;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-on-error: #ffffff;
+      --md-sys-color-error-container: #f9dedc;
+      --olive: var(--md-sys-color-primary);
+      --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
+      --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
+      --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
+      --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
+      --md-elevation-1: var(--el-1);
+      --md-elevation-2: var(--el-2);
+      --md-elevation-3: var(--el-3);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Jost', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.02rem;
+      background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.65;
+      font-size: 1.05rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    .benton-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; height: 72px; padding: 0 32px;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--md-sys-color-outline);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .benton-nav .logo img { height: 44px; width: auto; transition: transform 0.2s ease, opacity 0.2s ease; }
+    .benton-nav .logo:hover img { transform: scale(1.03); opacity: 0.92; }
+    .benton-nav .nav-links { display: flex; gap: 4px; }
+    .benton-nav .nav-links a {
+      color: var(--md-sys-color-on-surface-variant); text-decoration: none;
+      font-weight: 600; text-transform: uppercase; font-size: 0.78rem;
+      letter-spacing: 0.08rem; padding: 10px 16px; border-radius: 999px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .benton-nav .nav-links a:hover { background: var(--md-sys-color-primary-container); color: var(--olive-deep); }
+    .benton-nav a.logo { padding: 0; }
+    .benton-nav a.logo:hover { background: transparent; }
+    .hero {
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color: var(--md-sys-color-on-primary);
+      padding: 64px 24px 72px; text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .hero-inner { max-width: 720px; margin: 0 auto; }
+    .hero img { height: 60px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); transition: transform 0.2s ease, opacity 0.2s ease; }
+    .hero img:hover { transform: scale(1.03); opacity: 0.92; }
+    .hero .eyebrow { display: block; margin-bottom: 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.82; }
+    .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
+    .hero p { margin: 0 auto; max-width: 640px; opacity: 0.92; font-size: 1.1rem; font-weight: 500; line-height: 1.55; }
+    main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+    h2 {
+      color: var(--md-sys-color-primary); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.2;
+      border-bottom: 1px solid var(--md-sys-color-outline); padding-bottom: 8px; margin-top: 48px;
+    }
+    h3 { color: var(--md-sys-color-primary); font-size: 1.3rem; font-weight: 600; margin-top: 28px; line-height: 1.3; }
+    a { color: var(--md-sys-color-secondary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .card {
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
+      border-radius: 16px; padding: 28px; margin: 20px 0;
+      box-shadow: var(--el-1); transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--el-2); }
+    .card.cream { background: #fffce7; }
+    .card.blue { background: #e7ecff; }
+    .card.green { background: var(--md-sys-color-primary-container); }
+    .card.warn { border-color: #e8893a; background: #fff8e1; }
+    .card.block { border-color: var(--md-sys-color-error); background: var(--md-sys-color-error-container); }
+    pre, code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.9rem; letter-spacing: 0;
+    }
+    pre {
+      background: #1b1b1b; color: #e5e7eb;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 8px; padding: 16px; overflow-x: auto;
+    }
+    code { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline); border-radius: 6px; padding: 2px 6px; }
+    ol.steps { counter-reset: step; list-style: none; padding: 0; }
+    ol.steps > li {
+      position: relative;
+      padding-left: 48px;
+      margin-bottom: 20px;
+      min-height: 32px;
+    }
+    ol.steps > li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0; top: 0;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 12px; overflow: hidden;
+    }
+    th, td { border-bottom: 1px solid var(--md-sys-color-outline-variant); padding: 14px 16px; text-align: left; }
+    th {
+      background: var(--md-sys-color-surface-container); color: var(--olive-deep);
+      font-weight: 700; font-size: 0.78rem; letter-spacing: 0.08rem; text-transform: uppercase;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--md-sys-color-surface-container-low); }
+    .pill {
+      display: inline-block; padding: 6px 14px; border-radius: 999px;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08rem;
+      text-transform: uppercase; border: 1.5px solid;
+    }
+    .pill.olive { background: var(--md-sys-color-primary-container); color: #3d4d1f; border-color: var(--md-sys-color-primary); }
+    .pill.blue { background: #e7ecff; color: var(--md-sys-color-secondary); border-color: var(--md-sys-color-secondary); }
+    .pill.warn { background: #fff3e0; color: #8a4a00; border-color: #e8893a; }
+    .toc {
+      display: flex; flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 32px;
+    }
+    .toc a {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      color: var(--md-sys-color-primary);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 600; letter-spacing: 0.08rem;
+      text-decoration: none;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      box-shadow: var(--el-1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .toc a:hover {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      transform: translateY(-1px);
+      box-shadow: var(--el-2);
+      text-decoration: none;
+    }
+    footer { margin-top: 64px; padding: 32px; text-align: center; font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant); }
+    @media (max-width: 600px) {
+      .benton-nav { height: 60px; padding: 0 16px; }
+      .benton-nav .logo img { height: 36px; }
+      .benton-nav .nav-links a { padding: 8px 12px; font-size: 0.72rem; }
+      .hero { padding: 48px 16px 56px; }
+      .hero h1 { font-size: 1.8rem; }
+      main { padding: 32px 16px 64px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <nav class="benton-nav">
+    <a class="logo" href="/overview">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+    </a>
+    <div class="nav-links">
+      <a href="/overview">Overview</a>
+      <a href="/admin">Admin</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+      <span class="eyebrow">Benton Drones</span>
+      <h1>Lead Ingest Training Guide</h1>
+      <p>How to use, administer, extend, and deploy the Benton Drones lead ingestion system.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="toc">
+      <a href="#public">Public signup</a>
+      <a href="#admin">Admin dashboard</a>
+      <a href="#exports">Exports & PDF</a>
+      <a href="#jira">JIRA integration</a>
+      <a href="#dev">Developer / Code Puppy</a>
+      <a href="#deploy">Deployment</a>
+      <a href="#security">Security</a>
+      <a href="#trouble">Troubleshooting</a>
+    </div>
+
+    <section id="public">
+      <h2>1. Public signup flow</h2>
+      <p>The public-facing pages are styled to match the Benton Drones website. There are two entry points:</p>
+      <ul>
+        <li><strong>Landing page:</strong> <code>/landing-page.html</code> — a standalone branded page with a CTA to the signup form.</li>
+        <li><strong>Signup form:</strong> <code>/signup</code> or <code>/signup/&lt;variant&gt;</code> — the actual lead capture form.</li>
+      </ul>
+
+      <h3>What the visitor sees</h3>
+      <ol class="steps">
+        <li>Visitor arrives from a Shopify CTA, ad, or direct link.</li>
+        <li>Visitor reads the aerial services waiver in the scrollable waiver box.</li>
+        <li>Visitor checks <em>"I have read and agree to the above waiver"</em>.</li>
+        <li>Visitor types their full legal name in the signature field.</li>
+        <li>Visitor submits the form and sees a confirmation message.</li>
+      </ol>
+
+      <div class="card warn">
+        <h3><span class="pill warn">Important</span> Waiver text is a placeholder</h3>
+        <p>The waiver currently shown in the form is clearly marked as a placeholder. Before accepting real signups, replace the text in <code>lead_ingest/models.py</code> with language reviewed by legal counsel.</p>
+      </div>
+
+      <h3>Variant tracking</h3>
+      <p>You can track marketing attribution by using URLs like:</p>
+      <pre>/signup/facebook-ad?source=facebook&campaign=summer2026</pre>
+      <p>The form automatically captures <code>source</code>, <code>campaign</code>, and <code>variant_slug</code>. These values appear in the admin dashboard and exports.</p>
+    </section>
+
+    <section id="admin">
+      <h2>2. Admin dashboard</h2>
+      <p>Log in at <code>/admin-login</code> using the password set via the <code>ADMIN_PASSWORD</code> environment variable.</p>
+
+      <h3>Dashboard features</h3>
+      <table>
+        <tr><th>Feature</th><th>How to use it</th></tr>
+        <tr><td>Analytics cards</td><td>Quick counts: total leads, today, this week, pending geocodes.</td></tr>
+        <tr><td>Lead map</td><td>Interactive Leaflet map showing geocoded leads. Click a pin to open the lead.</td></tr>
+        <tr><td>Breakdowns</td><td>See lead distribution by source, campaign, and variant.</td></tr>
+        <tr><td>Recent leads</td><td>Table of recent signups. Click <strong>View</strong> for details.</td></tr>
+        <tr><td>Exports</td><td>Download CSV, GeoJSON, or KML from the Export card.</td></tr>
+      </table>
+
+      <h3>Lead detail page</h3>
+      <p>Click <strong>View</strong> on any lead to see:</p>
+      <ul>
+        <li>Contact details and full address</li>
+        <li>Source, campaign, and variant attribution</li>
+        <li>Consent record (version, timestamp, IP, user agent)</li>
+        <li>Signature record (typed name, waiver version, timestamp, IP, user agent)</li>
+        <li>Geocode status and coordinates</li>
+        <li>JIRA ticket status (created, queued, or not configured)</li>
+        <li><strong>Print / PDF</strong> link for the completed form</li>
+      </ul>
+    </section>
+
+    <section id="exports">
+      <h2>3. Exports & PDF</h2>
+
+      <h3>CSV export</h3>
+      <p>The CSV export at <code>/export/csv</code> includes lead data plus consent and signature metadata (signed name, signed at, waiver version). Use it for spreadsheet reporting and planning.</p>
+
+      <h3>GeoJSON / KML</h3>
+      <p>Download <code>/export/geojson</code> or <code>/export/kml</code> to view leads in mapping tools like Google Earth or QGIS.</p>
+
+      <h3>PDF of completed form</h3>
+      <p>Each lead has two export options:</p>
+      <ul>
+        <li><code>/admin/lead/&lt;id&gt;/print</code> — browser-printable HTML view. No dependencies. Use Ctrl+P / Cmd+P to save as PDF.</li>
+        <li><code>/admin/lead/&lt;id&gt;/pdf</code> — true PDF download if <code>fpdf2</code> is installed. Otherwise it falls back to the print view.</li>
+      </ul>
+      <pre>pip install fpdf2</pre>
+    </section>
+
+    <section id="jira">
+      <h2>4. JIRA integration</h2>
+      <p>The system can create a JIRA ticket for every completed signup. Set these environment variables:</p>
+      <pre>
+JIRA_BASE_URL=https://your-domain.atlassian.net
+JIRA_USER_EMAIL=you@example.com
+JIRA_API_TOKEN=your-api-token
+JIRA_PROJECT_KEY=BDS
+JIRA_ISSUE_TYPE=Task  # optional, defaults to Task
+      </pre>
+
+      <h3>If JIRA is not configured</h3>
+      <p>Signups are stored in a local <code>jira_queue</code> table with status <code>pending</code>. You can process them later by:</p>
+      <ol>
+        <li>Setting the JIRA env vars.</li>
+        <li>Running a future processing script (not yet built — add if needed).</li>
+      </ol>
+
+      <div class="card green">
+        <h3>Privacy note</h3>
+        <p>JIRA ticket descriptions include the lead name, email, address, and signature metadata. Make sure your JIRA project permissions are appropriate for PII.</p>
+      </div>
+    </section>
+
+    <section id="dev">
+      <h2>5. Developer / Code Puppy workflow</h2>
+
+      <h3>Clone and run</h3>
+      <pre>
+git clone &lt;your-repo-url&gt;
+cd Lead-Ingest
+make init-db
+ADMIN_PASSWORD=yourpass make run
+      </pre>
+
+      <h3>Run tests</h3>
+      <pre>make test</pre>
+
+      <h3>Install optional dependencies</h3>
+      <pre>make install</pre>
+
+      <h3>Extend the system</h3>
+      <table>
+        <tr><th>To add...</th><th>Edit...</th></tr>
+        <tr><td>A new route</td><td><code>lead_ingest/server.py</code></td></tr>
+        <tr><td>A new DB table</td><td><code>lead_ingest/db.py</code> (SCHEMA string + helper functions)</td></tr>
+        <tr><td>A new data model</td><td><code>lead_ingest/models.py</code></td></tr>
+        <tr><td>A new landing page variant</td><td><code>landing_page_variants</code> table or insert a row via SQL</td></tr>
+        <tr><td>A new test</td><td><code>tests/test_*.py</code> using <code>unittest.TestCase</code></td></tr>
+      </table>
+    </section>
+
+    <section id="deploy">
+      <h2>6. Deployment</h2>
+
+      <h3>Environment variables for production</h3>
+      <table>
+        <tr><th>Variable</th><th>Required?</th><th>Notes</th></tr>
+        <tr><td><code>ADMIN_PASSWORD</code></td><td>Yes</td><td>Strong password for admin login.</td></tr>
+        <tr><td><code>ADMIN_SESSION_SECRET</code></td><td>Production only</td><td>≥32 random chars. Required when <code>ENV=production</code>.</td></tr>
+        <tr><td><code>CSRF_SECRET</code></td><td>Production only</td><td>≥32 random chars. Required when <code>ENV=production</code>.</td></tr>
+        <tr><td><code>COOKIE_SECURE</code></td><td>Recommended</td><td>Set to <code>1</code> when running behind HTTPS.</td></tr>
+        <tr><td><code>ENV</code></td><td>No</td><td>Set to <code>production</code> to enforce strict secret checks.</td></tr>
+        <tr><td><code>HOST</code></td><td>No</td><td>Bind address (default <code>127.0.0.1</code>).</td></tr>
+        <tr><td><code>PORT</code></td><td>No</td><td>Listen port (default <code>8000</code>).</td></tr>
+      </table>
+
+      <h3>Reverse proxy setup</h3>
+      <p>Example configs are provided in <code>deploy/Caddyfile</code> and <code>deploy/nginx.conf</code>. In production, always:</p>
+      <ol class="steps">
+        <li>Run the Python app on <code>127.0.0.1:8000</code>.</li>
+        <li>Put Caddy or nginx in front for TLS termination.</li>
+        <li>Forward <code>X-Forwarded-Proto: https</code> so cookies get the Secure flag.</li>
+        <li>Set <code>COOKIE_SECURE=1</code> or rely on the forwarded header.</li>
+        <li>Keep <code>ADMIN_PASSWORD</code> and secrets in a vault or environment, never in code.</li>
+      </ol>
+
+      <h3>Health check</h3>
+      <p>Load balancers can use <code>/healthz</code> for health checks. It returns JSON:</p>
+      <pre>{"status": "ok", "version": "0.2.0", "tests_passed": true}</pre>
+    </section>
+
+    <section id="security">
+      <h2>7. Security checklist</h2>
+      <ul>
+        <li>Replace the placeholder waiver text with legally reviewed language.</li>
+        <li>Use strong, unique <code>ADMIN_PASSWORD</code>, <code>ADMIN_SESSION_SECRET</code>, and <code>CSRF_SECRET</code>.</li>
+        <li>Run behind HTTPS with <code>COOKIE_SECURE=1</code>.</li>
+        <li>Restrict admin access to trusted networks if possible (at the proxy level).</li>
+        <li>Back up the SQLite database regularly (e.g., <code>data/lead_ingest.sqlite3</code>).</li>
+        <li>Review JIRA project permissions because ticket descriptions contain PII.</li>
+        <li>Keep the app and Python runtime patched.</li>
+      </ul>
+    </section>
+
+    <section id="trouble">
+      <h2>8. Troubleshooting</h2>
+      <table>
+        <tr><th>Symptom</th><th>Fix</th></tr>
+        <tr><td>Admin login fails</td><td>Verify <code>ADMIN_PASSWORD</code> env var is set and not a weak default.</td></tr>
+        <tr><td>App won't start in production</td><td>Set <code>ADMIN_SESSION_SECRET</code> and <code>CSRF_SECRET</code> to ≥32 random characters.</td></tr>
+        <tr><td>Map is blank</td><td>Check that <code>static/leaflet/leaflet.js</code> and <code>.css</code> serve with HTTP 200.</td></tr>
+        <tr><td>JIRA tickets not created</td><td>Check all 4 JIRA env vars are set. Check <code>jira_queue</code> table for errors.</td></tr>
+        <tr><td>PDF endpoint redirects to print view</td><td>Install <code>fpdf2</code>: <code>pip install fpdf2</code>.</td></tr>
+        <tr><td>Database locked errors</td><td>WAL mode and busy timeout are enabled automatically on new connections.</td></tr>
+      </table>
+    </section>
+
+    <div class="card block">
+      <h3>Remaining blockers before production</h3>
+      <ul>
+        <li>Replace placeholder waiver text with legally reviewed language.</li>
+        <li>Provision a host and DNS record for <code>leads.bentondrones.com</code>.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>
+    Benton Drones Lead Ingest · Training Guide · Local MVP · Not production-deployed
+  </footer>
+</body>
+</html>

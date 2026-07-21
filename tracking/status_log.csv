@@ -1,0 +1,39 @@
+log_id,entity_type,entity_id,old_status,new_status,changed_by,changed_at,reason,evidence_id
+LOG-001,requirement,REQ-LOCAL-001,not_started,in_progress,code-puppy-da30e5,,Existing MVP implementation present,
+LOG-002,requirement,REQ-DEPLOY-001,not_started,blocked,code-puppy-da30e5,,Backend host not selected,
+LOG-003,task,TASK-QA-001,in_progress,passed,qa-kitten,,Browser automation fixed and smoke QA passed,EVID-QA-001
+LOG-004,task,TASK-SCRIPT-001,in_progress,passed,code-puppy-da30e5,,Read-only preflight scripts run successfully,EVID-SCRIPT-001
+LOG-005,decision,DEC-TRACK-001,proposed,accepted,code-puppy-da30e5,,Dolt CLI not installed so local CSV tables created,
+LOG-006,decision,DEC-TRACK-001,csv_only,dolt_backed,code-puppy-da30e5,,Portable Dolt installed initialized imported and committed,EVID-DOLT-001
+LOG-007,requirement,REQ-DOC-001,not_started,passed,code-puppy-da30e5,,Created current-state doc and /current-state route,EVID-DOC-001
+LOG-008,task,TASK-DESIGN-001,not_started,passed,web-puppy,2026-07-13T15:58:06Z,Brand/design research completed; assets in research/bentondrones-brand/,EVID-BRAND-001
+LOG-009,plan,PLAN-001,not_started,in_progress,benton-lead-orchestrator,2026-07-13T15:58:06Z,Orchestrator presented build plan and began design/implementation phase,
+LOG-010,task,TASK-BRAND-001,not_started,in_progress,benton-lead-orchestrator,2026-07-13T16:00:00Z,Started branded signup/admin page implementation,
+LOG-011,task,TASK-SIG-001,not_started,in_progress,benton-lead-orchestrator,2026-07-13T16:00:00Z,Started waiver + typed-name signature capture implementation,
+LOG-012,task,TASK-DASH-001,not_started,in_progress,benton-lead-orchestrator,2026-07-13T16:00:00Z,Started admin dashboard maps + drill-down + analytics implementation,
+LOG-013,task,TASK-BRAND-001,in_progress,passed,code-puppy,2026-07-14T18:30:00Z,Branded signup/admin pages implemented and tested,EVID-BUILD-001
+LOG-014,task,TASK-SIG-001,in_progress,passed,code-puppy,2026-07-14T18:30:00Z,Waiver + typed-name signature + audit trail implemented,EVID-BUILD-001
+LOG-015,task,TASK-DASH-001,in_progress,passed,code-puppy,2026-07-14T18:30:00Z,Admin dashboard upgraded with map analytics drill-down,EVID-BUILD-001
+LOG-016,task,TASK-TEST-001,in_progress,passed,qa-kitten,2026-07-14T18:35:00Z,Unit tests and browser QA passed after fixes,EVID-TEST-002
+LOG-017,task,TASK-GUIDE-001,in_progress,passed,benton-lead-orchestrator,2026-07-14T18:40:00Z,Flat HTML explainer guide created,EVID-GUIDE-001
+LOG-018,judge,JUDGE-LOCAL-001,ready,passed,benton-lead-orchestrator,2026-07-14T18:30:00Z,Local MVP judge passes after build,EVID-TEST-002
+LOG-019,judge,JUDGE-DESIGN-001,not_ready,passed,benton-lead-orchestrator,2026-07-14T18:30:00Z,Design system capture judge passes,EVID-BUILD-001
+LOG-020,judge,JUDGE-QA-001,ready,passed,benton-lead-orchestrator,2026-07-14T18:35:00Z,Browser QA judge passes after re-QA,EVID-QA-003
+LOG-021,task,TASK-TEST-001,passed,passed,e2e-testing-expert,2026-07-14T19:45:00Z,"E2E test suite expanded from 64 to 189 tests; 3 consecutive passes",EVID-TEST-003
+LOG-022,test,EVID-TEST-003,ready,passed,benton-lead-orchestrator,2026-07-14T19:45:00Z,Fixed tracking CSV header sniffing test and SQLite connection leak in server.py,EVID-TEST-003
+LOG-023,judge,JUDGE-LOCAL-001,ready,passed,benton-lead-orchestrator,2026-07-14T19:45:00Z,Local MVP judge passes with 189 tests and manual E2E verification,EVID-TEST-003
+LOG-024,task,TASK-GITHUB-001,in_progress,passed,code-puppy,2026-07-14T20:30:00Z,Project made GitHub-ready,EVID-GITHUB-001
+LOG-025,task,TASK-JIRA-001,in_progress,passed,code-puppy,2026-07-14T20:30:00Z,JIRA ticket creation + local queue implemented,EVID-JIRA-001
+LOG-026,task,TASK-PDF-001,in_progress,passed,code-puppy,2026-07-14T20:30:00Z,PDF print view + optional fpdf2 PDF implemented,EVID-PDF-001
+LOG-027,task,TASK-LANDING-001,in_progress,passed,code-puppy,2026-07-14T20:30:00Z,Standalone branded landing page created,EVID-LANDING-001
+LOG-028,judge,JUDGE-LOCAL-001,ready,passed,benton-lead-orchestrator,2026-07-14T20:30:00Z,Local MVP judge updated after JIRA/PDF/landing-page additions; 230 tests pass,EVID-TEST-004
+LOG-029,task,TASK-ARCH-001,in_progress,passed,code-puppy,2026-07-17T20:00:00Z,Architecture diagram created,EVID-ARCH-001
+LOG-030,task,TASK-UAT-001,in_progress,passed,e2e-testing-expert,2026-07-17T20:00:00Z,UAT test suite created and passing,EVID-UAT-001
+LOG-031,task,TASK-PROD-001,in_progress,passed,code-puppy,2026-07-17T20:00:00Z,Production hardening implemented,EVID-PROD-001
+LOG-032,judge,JUDGE-HARDEN-001,ready,passed,benton-lead-orchestrator,2026-07-17T20:30:00Z,Production hardening judge passes after P0/P1 fixes,EVID-PROD-001
+LOG-033,judge,JUDGE-LOCAL-001,ready,passed,benton-lead-orchestrator,2026-07-17T20:30:00Z,Local MVP judge updated: 281 tests pass after architecture/UAT/hardening,EVID-TEST-005
+LOG-034,task,TASK-TRAIN-001,in_progress,passed,benton-lead-orchestrator,2026-07-17T21:00:00Z,Training guide created,EVID-TRAIN-001
+LOG-035,task,TASK-POLISH-001,in_progress,passed,code-puppy,2026-07-17T22:15:00Z,Material 3 visual polish applied across all pages and templates,EVID-POLISH-001
+LOG-036,verification,TASK-VERIFY-001,ready,passed,benton-lead-orchestrator,2026-07-17T22:45:00Z,Full verification: routes files tests E2E and browser open all OK,EVID-VERIFY-001
+LOG-037,task,TASK-POLISH-002,in_progress,passed,code-puppy,2026-07-18T13:30:00Z,Premium visual refinement applied across all HTML pages and templates,EVID-POLISH-003
+LOG-038,verification,TASK-POLISH-002,ready,passed,benton-lead-orchestrator,2026-07-18T13:30:00Z,3 rounds QA passed after premium visual refinement,EVID-POLISH-003

@@ -1,0 +1,62 @@
+Marketing / tone examples captured from bentondrones.com and @bentondrones YouTube, 2026-07-13.
+
+---
+HOME PAGE (bentondrones.com/)
+---
+H1: "Drone Pilot & Videographer"
+Tagline: "Moving cameras to capture unique perspectives"
+
+Services accordion titles:
+- "Extreme Sports + Action Shots"
+- "Scenic Overhead Drone Shots"
+- "Trail Previews"
+- "Drone Surveys"
+
+Service descriptions:
+- "FPV (first person view) drones allow us to capture you on your mountain bike, onewheel, or while participating in pretty much any other extreme sport by following the action!"
+- "We can capture stunning overhead stills or video for real estate, b-roll for video projects and more."
+- "We often work with trail builders and mountain bikers to show fresh trails with a unique perspective."
+- "If you need land or sites surveyed for construction, we can gather that data for you."
+
+Section heading: "Folks we've worked with -"
+Newsletter heading: "Stay in our loop -"
+
+---
+ABOUT PAGE (bentondrones.com/pages/about)
+---
+Heading: "About"
+Intro: "Hi, I'm Anderson!"
+Body: "I started flying drones in 2020 and haven't stopped since."
+Credentials: "Part 107 Certified Drone Pilot + Insured"
+Location: "Based in Bentonville, Northwest Arkansas"
+CTA button: "See my work"
+
+---
+CONTACT PAGE (bentondrones.com/pages/contact)
+---
+Heading: "WORK WITH US"
+Body: "We'd love to hear about your project!"
+Pricing: "Project rates start at $1500."
+Email CTA: "EMAIL ME - ANDERSON@BENTONDRONES.COM"
+Form fields: Name, Email *, Phone number, Comment
+Form CTA: "Send"
+
+---
+YOUTUBE CHANNEL (@bentondrones)
+---
+Channel tagline visible: "Drone builder and operator based out of Bentonville, Arkansas. Here you will find videos ..."
+Links: Instagram + 1 more link
+Tabs: Home, Videos, Shorts, Playlists, Posts
+Playlists/sections: "FPV BIKE", "Collaborations"
+
+Recent video titles:
+- "You've never seen a bike competition like this! RedBull Double..."
+- "Coastal Cruise - Coast Gravity Bike Park with Mark ..."
+- "What I pack when traveling to fly FPV!"
+- "Beautiful Bentonville Paradise, the 'MTB Capital' ..."
+- "Adventure awaits at Horseshoe Canyon Ranch! ..."
+
+Tone notes:
+- First-person, founder-led voice on About.
+- Short, punchy video titles.
+- Emphasis on action, place (Bentonville / NWA), and collaboration with athletes/brands.

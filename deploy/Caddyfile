@@ -1,0 +1,39 @@
+# Benton Drones Lead Ingest — Caddy reverse proxy
+#
+# Auto-HTTPS via Let's Encrypt, HSTS, and X-Forwarded-Proto so the
+# app sets Secure cookies automatically.
+#
+# Usage:
+#   1. Install Caddy (https://caddyserver.com/docs/install)
+#   2. Replace leads.bentondrones.com with your domain
+#   3. Ensure DNS A/AAAA records point to this server
+#   4. caddy run --config deploy/Caddyfile
+#
+# The app should be running on 127.0.0.1:8000 (default).
+
+leads.bentondrones.com {
+	# Reverse proxy to the Python stdlib server
+	reverse_proxy 127.0.0.1:8000
+
+	# Forward the original scheme so the app enables Secure cookies
+	header_up X-Forwarded-Proto {scheme}
+
+	# HSTS — tell browsers to use HTTPS for a year (preload optional)
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+	# Baseline security headers (defense in depth — the app also sets these)
+	header X-Content-Type-Options "nosniff"
+	header X-Frame-Options "DENY"
+	header Referrer-Policy "no-referrer"
+
+	# Static assets — long cache + immutable
+	@static path /static/*
+	header @static Cache-Control "public, max-age=86400"
+
+	# Admin / PII routes — never cache
+	@admin path /admin* /admin-login /admin-logout /export/*
+	header @admin Cache-Control "no-store"
+
+	# Compress responses
+	encode gzip zstd
+}

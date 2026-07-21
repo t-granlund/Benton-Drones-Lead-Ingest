@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benton Drones — Lead Ingest Architecture</title>
+  <meta name="description" content="Material 3 architecture diagram for the Benton Drones lead ingest system: signup, consent, SQLite, JIRA, PDF, admin dashboard, exports, Cloudflare, Shopify.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Material 3 color roles */
+      --md-sys-color-primary: #809948;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f0f7f4;
+      --md-sys-color-on-primary-container: #1b1b1b;
+      --md-sys-color-secondary: #6184d8;
+      --md-sys-color-on-secondary: #ffffff;
+      --md-sys-color-tertiary: #0000ff;
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-container-low: #fbfbf8;
+      --md-sys-color-surface-container: #f5f5f0;
+      --md-sys-color-surface-container-high: #efefe9;
+      --md-sys-color-background: #f7f7f3;
+      --md-sys-color-on-surface: #1b1b1b;
+      --md-sys-color-on-surface-variant: #44464f;
+      --md-sys-color-outline: #d7d3c5;
+      --md-sys-color-outline-variant: #ede8d8;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-on-error: #ffffff;
+      --md-sys-color-error-container: #f9dedc;
+
+      /* Legacy aliases */
+      --olive: var(--md-sys-color-primary);
+      --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
+      --cream: #fffce7;
+      --pale-blue: #e7ecff;
+      --pale-green: var(--md-sys-color-primary-container);
+      --link-blue: var(--md-sys-color-secondary);
+      --white: var(--md-sys-color-surface);
+      --page-bg: var(--md-sys-color-background);
+      --ls: 0.02rem;
+
+      /* status */
+      --st-impl: var(--md-sys-color-primary);
+      --st-future: #e8893a;
+      --st-blocked: var(--md-sys-color-error);
+      --st-actor: var(--md-sys-color-secondary);
+
+      /* elevation — softer, more diffused */
+      --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
+      --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
+      --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
+      --md-elevation-1: var(--el-1);
+      --md-elevation-2: var(--el-2);
+      --md-elevation-3: var(--el-3);
+      --md-elevation-4: 0 8px 16px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.10);
+
+      /* shape */
+      --radius-card: 16px;
+      --radius-button: 10px;
+      --radius-table: 12px;
+      --radius-chip: 999px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Jost', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.02rem;
+      background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.65;
+      font-size: 1.05rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--md-sys-color-secondary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Hero — logo on top, eyebrow, title, subtitle, clean bottom edge */
+    .hero {
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color: var(--white);
+      padding: 64px 24px 72px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .hero img { height: 64px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); transition: transform 0.2s ease, opacity 0.2s ease; }
+    .hero img:hover { transform: scale(1.03); opacity: 0.92; }
+    .hero .eyebrow {
+      display: block; margin-bottom: 14px;
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.14em; opacity: 0.82;
+    }
+    .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
+    .hero p { margin: 0 auto; max-width: 680px; opacity: 0.92; font-size: 1.15rem; font-weight: 500; line-height: 1.55; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px 64px; }
+
+    /* M3 cards */
+    .card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 16px;
+      box-shadow: var(--el-1);
+      padding: 28px;
+      margin-top: 28px;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--el-2); }
+    .card.elev { box-shadow: var(--el-2); }
+    .card.elev:hover { transform: translateY(-2px); box-shadow: var(--el-3); }
+    .card h2 { color: var(--md-sys-color-primary); margin: 0 0 6px; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.2; }
+    .card .lead { color: var(--md-sys-color-on-surface-variant); margin: 0 0 18px; font-size: .98rem; line-height: 1.55; }
+    section { scroll-margin-top: 24px; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 13px; border-radius: 999px; border: 1.5px solid;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+      transition: opacity 0.2s ease;
+    }
+    .badge:hover { opacity: 0.88; }
+    .badge .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+    .badge--impl   { background: var(--md-sys-color-primary-container); border-color: var(--st-impl);   color: #3d4d1f; }
+    .badge--impl   .dot { background: var(--st-impl); }
+    .badge--future { background: #fffce7;       border-color: var(--st-future); color: #8a4a00; }
+    .badge--future .dot { background: var(--st-future); }
+    .badge--blocked{ background: var(--md-sys-color-error-container); border-color: var(--st-blocked);color: #8e1c1c; }
+    .badge--blocked .dot { background: var(--st-blocked); }
+    .badge--actor  { background: #e7ecff;   border-color: var(--st-actor); color: #1a2a5a; }
+    .badge--actor  .dot { background: var(--st-actor); }
+
+    /* Legend */
+    .legend-grid { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; }
+    .legend-grid .badge { border-radius: 999px; }
+    .shape-key { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--md-sys-color-outline); font-size: .85rem; color: var(--md-sys-color-on-surface-variant); }
+    .shape-key b { color: var(--md-sys-color-primary); }
+
+    /* Diagram */
+    .diagram-wrap { overflow-x: auto; border-radius: 12px; }
+    #diagram-container { min-height: 260px; display: flex; align-items: center; justify-content: center; }
+    #diagram-container svg { max-width: 100%; height: auto; }
+    .diagram-tip { margin-top: 14px; font-size: .85rem; color: var(--md-sys-color-on-surface-variant); text-align: center; }
+    .diagram-error { color: var(--st-blocked); text-align: center; padding: 24px; }
+
+    /* Component grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+    .comp {
+      background: var(--md-sys-color-surface); border-radius: 16px; box-shadow: var(--el-1);
+      border: 1px solid var(--md-sys-color-outline); border-top: 4px solid var(--md-sys-color-primary);
+      padding: 24px; display: flex; flex-direction: column; gap: 10px;
+      transition: box-shadow .22s ease, transform .22s ease;
+    }
+    .comp:hover { box-shadow: var(--el-2); transform: translateY(-3px); }
+    .comp .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .comp .ico { color: var(--md-sys-color-primary); display: inline-flex; align-items: center; flex: none; }
+    .comp h3 { margin: 0; color: var(--md-sys-color-primary); font-size: 1.08rem; font-weight: 700; }
+    .comp .route {
+      display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem;
+      background: var(--md-sys-color-primary-container); border: 1px solid var(--md-sys-color-primary); color: #2f3a16;
+      padding: 2px 8px; border-radius: 6px; letter-spacing: 0;
+    }
+    .comp p { margin: 0; font-size: .92rem; color: var(--md-sys-color-on-surface-variant); }
+    .comp .foot { margin-top: auto; }
+
+    /* Data flow */
+    .flow { counter-reset: step; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+    .flow li {
+      counter-increment: step; position: relative; padding: 12px 16px 12px 56px;
+      background: var(--md-sys-color-surface-container-low); border-radius: 12px; border: 1px solid var(--md-sys-color-outline);
+    }
+    .flow li::before {
+      content: counter(step); position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      width: 30px; height: 30px; border-radius: 50%; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem;
+    }
+    .flow code { background: #e7ecff; border: 1px solid var(--md-sys-color-secondary); border-radius: 5px; padding: 1px 6px; font-size: .84rem; }
+
+    /* Callout */
+    .callout {
+      border-left: 6px solid var(--md-sys-color-primary); background: #fffce7;
+      border-radius: 12px; padding: 24px 26px; box-shadow: var(--md-elevation-1);
+    }
+    .callout h2 { display: flex; align-items: center; gap: 10px; color: var(--md-sys-color-primary); }
+    .callout .steps { margin: 14px 0 0; padding-left: 20px; }
+    .callout .steps li { margin-bottom: 8px; }
+    .callout .gates { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+    footer { text-align: center; padding: 40px 20px 48px; color: var(--md-sys-color-on-surface-variant); font-size: .85rem; }
+    footer a { margin: 0 12px; font-weight: 700; color: var(--md-sys-color-primary); transition: opacity 0.2s ease; }
+    footer a:hover { opacity: 0.82; }
+
+    @media (max-width: 640px) {
+      .card { padding: 20px; }
+      .hero { padding: 48px 16px 56px; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 1rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo">
+    <span class="eyebrow">Architecture Diagram</span>
+    <h1>Lead Ingest System Architecture</h1>
+    <p>Self-owned, Shopify-aware lead capture: branded landing page, consent &amp; typed-name signature, SQLite persistence, JIRA tickets, PDF export, and an admin dashboard with maps and exports.</p>
+  </header>
+
+  <main class="container">
+
+    <!-- Legend -->
+    <section class="card" id="legend" aria-label="Legend">
+      <h2>Legend</h2>
+      <p class="lead">Status reflects the working tree of the Lead-Ingest repository.</p>
+      <div class="legend-grid">
+        <span class="badge badge--impl"><span class="dot"></span>Implemented</span>
+        <span class="badge badge--future"><span class="dot"></span>Future / deferred</span>
+        <span class="badge badge--blocked"><span class="dot"></span>Blocked</span>
+        <span class="badge badge--actor"><span class="dot"></span>Actor</span>
+      </div>
+      <div class="shape-key">
+        <span><b>Stadium</b> = human actor</span>
+        <span><b>Cylinder</b> = data store</span>
+        <span><b>Hexagon</b> = infrastructure / routing</span>
+        <span><b>Rounded rect</b> = component or page</span>
+        <span><b>Dashed line</b> = future or fallback path</span>
+      </div>
+    </section>
+
+    <!-- Diagram -->
+    <section class="card elev" id="diagram" aria-label="Architecture diagram">
+      <h2>System diagram</h2>
+      <p class="lead">Interactive Mermaid flowchart — render client-side, no build step.</p>
+      <div class="diagram-wrap">
+        <div id="diagram-container" role="img" aria-label="Benton Drones lead ingest architecture flowchart">
+          <p style="color:#888">Loading diagram…</p>
+        </div>
+      </div>
+      <p class="diagram-tip">The diagram source is embedded in this file inside <code style="font-family:ui-monospace,monospace">&lt;script type="text/mermaid"&gt;</code> — edit it and refresh to update.</p>
+    </section>
+
+    <!-- Components -->
+    <section class="card" id="components" aria-label="Components">
+      <h2>Components in detail</h2>
+      <p class="lead">Each node of the diagram, explained in prose.</p>
+      <div class="grid">
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="badge badge--actor"><span class="dot"></span>Actor</span></div>
+          <div><h3>Visitor</h3></div>
+          <p>A prospective customer. Today they arrive via a direct link to the owned backend; tomorrow a Shopify storefront CTA will route them here. No PII is collected until the form is submitted.</p>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></span><span class="badge badge--future"><span class="dot"></span>Future / deferred</span></div>
+          <div><h3>Shopify Storefront</h3></div>
+          <p>Shopify runs the public storefront. The launch path uses a CTA button linking into <code>/signup</code>. A deeper App Proxy integration (HMAC-signed context tokens) is implemented as utilities but deferred for production.</p>
+          <div class="foot"><span class="route">storefront to CTA</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h6M10 16h6"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>Landing Page</h3></div>
+          <p>A flat, branded static hero — olive gradient, Jost type, benefit cards, and a CTA into signup. Served as a static file, no server-side rendering needed.</p>
+          <div class="foot"><span class="route">/landing-page.html</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 12l2 2 4-4"/><path d="M9 17h6"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>Signup Form</h3></div>
+          <p>Variant-aware form capturing lead info, consent checkbox, waiver box, and typed-name signature. Hidden Shopify context, CSRF token, and honeypot field. Variants (title, subtitle, CTA, campaign, source) live in the <code>landing_page_variants</code> table.</p>
+          <div class="foot"><span class="route">/signup · /signup/{variant}</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="6" rx="1"/><rect x="4" y="14" width="16" height="6" rx="1"/><path d="M7.5 7h.01M7.5 17h.01"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>Owned Backend</h3></div>
+          <p>Python stdlib <code>ThreadingHTTPServer</code> handler. Validates input, checks CSRF tokens, trips the honeypot, rate-limits by IP+path (20/min), geocodes the address (swappable mock), and persists the signup with linked consent + signature rows. SQLite only — no web framework.</p>
+          <div class="foot"><span class="route">lead_ingest/server.py</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>SQLite Database</h3></div>
+          <p>Single file at <code>data/lead_ingest.sqlite3</code>. Tables: <code>signups</code>, <code>consent_records</code>, <code>signatures</code>, <code>landing_page_variants</code>, <code>clusters</code> + <code>cluster_members</code>, <code>jira_queue</code>, <code>jira_tickets</code>. Foreign keys on; row factory enabled.</p>
+          <div class="foot"><span class="route">lead_ingest/db.py</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l8-8h6v6l-8 8z"/><circle cx="15" cy="9" r="1.4"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>JIRA Integration</h3></div>
+          <p>After each signup, the backend builds a JIRA Cloud REST payload (stdlib <code>urllib</code> only — no SDK) and creates a ticket. If JIRA env vars are unset or the call fails, the signup is queued in <code>jira_queue</code> for later replay.</p>
+          <div class="foot"><span class="route">lead_ingest/jira.py</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="6" rx="1"/><path d="M7 15v5h10v-5"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>PDF Export</h3></div>
+          <p><code>/print</code> returns a browser-printable HTML consent form with no dependencies. <code>/pdf</code> returns a true PDF when <code>fpdf2</code> is installed, otherwise it gracefully redirects to the print view.</p>
+          <div class="foot"><span class="route">/admin/lead/{id}/print · /pdf</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>Admin Dashboard</h3></div>
+          <p>Password-gated dashboard: analytics cards (total / today / week / pending geocodes), a Leaflet map of geocoded leads (vendored locally), source / campaign / variant breakdowns, a recent-lead table, and per-lead drill-down.</p>
+          <div class="foot"><span class="route">/admin · /admin/lead/{id}</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="M8 11l4 4 4-4"/><path d="M5 20h14"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
+          <div><h3>Exports</h3></div>
+          <p>Admin-only CSV (with signature &amp; consent metadata), GeoJSON (geocoded leads for the map), and KML (for Google Earth planning). These replace the old manual Google Sheets + Earth workflow.</p>
+          <div class="foot"><span class="route">/export/csv · /geojson · /kml</span></div>
+        </article>
+
+        <article class="comp">
+          <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1A4 4 0 0 1 18 18z"/></svg></span><span class="badge badge--blocked"><span class="dot"></span>Blocked</span></div>
+          <div><h3>Cloudflare / DNS</h3></div>
+          <p>Future production edge: <code>leads.bentondrones.com</code> routes to the chosen host via Cloudflare. Blocked on (a) selecting a host and (b) a Cloudflare API token to automate &amp; verify DNS. Namecheap stays registrar; Google Workspace stays email.</p>
+          <div class="foot"><span class="route">leads.bentondrones.com</span></div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Data flow -->
+    <section class="card" id="data-flow" aria-label="Data flow">
+      <h2>Data flow</h2>
+      <p class="lead">End-to-end path of a single lead, from arrival to admin action.</p>
+      <ol class="flow">
+        <li>A visitor clicks a Shopify storefront CTA (or a direct link) and lands on the branded <code>Landing Page</code>.</li>
+        <li>The CTA points to <code>/signup</code> or <code>/signup/{variant}</code>, rendering the variant-aware form with a CSRF token and Shopify context (if present).</li>
+        <li>The visitor submits lead info, ticks consent + waiver, and types their full legal name as a signature.</li>
+        <li>The <code>Owned Backend</code> validates the payload, checks the CSRF token + honeypot, applies rate limiting, and geocodes the address.</li>
+        <li>Signup, consent record, and signature row are persisted in <code>SQLite</code> — foreign-keyed and auditable.</li>
+        <li>The backend attempts to create a <code>JIRA</code> ticket; on success it records the ticket key, on failure it queues the signup locally.</li>
+        <li>The admin logs in at <code>/admin-login</code> and reviews analytics, the Leaflet map, breakdowns, and per-lead drill-downs.</li>
+        <li>From a lead's detail page the admin prints/PDFs the consent form, or exports the full lead set as CSV, GeoJSON, or KML.</li>
+      </ol>
+    </section>
+
+    <!-- Production path callout -->
+    <section class="callout" id="production-path" aria-label="Production path">
+      <h2><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M12 6h6l2 2-2 2h-6"/><path d="M12 14H6l-2 2 2 2h6"/></svg>Production path</h2>
+      <p style="margin:6px 0 0;color:#5b4a12">Today the system runs locally with <code>python -m lead_ingest.server</code>. The production target is <code>leads.bentondrones.com</code> behind Cloudflare. Two blockers must clear first:</p>
+      <ol class="steps">
+        <li><b>Pick a host</b> — a Python-friendly platform with HTTPS + custom domain (Fly.io, Railway, Render, Hetzner, or a VPS).</li>
+        <li><b>Provision a Cloudflare API token</b> scoped to <code>bentondrones.com</code> (zone + DNS read) so the preflight scripts can verify the cutover.</li>
+        <li>Add the <code>leads.bentondrones.com</code> DNS record pointing to the chosen host, preserving Google Workspace MX/SPF/DKIM/DMARC.</li>
+        <li>Set production secrets, configure HTTPS, and smoke-test against the real domain.</li>
+      </ol>
+      <div class="gates">
+        <span class="badge badge--blocked"><span class="dot"></span>Host not selected</span>
+        <span class="badge badge--blocked"><span class="dot"></span>Cloudflare token needed</span>
+        <span class="badge badge--future"><span class="dot"></span>Shopify App Proxy = later phase</span>
+      </div>
+      <p style="margin:16px 0 0;font-size:.85rem;color:#7a6616"><b>Note:</b> the aerial-services waiver text in <code>lead_ingest/models.py</code> is a clearly-labeled placeholder and must be reviewed by legal counsel before production use.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <a href="/overview">Overview</a>
+    <a href="/signup">Signup</a>
+    <a href="/admin">Admin</a>
+    <p>© 2026 Benton Drones · Lead Ingest Architecture · Mermaid + Material&nbsp;3</p>
+  </footer>
+
+  <!-- Mermaid source kept as raw text so <br/> line breaks survive untouched -->
+  <script type="text/mermaid" id="diagram-source">%%{init: {"flowchart": {"htmlLabels": true, "curve": "basis", "useMaxWidth": true, "padding": 14}}}%%
+flowchart TD
+  VISITOR([Visitor]):::neutral
+  SHOPIFY(Shopify Storefront<br/>CTA + future App Proxy):::future
+  LANDING(Landing Page<br/>/landing-page.html):::impl
+  SIGNUP(Signup Form<br/>/signup · variants):::impl
+  BACKEND(Owned Backend<br/>Python stdlib + SQLite):::impl
+  SEC(Validation · CSRF · Honeypot<br/>Rate-limit · Geocode):::trait
+  DB[("SQLite Database<br/>signups · consent_records<br/>signatures · jira_queue<br/>jira_tickets · variants · clusters")]:::impl
+  JIRA(JIRA Integration<br/>ticket per signup · queue fallback):::impl
+  PDF(PDF Export<br/>/print · /pdf, fpdf2 optional):::impl
+  ADMIN(Admin Dashboard<br/>/admin · Leaflet · analytics):::impl
+  EXPORTS(Exports<br/>CSV · GeoJSON · KML):::impl
+  CLOUDFLARE{{Cloudflare / DNS<br/>leads.bentondrones.com}}:::blocked
+
+  SHOPIFY -->|storefront CTA| LANDING
+  VISITOR -->|direct link| LANDING
+  LANDING -->|/signup| SIGNUP
+  SIGNUP -->|POST form| BACKEND
+  BACKEND -.- SEC
+  BACKEND -->|persist| DB
+  BACKEND -->|create ticket| JIRA
+  JIRA -.->|fallback queue| DB
+  DB -->|read| ADMIN
+  ADMIN -->|render| PDF
+  ADMIN -->|export| EXPORTS
+  CLOUDFLARE -.->|future: production route| BACKEND
+
+  classDef impl fill:#f0f7f4,stroke:#809948,stroke-width:2px,color:#000000
+  classDef future fill:#fffce7,stroke:#e8893a,stroke-width:2px,color:#000000,stroke-dasharray:6 4
+  classDef blocked fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000000,stroke-dasharray:6 4
+  classDef neutral fill:#ffffff,stroke:#6184d8,stroke-width:1.5px,color:#000000
+  classDef trait fill:#e7ecff,stroke:#6184d8,stroke-width:1.5px,color:#000000,stroke-dasharray:3 3
+</script>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'Jost, sans-serif',
+        fontSize: '15px',
+        primaryColor: '#ffffff',
+        primaryTextColor: '#1b1b1b',
+        primaryBorderColor: '#809948',
+        lineColor: '#6b8438',
+        secondaryColor: '#e7ecff',
+        tertiaryColor: '#fffce7'
+      }
+    });
+    const out = document.getElementById('diagram-container');
+    const src = document.getElementById('diagram-source').textContent.trim();
+    try {
+      const { svg } = await mermaid.render('benton-arch', src);
+      out.innerHTML = svg;
+    } catch (err) {
+      out.innerHTML = '<p class="diagram-error">Could not render diagram — check your connection to the Mermaid CDN.<br>' +
+        (err && err.message ? err.message : '') + '</p>';
+      console.error(err);
+    }
+  </script>
+</body>
+</html>

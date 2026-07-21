@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+# Secrets
+.env
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local runtime data (SQLite, etc.)
+data/
+
+# Local tools and Dolt database storage
+.tools/
+.dolt/
+
+# QA artifacts
+qa_screenshots/
+
+# Build / dist
+dist/
+build/

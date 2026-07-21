@@ -1,0 +1,6 @@
+decision_id,domain,title,decision,rationale,status,decided_by,decided_at,supersedes
+DEC-ARCH-001,architecture,System of record,"Owned backend stores lead PII consent geocoding clusters reports and exports",Shopify should remain storefront/context only,accepted,code-puppy-da30e5,,
+DEC-DNS-001,dns,DNS authority target,Use Cloudflare as authoritative DNS after preflight,Cloudflare API and DNS tooling are better suited for automation,proposed,code-puppy-da30e5,,
+DEC-SHOP-001,shopify,Initial Shopify integration,Use Shopify landing page CTA to leads.bentondrones.com,Simpler safer launch than immediate App Proxy,accepted,code-puppy-da30e5,,
+DEC-SHOP-002,shopify,App Proxy validation requirement,Require HMAC/signature validation before production App Proxy trust,Prevents spoofed Shopify customer context,accepted,code-puppy-da30e5,,
+DEC-TRACK-001,tracking,Dolt-backed local tracking,Use repo-local portable Dolt plus CSV source/export tables,Winget installer was cancelled so portable Dolt was installed under ignored .tools,accepted,code-puppy-da30e5,,

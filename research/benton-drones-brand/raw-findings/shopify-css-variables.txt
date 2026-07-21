@@ -1,0 +1,140 @@
+Extracted from <style data-shopify> block on bentondrones.com, 2026-07-13.
+
+THEME: Shopify "Colorblock" v14.0.0 (theme_store_id 1499)
+FONT: Jost (500, 700, plus italic variants)
+
+:root / .color-scheme-1 {
+  --color-background: 245,245,245;          /* #f5f5f5 */
+  --gradient-background: #f5f5f5;
+  --color-foreground: 128,152,72;           /* #809948 */
+  --color-background-contrast: 181,181,181; /* #b5b5b5 */
+  --color-shadow: 97,132,216;               /* #6184d8 */
+  --color-button: 128,152,72;               /* #809948 */
+  --color-button-text: 245,245,245;         /* #f5f5f5 */
+  --color-secondary-button: 245,245,245;    /* #f5f5f5 */
+  --color-secondary-button-text: 97,132,216;/* #6184d8 */
+  --color-link: 97,132,216;                 /* #6184d8 */
+  --color-badge-foreground: 128,152,72;
+  --color-badge-background: 245,245,245;
+  --color-badge-border: 128,152,72;
+  --payment-terms-background-color: rgb(245 245 245);
+}
+
+.color-scheme-2 {
+  --color-background: 255,252,231;          /* #fffce7 */
+  --gradient-background: #fffce7;
+  --color-foreground: 128,152,72;           /* #809948 */
+  --color-background-contrast: 255,236,103;
+  --color-shadow: 0,0,255;
+  --color-button: 0,0,255;                  /* #0000ff */
+  --color-button-text: 255,252,231;
+  --color-secondary-button: 255,252,231;
+  --color-secondary-button-text: 0,0,255;
+  --color-link: 0,0,255;
+  --color-badge-foreground: 128,152,72;
+  --color-badge-background: 255,252,231;
+  --color-badge-border: 128,152,72;
+  --payment-terms-background-color: rgb(255 252 231);
+}
+
+.color-scheme-3 {
+  --color-background: 0,0,255;              /* #0000ff */
+  --gradient-background: #0000ff;
+  --color-foreground: 255,255,255;
+  --color-background-contrast: 26,26,255;
+  --color-shadow: 0,0,255;
+  --color-button: 255,255,255;
+  --color-button-text: 0,0,255;
+  --color-secondary-button: 0,0,255;
+  --color-secondary-button-text: 255,255,255;
+  --color-link: 255,255,255;
+  --color-badge-foreground: 255,255,255;
+  --color-badge-background: 0,0,255;
+  --color-badge-border: 255,255,255;
+  --payment-terms-background-color: rgb(0 0 255);
+}
+
+.color-scheme-4 {
+  --color-background: 231,236,255;          /* #e7ecff */
+  --gradient-background: #e7ecff;
+  --color-foreground: 0,0,255;
+  --color-background-contrast: 103,135,255;
+  --color-shadow: 0,0,255;
+  --color-button: 0,0,255;
+  --color-button-text: 231,236,255;
+  --color-secondary-button: 231,236,255;
+  --color-secondary-button-text: 0,0,255;
+  --color-link: 0,0,255;
+  --color-badge-foreground: 0,0,255;
+  --color-badge-background: 231,236,255;
+  --color-badge-border: 0,0,255;
+  --payment-terms-background-color: rgb(231 236 255);
+}
+
+.color-scheme-5 {
+  --color-background: 255,230,230;          /* #ffe6e6 */
+  --gradient-background: #ffe6e6;
+  --color-foreground: 0,0,255;
+  --color-background-contrast: 255,102,102;
+  --color-shadow: 0,0,255;
+  --color-button: 0,0,255;
+  --color-button-text: 255,230,230;
+  --color-secondary-button: 255,230,230;
+  --color-secondary-button-text: 0,0,255;
+  --color-link: 0,0,255;
+  --color-badge-foreground: 0,0,255;
+  --color-badge-background: 255,230,230;
+  --color-badge-border: 0,0,255;
+  --payment-terms-background-color: rgb(255 230 230);
+}
+
+.color-scheme-fb352dcd-2f79-4035-9bfc-fe43969bcb0f {
+  --color-background: 240,247,244;          /* #f0f7f4 */
+  --gradient-background: #f0f7f4;
+  --color-foreground: 128,152,72;           /* #809948 */
+  --color-background-contrast: 157,203,183;
+  --color-shadow: 97,132,216;
+  --color-button: 128,152,72;
+  --color-button-text: 240,247,244;
+  --color-secondary-button: 240,247,244;
+  --color-secondary-button-text: 97,132,216;
+  --color-link: 97,132,216;
+  --color-badge-foreground: 128,152,72;
+  --color-badge-background: 240,247,244;
+  --color-badge-border: 128,152,72;
+  --payment-terms-background-color: rgb(240 247 244);
+}
+
+FONT VARIABLES:
+--font-body-family: Jost, sans-serif;
+--font-body-style: normal;
+--font-body-weight: 500;
+--font-body-weight-bold: 800;
+--font-heading-family: Jost, sans-serif;
+--font-heading-style: normal;
+--font-heading-weight: 500;
+--font-body-scale: 1.3;
+--font-heading-scale: 0.7692307692307693;
+
+BUTTON VARIABLES:
+--buttons-radius: 0px;
+--buttons-radius-outset: 0px;
+--buttons-border-width: 1px;
+--buttons-border-opacity: 1.0;
+--buttons-shadow-opacity: 0.0;
+--buttons-shadow-visible: 0;
+--buttons-shadow-horizontal-offset: 0px;
+--buttons-shadow-vertical-offset: 4px;
+--buttons-shadow-blur-radius: 5px;
+--buttons-border-offset: 0px;
+
+INPUT VARIABLES:
+--inputs-radius: 0px;
+--inputs-border-width: 1px;
+--inputs-border-opacity: 1.0;
+--inputs-shadow-opacity: 0.0;
+--inputs-shadow-horizontal-offset: 0px;
+--inputs-margin-offset: 0px;
+--inputs-shadow-vertical-offset: 4px;
+--inputs-shadow-blur-radius: 5px;
+--inputs-radius-outset: 0px;

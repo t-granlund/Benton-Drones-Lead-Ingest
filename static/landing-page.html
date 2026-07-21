@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benton Drones — Aerial Services</title>
+  <meta name="description" content="Benton Drones delivers cinematic FPV footage, aerial surveys, and Part 107 certified drone operations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --md-sys-color-primary: #809948;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f0f7f4;
+      --md-sys-color-secondary: #6184d8;
+      --md-sys-color-on-secondary: #ffffff;
+      --md-sys-color-tertiary: #0000ff;
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-container-low: #fbfbf8;
+      --md-sys-color-surface-container: #f5f5f0;
+      --md-sys-color-surface-container-high: #efefe9;
+      --md-sys-color-background: #f7f7f3;
+      --md-sys-color-on-surface: #1b1b1b;
+      --md-sys-color-on-surface-variant: #44464f;
+      --md-sys-color-outline: #d7d3c5;
+      --md-sys-color-outline-variant: #ede8d8;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-error-container: #f9dedc;
+      --olive: var(--md-sys-color-primary);
+      --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
+      --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
+      --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
+      --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
+      --md-elevation-1: var(--el-1);
+      --md-elevation-2: var(--el-2);
+      --md-elevation-3: var(--el-3);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.02rem;
+      background: var(--md-sys-color-background);
+      color: #1b1b1b;
+      line-height: 1.65;
+      font-size: 1.05rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--md-sys-color-secondary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Hero — logo, eyebrow, title, subtitle, CTA, clean bottom edge */
+    .hero {
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color: var(--md-sys-color-on-primary);
+      padding: 72px 24px 88px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .hero-inner { max-width: 720px; margin: 0 auto; }
+    .hero img {
+      height: 68px; width: auto; margin-bottom: 22px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.22));
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .hero img:hover { transform: scale(1.03); opacity: 0.92; }
+    .hero .eyebrow {
+      display: block; margin-bottom: 14px;
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.14em; opacity: 0.82;
+    }
+    .hero h1 {
+      font-size: 2.8rem; font-weight: 700;
+      letter-spacing: 0.01rem; line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 1.2rem; font-weight: 500;
+      opacity: 0.92; line-height: 1.55;
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .hero .cta {
+      display: inline-block;
+      padding: 16px 32px;
+      background: var(--md-sys-color-on-primary);
+      color: var(--olive);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08rem;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: 10px;
+      box-shadow: var(--el-2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hero .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--el-3);
+      text-decoration: none;
+    }
+    .hero .cta:active { transform: translateY(0); box-shadow: var(--el-1); }
+
+    /* Benefits */
+    .benefits {
+      max-width: 1200px;
+      margin: -60px auto 0;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .benefit-card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-top: 4px solid var(--md-sys-color-primary);
+      border-radius: 16px;
+      padding: 32px 28px;
+      text-align: center;
+      box-shadow: var(--el-1);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .benefit-card:hover {
+      box-shadow: var(--el-3);
+      transform: translateY(-4px);
+    }
+    .benefit-card .icon {
+      width: 56px; height: 56px;
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--md-sys-color-primary-container);
+      border-radius: 16px;
+      color: var(--md-sys-color-primary);
+    }
+    .benefit-card .icon svg { width: 28px; height: 28px; }
+    .benefit-card h3 {
+      color: var(--md-sys-color-primary);
+      font-size: 1.3rem; font-weight: 600;
+      margin-bottom: 10px; line-height: 1.2;
+    }
+    .benefit-card p { font-size: 0.95rem; font-weight: 500; color: #44464f; line-height: 1.55; }
+
+    /* How it works */
+    .how-it-works {
+      max-width: 800px;
+      margin: 64px auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .how-it-works h2 {
+      color: var(--md-sys-color-primary);
+      font-size: 1.7rem; font-weight: 700;
+      letter-spacing: 0.01rem; line-height: 1.2;
+      margin-bottom: 36px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      text-align: left;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .step .num {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.1rem;
+    }
+    .step h4 { color: var(--md-sys-color-primary); font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+    .step p { font-size: 0.95rem; color: #44464f; }
+
+    /* CTA band */
+    .cta-band {
+      background: var(--md-sys-color-primary-container);
+      padding: 56px 24px;
+      text-align: center;
+    }
+    .cta-band h2 {
+      color: var(--md-sys-color-primary);
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.015rem;
+      margin-bottom: 16px;
+    }
+    .cta-band a {
+      display: inline-block;
+      padding: 16px 32px;
+      background: linear-gradient(180deg, #8ba855 0%, var(--olive) 100%);
+      color: var(--md-sys-color-on-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08rem;
+      font-size: 0.82rem;
+      border: none;
+      border-radius: 10px;
+      box-shadow: var(--el-1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cta-band a:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--el-2);
+      text-decoration: none;
+    }
+    .cta-band a:active { transform: translateY(0); box-shadow: var(--el-1); }
+
+    /* Footer */
+    footer {
+      padding: 40px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    footer a { margin: 0 12px; font-weight: 700; color: var(--md-sys-color-primary); transition: opacity 0.2s ease; }
+    footer a:hover { opacity: 0.82; }
+
+    @media (max-width: 904px) {
+      .benefits { grid-template-columns: 1fr 1fr; margin-top: -40px; }
+    }
+    @media (max-width: 600px) {
+      .benefits { grid-template-columns: 1fr; margin-top: -30px; }
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1.05rem; }
+      .hero { padding: 56px 16px 64px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="hero-inner">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+      <span class="eyebrow">Benton Drones</span>
+      <h1>Aerial Services</h1>
+      <p>Cinematic FPV footage, precision aerial surveys, and Part 107 certified drone operations &mdash; right here in Bentonville.</p>
+      <a href="/signup" class="cta">Sign up for updates</a>
+    </div>
+  </section>
+
+  <section class="benefits">
+    <div class="benefit-card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <h3>Cinematic FPV</h3>
+      <p>Immersive first-person-view footage for real estate, events, and brand storytelling.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h3>Aerial Surveys</h3>
+      <p>High-resolution mapping and inspection for construction, agriculture, and land management.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+      </div>
+      <h3>Part 107 Certified</h3>
+      <p>Fully FAA Part 107 remote pilot certified. Insured, legal, and safety-first on every flight.</p>
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <h2>How it works</h2>
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h4>Sign up</h4>
+        <p>Fill out our quick signup form so we know your location and what you're looking for.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h4>We plan the flight</h4>
+        <p>We assess your site, check airspace regulations, and plan a safe, compliant flight path.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h4>You get your footage</h4>
+        <p>We deliver polished aerial photos and video, ready for your project or listing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2>Ready to take to the skies?</h2>
+    <a href="/signup">Sign up for updates</a>
+  </section>
+
+  <footer>
+    <a href="/overview">Overview</a>
+    <a href="/admin">Admin</a>
+    <p>&copy; 2026 Benton Drones. All rights reserved.</p>
+  </footer>
+</body>
+</html>

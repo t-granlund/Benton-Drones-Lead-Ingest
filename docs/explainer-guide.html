@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benton Drones Lead Ingest — Initiative Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --md-sys-color-primary: #809948;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f0f7f4;
+      --md-sys-color-on-primary-container: #1b1b1b;
+      --md-sys-color-secondary: #6184d8;
+      --md-sys-color-on-secondary: #ffffff;
+      --md-sys-color-tertiary: #0000ff;
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-container-low: #fbfbf8;
+      --md-sys-color-surface-container: #f5f5f0;
+      --md-sys-color-surface-container-high: #efefe9;
+      --md-sys-color-background: #f7f7f3;
+      --md-sys-color-on-surface: #1b1b1b;
+      --md-sys-color-on-surface-variant: #44464f;
+      --md-sys-color-outline: #d7d3c5;
+      --md-sys-color-outline-variant: #ede8d8;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-on-error: #ffffff;
+      --md-sys-color-error-container: #f9dedc;
+      --olive: var(--md-sys-color-primary);
+      --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
+      --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
+      --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
+      --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
+      --md-elevation-1: var(--el-1);
+      --md-elevation-2: var(--el-2);
+      --md-elevation-3: var(--el-3);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Jost', sans-serif; font-weight: 500; letter-spacing: 0.02rem;
+      margin: 0; background: var(--md-sys-color-background); color: #1b1b1b;
+      line-height: 1.65; font-size: 1.05rem; -webkit-font-smoothing: antialiased;
+    }
+    .benton-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; height: 72px; padding: 0 32px;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--md-sys-color-outline);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: sticky; top: 0; z-index: 100;
+    }
+    .benton-nav .logo img { height: 44px; width: auto; transition: transform 0.2s ease, opacity 0.2s ease; }
+    .benton-nav .logo:hover img { transform: scale(1.03); opacity: 0.92; }
+    .benton-nav .nav-links { display: flex; gap: 4px; }
+    .benton-nav .nav-links a {
+      color: var(--md-sys-color-on-surface-variant); text-decoration: none;
+      font-weight: 600; text-transform: uppercase; font-size: 0.78rem;
+      letter-spacing: 0.08rem; padding: 10px 16px; border-radius: 999px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .benton-nav .nav-links a:hover { background: var(--md-sys-color-primary-container); color: var(--olive-deep); }
+    .benton-nav a.logo { padding: 0; }
+    .benton-nav a.logo:hover { background: transparent; }
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color: var(--md-sys-color-on-primary); padding: 64px 24px 72px; text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .hero-inner { max-width: 760px; margin: 0 auto; }
+    .hero img { height: 60px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); transition: transform 0.2s ease, opacity 0.2s ease; }
+    .hero img:hover { transform: scale(1.03); opacity: 0.92; }
+    .hero .eyebrow { display: block; margin-bottom: 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.82; }
+    .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
+    .hero .subtitle { max-width: 680px; margin: 0 auto; font-size: 1.1rem; font-weight: 500; opacity: 0.92; line-height: 1.55; }
+    main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+    h2 { color: var(--md-sys-color-primary); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.2; margin-top: 48px; border-bottom: 1px solid var(--md-sys-color-outline); padding-bottom: 8px; }
+    h3 { color: var(--md-sys-color-primary); font-size: 1.3rem; font-weight: 600; line-height: 1.3; }
+    a { color: var(--md-sys-color-secondary); }
+    .card {
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
+      border-radius: 16px; padding: 28px; margin: 20px 0;
+      box-shadow: var(--el-1); transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--el-2); }
+    .card.cream { background: #fffce7; }
+    .card.blue { background: #e7ecff; }
+    .card.green { background: var(--md-sys-color-primary-container); }
+    pre, code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.9rem; letter-spacing: 0;
+    }
+    pre {
+      background: #1b1b1b; color: #e5e7eb; border: 1px solid var(--md-sys-color-outline);
+      border-radius: 8px; padding: 16px; overflow-x: auto;
+    }
+    code { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline); border-radius: 6px; padding: 2px 6px; }
+    .diagram {
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
+      border-radius: 12px; padding: 20px; overflow-x: auto;
+      font-size: 0.85rem; line-height: 1.4; box-shadow: var(--md-elevation-1);
+    }
+    table {
+      width: 100%; border-collapse: collapse; background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline); border-radius: 12px; overflow: hidden; margin: 16px 0;
+    }
+    th, td { border-bottom: 1px solid var(--md-sys-color-outline-variant); padding: 14px 16px; text-align: left; }
+    th { background: var(--md-sys-color-surface-container); color: var(--olive-deep); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.08rem; text-transform: uppercase; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--md-sys-color-surface-container-low); }
+    ul, ol { padding-left: 20px; }
+    li { margin-bottom: 8px; }
+    .chip {
+      display: inline-block; padding: 5px 14px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06rem;
+      text-transform: uppercase; border: 1px solid;
+    }
+    .chip.pass { color: #3d4d1f; background: var(--md-sys-color-primary-container); border-color: var(--md-sys-color-primary); }
+    .chip.warn { color: #8a4a00; background: #fffce7; border-color: #e8893a; }
+    .chip.block { color: #8e1c1c; background: var(--md-sys-color-error-container); border-color: var(--md-sys-color-error); }
+    .status-pass { color: #3d4d1f; font-weight: 700; }
+    .status-warn { color: #8a4a00; font-weight: 700; }
+    .status-block { color: #8e1c1c; font-weight: 700; }
+    .button {
+      display: inline-block; margin-top: 16px; padding: 16px 28px;
+      border: none; border-radius: 10px; background: linear-gradient(180deg, #8ba855 0%, var(--olive) 100%);
+      color: var(--md-sys-color-on-primary); text-decoration: none;
+      font-weight: 600; text-transform: uppercase; font-size: 0.82rem; letter-spacing: 0.08rem;
+      box-shadow: var(--el-1); transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .button:hover { transform: translateY(-1px); box-shadow: var(--el-2); text-decoration: none; }
+    .button:active { transform: translateY(0); box-shadow: var(--el-1); }
+    .button.secondary {
+      background: transparent; color: var(--md-sys-color-secondary);
+      border: 1.5px solid var(--md-sys-color-secondary); box-shadow: none;
+    }
+    .button.secondary:hover { background: #e7ecff; border-color: var(--md-sys-color-secondary); }
+    .button:focus-visible { outline: 2px solid var(--md-sys-color-primary); outline-offset: 2px; }
+    footer { margin-top: 64px; padding: 32px; text-align: center; font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant); }
+    @media (max-width: 600px) {
+      .benton-nav { height: 60px; padding: 0 16px; }
+      .benton-nav .logo img { height: 36px; }
+      .benton-nav .nav-links a { padding: 8px 12px; font-size: 0.72rem; }
+      .hero { padding: 48px 16px 56px; }
+      .hero h1 { font-size: 1.8rem; }
+      main { padding: 32px 16px 64px; }
+      h2 { font-size: 1.4rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <nav class="benton-nav">
+    <a class="logo" href="/overview">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+    </a>
+    <div class="nav-links">
+      <a href="/overview">Overview</a>
+      <a href="/admin">Admin</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+      <span class="eyebrow">Benton Drones</span>
+      <h1>Lead Ingest Initiative</h1>
+      <p class="subtitle">A self-owned, Shopify-aware lead ingestion pipeline for Benton Drones.</p>
+    </div>
+  </header>
+
+  <main>
+    <p class="card cream">
+      This guide explains the in-house lead ingestion pipeline built for Benton Drones. It covers why the system exists, how it works, who built it, and what must happen before it goes live.
+    </p>
+
+    <h2>What this replaces</h2>
+    <p>
+      The current workflow uses Google Forms + PDFfiller + Google Sheets + manual Google Earth work. This project replaces that with a self-owned, Shopify-aware lead backend that keeps PII, consent, signatures, and mapping data under Benton Drones control.
+    </p>
+
+    <h2>Architecture</h2>
+    <div class="diagram">
+<pre>
+Shopify storefront          Owned backend (this repo)              Cloudflare / DNS
++----------------+          +---------------------------+           +------------------+
+| Landing page   |  CTA     |  /signup (variants)       |           | bentondrones.com |
+| CTA link       +--------->|  Waiver + typed signature |           | leads.benton...  |
+| source params  |          |  SQLite: leads/consent/   |           +---------+--------+
++----------------+          |  signatures/variants      |                     |
+                            |  /admin dashboard + map   |                     v
+                            |  CSV / GeoJSON / KML      |            [future production host]
+                            +---------------------------+
+                                       ^
+                                       |
+                            +----------+-----------+
+                            |  Mock geocoder       |
+                            |  (production: real   |
+                            |   geocoding provider)|
+                            +----------------------+
+</pre>
+    </div>
+
+    <h2>Data flow</h2>
+    <ol>
+      <li>A visitor arrives from a Shopify CTA or direct link (<code>/signup</code> or <code>/signup/&lt;variant&gt;</code>).</li>
+      <li>The page captures campaign/source/variant attribution and optional Shopify context.</li>
+      <li>The visitor reads the waiver, checks agreement, and types their full legal name as an electronic signature.</li>
+      <li>On POST, the server validates input, checks CSRF and honeypot, geocodes the address, and stores the lead plus consent/signature audit records.</li>
+      <li>Admins log in at <code>/admin-login</code> to view analytics, a Leaflet map, recent leads, and drill-down details.</li>
+      <li>Protected exports at <code>/export/csv</code>, <code>/export/geojson</code>, and <code>/export/kml</code> can be downloaded for planning.</li>
+    </ol>
+
+    <h2>Key components</h2>
+    <table>
+      <tr><th>Component</th><th>File(s)</th><th>Purpose</th></tr>
+      <tr><td>Branded template</td><td><code>lead_ingest/branded_template.py</code></td><td>Jost font, Benton olive/cream/blue palette, logo, sharp buttons/forms.</td></tr>
+      <tr><td>Models</td><td><code>lead_ingest/models.py</code></td><td><code>SignupInput</code>, <code>LeadPoint</code>, consent/signature text constants.</td></tr>
+      <tr><td>Database</td><td><code>lead_ingest/db.py</code></td><td>SQLite schema for signups, consent, signatures, variants, clusters.</td></tr>
+      <tr><td>Server</td><td><code>lead_ingest/server.py</code></td><td>Routes, auth, static files, admin dashboard, exports.</td></tr>
+      <tr><td>Exports</td><td><code>lead_ingest/exports.py</code></td><td>CSV, GeoJSON, KML generation.</td></tr>
+      <tr><td>Security</td><td><code>lead_ingest/request_security.py</code>, <code>auth.py</code></td><td>CSRF, rate limiting, session cookies, honeypot.</td></tr>
+      <tr><td>Shopify security</td><td><code>lead_ingest/shopify_security.py</code></td><td>HMAC validation and signed context tokens for future App Proxy.</td></tr>
+    </table>
+
+    <h2>Agent choreography</h2>
+    <table>
+      <tr><th>Agent</th><th>Contribution</th></tr>
+      <tr><td><strong>Benton Lead Orchestrator</strong></td><td>Coordinated discovery, planning, build, QA, and documentation.</td></tr>
+      <tr><td><strong>web-puppy</strong></td><td>Researched Benton Drones brand colors, fonts, logo, imagery, tone, and button/form styling.</td></tr>
+      <tr><td><strong>code-puppy</strong></td><td>Implemented branded pages, waiver/signature capture, dashboard maps/analytics, static Leaflet vendoring, and tests.</td></tr>
+      <tr><td><strong>qa-kitten</strong></td><td>Ran Playwright browser QA, found logo/map/clickability issues, verified fixes.</td></tr>
+    </table>
+
+    <h2>Custom tools</h2>
+    <p>No new Universal Constructor tools were required for this phase. The system uses:</p>
+    <ul>
+      <li>Python standard library <code>http.server</code> and <code>sqlite3</code>.</li>
+      <li>Vendored Leaflet (CSS + JS) in <code>static/leaflet/</code> for the admin map.</li>
+      <li>Mock geocoder (<code>lead_ingest/geocoding.py</code>) for local development; production will swap in a real provider.</li>
+    </ul>
+
+    <h2>Run it locally</h2>
+    <pre>
+python scripts/init_db.py
+ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
+    </pre>
+    <p>Then open:</p>
+    <ul>
+      <li><code>http://127.0.0.1:8000/signup</code></li>
+      <li><code>http://127.0.0.1:8000/admin-login</code></li>
+      <li><code>http://127.0.0.1:8000/admin</code></li>
+      <li><code>http://127.0.0.1:8000/overview</code></li>
+    </ul>
+    <p>Run tests:</p>
+    <pre>python -m unittest discover -s tests</pre>
+
+    <h2>Production deployment path</h2>
+    <div class="card blue">
+      <p><span class="chip block">Blocked</span> Human decisions required:</p>
+      <ol>
+        <li>Choose a host for <code>leads.bentondrones.com</code> (Fly.io, Railway, Render, Hetzner, VPS, etc.).</li>
+        <li>Migrate DNS authority to Cloudflare and add the <code>leads</code> A/CNAME record.</li>
+        <li>Swap the mock geocoder for a real provider and add provider API keys as environment secrets.</li>
+        <li>Replace the placeholder waiver text with legally reviewed language.</li>
+        <li>Set strong <code>ADMIN_PASSWORD</code>, <code>CSRF_SECRET</code>, and <code>ADMIN_SESSION_SECRET</code> in production.</li>
+        <li>Configure HTTPS, backups, monitoring, and a persistent database strategy (Postgres/PostGIS recommended).</li>
+      </ol>
+    </div>
+
+    <h2>Human gates</h2>
+    <div class="card green">
+      <p><span class="chip warn">Warning</span> The waiver text is a placeholder.</p>
+      <p>
+        The current waiver is clearly labeled <code>[PLACEHOLDER WAIVER — MUST BE REVIEWED BY LEGAL COUNSEL BEFORE USE]</code>. Before production, a qualified attorney must review and replace the language in <code>lead_ingest/models.py</code>.
+      </p>
+      <p>
+        The electronic signature disclaimer also states that typing a full legal name constitutes a legally binding signature. This should be reviewed alongside the waiver.
+      </p>
+    </div>
+
+    <h2>Status</h2>
+    <table>
+      <tr><th>Area</th><th>Status</th></tr>
+      <tr><td>Branded signup/admin pages</td><td><span class="chip pass">Pass</span></td></tr>
+      <tr><td>Waiver + typed-name signature + audit trail</td><td><span class="chip pass">Pass</span> placeholder text</td></tr>
+      <tr><td>SQLite backend persistence</td><td><span class="chip pass">Pass</span></td></tr>
+      <tr><td>Admin dashboard with maps, drill-down, analytics</td><td><span class="chip pass">Pass</span></td></tr>
+      <tr><td>CSV / GeoJSON / KML exports</td><td><span class="chip pass">Pass</span></td></tr>
+      <tr><td>Unit tests</td><td><span class="chip pass">Pass</span> 281 tests</td></tr>
+      <tr><td>Browser QA</td><td><span class="chip pass">Pass</span></td></tr>
+      <tr><td>Production deployment</td><td><span class="chip block">Blocked</span> host / DNS / legal review</td></tr>
+    </table>
+
+    <h2>Files changed in this phase</h2>
+    <ul>
+      <li><code>lead_ingest/models.py</code></li>
+      <li><code>lead_ingest/validation.py</code></li>
+      <li><code>lead_ingest/db.py</code></li>
+      <li><code>lead_ingest/server.py</code></li>
+      <li><code>lead_ingest/exports.py</code></li>
+      <li><code>lead_ingest/branded_template.py</code> (new)</li>
+      <li><code>static/leaflet/leaflet.css</code> (new)</li>
+      <li><code>static/leaflet/leaflet.js</code> (new)</li>
+      <li><code>tests/test_db.py</code>, <code>tests/test_validation.py</code>, <code>tests/test_exports.py</code>, <code>tests/test_protected_routes.py</code></li>
+      <li><code>docs/explainer-guide.html</code> (new, this file)</li>
+    </ul>
+  </main>
+
+  <footer>
+    Built by the Benton Drones agent swarm · Local MVP · Not production-deployed
+  </footer>
+</body>
+</html>

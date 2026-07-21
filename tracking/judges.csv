@@ -1,0 +1,13 @@
+judge_id,requirement_id,judge_file,status,last_run_at,result,evidence_id,notes
+JUDGE-LOCAL-001,REQ-LOCAL-001,judges/local-mvp-judge.md,ready,2026-07-17T20:30:00Z,PASS,EVID-TEST-005,"Local MVP production-hardened: 281 tests, branded pages, waiver/signature, dashboard, maps, JIRA, PDF, landing page, healthz, security headers; manual E2E verified"
+JUDGE-DNS-001,REQ-DNS-001,judges/domain-dns-cloudflare-judge.md,not_ready,,unknown,,Blocked on platform snapshots
+JUDGE-NC-001,REQ-NC-001,judges/namecheap-preflight-judge.md,not_ready,,unknown,,Needs Namecheap capture
+JUDGE-GW-001,REQ-GW-001,judges/google-workspace-email-auth-judge.md,not_ready,,unknown,,Needs Google Admin verification
+JUDGE-SHOP-001,REQ-SHOP-001,judges/shopify-landing-page-judge.md,not_ready,,unknown,,Needs Shopify page/domain confirmation
+JUDGE-SHOP-002,REQ-SHOP-002,judges/shopify-app-proxy-future-judge.md,ready,,unknown,,Future App Proxy requirement documented
+JUDGE-DEPLOY-001,REQ-DEPLOY-001,judges/backend-deployment-judge.md,blocked,,unknown,,Backend host not selected
+JUDGE-DESIGN-001,REQ-DESIGN-001,judges/design-system-capture-judge.md,ready,2026-07-14T18:30:00Z,PASS,EVID-BUILD-001,"Benton design system applied to signup/admin pages and explainer guide"
+JUDGE-HARDEN-001,REQ-HARDEN-001,judges/production-hardening-judge.md,ready,2026-07-17T20:30:00Z,PASS,EVID-PROD-001,"P0/P1 production hardening implemented: secrets, headers, healthz, WAL, XSS fix, body limit, path traversal, Caddy/nginx examples"
+JUDGE-QA-001,REQ-QA-001,judges/browser-qa-judge.md,ready,2026-07-14T18:35:00Z,PASS,EVID-QA-003,"Initial QA + focused re-QA passed; logo, local Leaflet map, View links verified"
+JUDGE-SCRIPT-001,REQ-SCRIPT-001,judges/readonly-preflight-scripts-judge.md,ready,,PASS,EVID-SCRIPT-001,Read-only scripts run successfully
+JUDGE-TRACK-001,REQ-TRACK-001,judges/bds-dolt-tracking-judge.md,ready,,unknown,,Tracking files created
