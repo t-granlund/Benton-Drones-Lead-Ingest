@@ -21,14 +21,15 @@ Features:
 ## Quick start
 
 ```bash
-git clone <your-repo-url>
-cd Lead-Ingest
+git clone https://github.com/t-granlund/Benton-Drones-Lead-Ingest.git
+cd Benton-Drones-Lead-Ingest
 make init-db
 ADMIN_PASSWORD=change-me make run
 ```
 
 Then open:
 
+- `http://127.0.0.1:8000/` — root redirect to training guide
 - `http://127.0.0.1:8000/landing-page.html` — standalone branded landing page
 - `http://127.0.0.1:8000/signup` — public signup form
 - `http://127.0.0.1:8000/admin-login` — admin login
