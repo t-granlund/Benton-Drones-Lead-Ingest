@@ -35,70 +35,54 @@ To test these end-to-end, you must run the Python application locally.
 
 ## Hosting recommendation
 
-Because the repository is **private**, GitHub Pages is **not available on the free plan** (it requires GitHub Pro). The two best free alternatives are:
+The repository is now **public**, so **GitHub Pages is enabled and free**. This is the simplest option for the static guides and landing page.
 
-### Option 1: Vercel (recommended)
-
-**Why Vercel is the best choice here:**
-- Free hobby plan supports private GitHub repos
-- One-click import from GitHub
-- Automatic deployments on every push
-- Fast global CDN
-- Preview deployments for pull requests
-- Custom domain support
-- Very little configuration needed
-
-**Setup steps:**
-1. Go to https://vercel.com and sign up/login with your GitHub account.
-2. Click "Add New Project" → Import `t-granlund/Benton-Drones-Lead-Ingest`.
-3. Framework preset: **Other** (static).
-4. Root directory: leave as `./`.
-5. Build command: leave empty.
-6. Output directory: leave empty (serves from repo root).
-7. Click Deploy.
-
-Your pages will be available at:
-
-```
-https://<project-name>.vercel.app/
-https://<project-name>.vercel.app/static/landing-page.html
-https://<project-name>.vercel.app/docs/architecture-diagram.html
-https://<project-name>.vercel.app/docs/training-guide.html
-```
-
-### Option 2: Cloudflare Pages
-
-**Why Cloudflare Pages is also excellent:**
-- Free plan supports private GitHub repos
-- Unlimited bandwidth
-- Very fast global CDN
-- Custom domain support with free automatic HTTPS
-- Slightly more setup than Vercel but more control
-
-**Setup steps:**
-1. Go to https://dash.cloudflare.com and sign up/login.
-2. Navigate to Pages → Create a project → Connect to Git.
-3. Select `t-granlund/Benton-Drones-Lead-Ingest`.
-4. Framework preset: **None**.
-5. Build command: leave empty.
-6. Output directory: leave empty.
-7. Save and deploy.
-
-### Option 3: GitHub Pages (requires public repo or Pro)
-
-If you make the repository **public**, GitHub Pages is free and simple:
-
-1. Go to repository Settings → Pages.
-2. Source: Deploy from a branch → `main` → `/ (root)`.
-3. Save.
-
-Your site will be at:
+### Current GitHub Pages URL
 
 ```
 https://t-granlund.github.io/Benton-Drones-Lead-Ingest/
 ```
 
-**Trade-off:** The repository and hosted pages will be public. This may be fine for the documentation pages, but keep in mind the source code is also public.
+Live pages:
+
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/ — root redirect to training guide
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/static/landing-page.html — landing page
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/training-guide.html — training guide
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/architecture-diagram.html — architecture diagram
+- https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/explainer-guide.html — explainer guide
+
+### Option 1: GitHub Pages (currently enabled)
+
+**Pros:** free for public repos, integrated with GitHub, automatic deploys on push, HTTPS.  
+**Cons:** public repo required (now satisfied), basic CDN.
+
+Pages is already configured with source `main` branch and root `/`.
+
+### Option 2: Vercel
+
+**Why Vercel is also a strong choice:**
+- Excellent free hobby plan
+- One-click import from GitHub
+- Automatic deployments + preview deployments
+- Fast global CDN
+- Custom domain support
+
+Useful if you want better performance, preview URLs, or may make the repo private later.
+
+### Option 3: Cloudflare Pages
+
+**Why Cloudflare Pages is also excellent:**
+- Free plan
+- Unlimited bandwidth
+- Very fast global CDN
+- Custom domain support with free automatic HTTPS
+- More control than Vercel
+
+### Trade-offs
+
+- **GitHub Pages** is simplest and already working.
+- **Vercel/Cloudflare** are better if you want a custom domain, faster CDN, or might make the repo private later.
+- The hosted pages are public. The source code is also public. Do not put secrets or PII in the repo.
 
 ## How a friend clones and runs the full system on a Mac
 

@@ -2,6 +2,10 @@
 
 Local-first Shopify-aware MVP for replacing Google Forms + PDFfiller + Sheets + manual Google Earth planning.
 
+Repository: https://github.com/t-granlund/Benton-Drones-Lead-Ingest  
+GitHub Pages: https://t-granlund.github.io/Benton-Drones-Lead-Ingest/  
+Hosting options: see [`docs/hosting-guide.md`](docs/hosting-guide.md)
+
 ## What it is
 
 A Python stdlib + SQLite lead-ingest application that captures signups, consent, and waivers for Benton Drones aerial services. No Node, no npm, no external services required — just Python 3.11+.
