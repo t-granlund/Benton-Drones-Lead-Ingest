@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Benton Drones Lead Ingest — Training Guide</title>
+  <title>Benton Drones Lead Ingest - Training Guide</title>
   <meta name="description" content="Training guide for Benton Drones lead ingest system: public signup, admin dashboard, exports, PDFs, JIRA, and deployment.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +32,9 @@
       --olive: var(--md-sys-color-primary);
       --olive-dark: #6f853d;
       --olive-deep: #5a6f30;
+      --cream: #fffce7;
+      --pale-blue: #e7ecff;
+      --warn: #e8893a;
       --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
       --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
       --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
@@ -73,22 +76,37 @@
     .benton-nav a.logo { padding: 0; }
     .benton-nav a.logo:hover { background: transparent; }
     .hero {
+      position: relative; overflow: hidden;
       background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
       color: var(--md-sys-color-on-primary);
       padding: 64px 24px 72px; text-align: center;
       box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
-    .hero-inner { max-width: 720px; margin: 0 auto; }
+    .hero-overlay {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.45;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1.2px, transparent 1.2px);
+      background-size: 22px 22px;
+    }
+    .hero-inner { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; }
     .hero img { height: 60px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); transition: transform 0.2s ease, opacity 0.2s ease; }
     .hero img:hover { transform: scale(1.03); opacity: 0.92; }
     .hero .eyebrow { display: block; margin-bottom: 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.82; }
     .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
     .hero p { margin: 0 auto; max-width: 640px; opacity: 0.92; font-size: 1.1rem; font-weight: 500; line-height: 1.55; }
+    .hero-mockup {
+      position: relative; z-index: 2; margin: 36px auto 0; max-width: 320px;
+      background: rgba(255,255,255,0.96); border-radius: 16px; padding: 14px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.28); color: var(--md-sys-color-on-surface);
+      animation: floaty 6s ease-in-out infinite;
+    }
+    .hero-mockup svg { display: block; width: 100%; height: auto; }
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
     h2 {
       color: var(--md-sys-color-primary); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.2;
       border-bottom: 1px solid var(--md-sys-color-outline); padding-bottom: 8px; margin-top: 48px;
     }
+    h2 .num { color: var(--md-sys-color-on-surface-variant); font-weight: 500; margin-right: 6px; }
     h3 { color: var(--md-sys-color-primary); font-size: 1.3rem; font-weight: 600; margin-top: 28px; line-height: 1.3; }
     a { color: var(--md-sys-color-secondary); text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -110,7 +128,7 @@
     pre {
       background: #1b1b1b; color: #e5e7eb;
       border: 1px solid var(--md-sys-color-outline);
-      border-radius: 8px; padding: 16px; overflow-x: auto;
+      border-radius: 8px; padding: 16px; overflow-x: auto; margin: 0;
     }
     code { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline); border-radius: 6px; padding: 2px 6px; }
     ol.steps { counter-reset: step; list-style: none; padding: 0; }
@@ -178,6 +196,74 @@
       box-shadow: var(--el-2);
       text-decoration: none;
     }
+    .glance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+    .glance-item {
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
+      border-top: 3px solid var(--md-sys-color-primary);
+      border-radius: 14px; padding: 20px; box-shadow: var(--el-1);
+      display: flex; gap: 14px; align-items: flex-start;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .glance-item:hover { transform: translateY(-3px); box-shadow: var(--el-2); }
+    .glance-item .gico { color: var(--md-sys-color-primary); flex: none; }
+    .glance-item p { margin: 4px 0 0; font-size: 0.9rem; line-height: 1.45; color: var(--md-sys-color-on-surface-variant); }
+    .glance-item strong { display: block; color: var(--md-sys-color-on-surface); font-size: 0.98rem; }
+    .diagram-wrap { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px; padding: 18px; margin: 22px 0; overflow-x: auto; }
+    .svg-diagram { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto; }
+    .diagram-caption { text-align: center; font-size: 0.82rem; color: var(--md-sys-color-on-surface-variant); margin-top: 12px; }
+    .svg-diagram text { font-family: 'Jost', sans-serif; }
+    .divider {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin: 40px 0; color: var(--md-sys-color-primary); opacity: 0.7;
+    }
+    .divider .dline { height: 1px; width: 80px; background: var(--md-sys-color-outline); }
+    .divider .ddot { width: 6px; height: 6px; border-radius: 50%; background: var(--md-sys-color-primary); }
+    .cmd-card { background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline); border-radius: 12px; box-shadow: var(--el-1); margin: 18px 0; overflow: hidden; }
+    .cmd-card .cmd-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; background: var(--md-sys-color-surface-container); border-bottom: 1px solid var(--md-sys-color-outline-variant); }
+    .cmd-card .cmd-label { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08rem; color: var(--olive-deep); display: flex; align-items: center; gap: 8px; }
+    .cmd-card .cmd-label svg { color: var(--md-sys-color-primary); }
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: var(--md-sys-color-primary-container); color: #3d4d1f;
+      border: 1px solid var(--md-sys-color-primary); border-radius: 8px;
+      padding: 5px 12px; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06rem;
+      text-transform: uppercase; font-family: 'Jost', sans-serif;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+    .copy-btn:hover { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+    .copy-btn.copied { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+    .cmd-card pre { border: none; border-radius: 0; }
+    .timeline { position: relative; padding-left: 30px; margin: 24px 0; }
+    .timeline::before { content: ''; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px; background: var(--md-sys-color-outline); }
+    .tl-item { position: relative; padding: 0 0 22px 6px; }
+    .tl-item::before { content: ''; position: absolute; left: -25px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--md-sys-color-primary); border: 3px solid var(--md-sys-color-surface); box-shadow: 0 0 0 2px var(--md-sys-color-primary); }
+    .tl-item .tl-title { font-weight: 700; color: var(--md-sys-color-on-surface); }
+    .tl-item .tl-desc { font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant); margin: 2px 0 0; }
+    .tl-item code { font-size: 0.84rem; }
+    .dm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 22px 0; }
+    .dm-table { background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline); border-top: 3px solid var(--md-sys-color-primary); border-radius: 12px; padding: 16px; box-shadow: var(--el-1); }
+    .dm-table.core { border-top-color: var(--md-sys-color-secondary); }
+    .dm-table h4 { margin: 0 0 8px; color: var(--md-sys-color-primary); font-size: 1rem; }
+    .dm-table.core h4 { color: var(--md-sys-color-secondary); }
+    .dm-table ul { margin: 0; padding-left: 18px; }
+    .dm-table li { font-size: 0.84rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.5; }
+    .dm-table li b { color: var(--md-sys-color-on-surface); }
+    .dm-fk { font-size: 0.76rem; color: var(--md-sys-color-secondary); font-weight: 600; }
+    details.faq { background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline); border-radius: 12px; box-shadow: var(--el-1); margin: 12px 0; overflow: hidden; transition: box-shadow 0.2s ease; }
+    details.faq[open] { box-shadow: var(--el-2); }
+    details.faq summary { list-style: none; cursor: pointer; padding: 16px 20px; font-weight: 600; color: var(--md-sys-color-on-surface); display: flex; align-items: center; gap: 10px; }
+    details.faq summary::-webkit-details-marker { display: none; }
+    details.faq summary .faq-q { flex: 1; }
+    details.faq summary .faq-chev { color: var(--md-sys-color-primary); transition: transform 0.2s ease; flex: none; }
+    details.faq[open] summary .faq-chev { transform: rotate(90deg); }
+    details.faq .faq-a { padding: 0 20px 18px; color: var(--md-sys-color-on-surface-variant); font-size: 0.96rem; }
+    details.faq .faq-a p { margin: 0 0 8px; }
+    details.faq .faq-a p:last-child { margin-bottom: 0; }
+    .checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    .checklist li { display: flex; gap: 12px; align-items: flex-start; background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline); border-radius: 10px; padding: 14px 16px; box-shadow: var(--el-1); }
+    .checklist li .cbox { color: var(--md-sys-color-primary); flex: none; margin-top: 2px; }
+    .checklist li span { font-size: 0.94rem; }
+    .checklist li b { color: var(--md-sys-color-on-surface); }
     footer { margin-top: 64px; padding: 32px; text-align: center; font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant); }
     @media (max-width: 600px) {
       .benton-nav { height: 60px; padding: 0 16px; }
@@ -186,6 +272,7 @@
       .hero { padding: 48px 16px 56px; }
       .hero h1 { font-size: 1.8rem; }
       main { padding: 32px 16px 64px; }
+      .hero-mockup { max-width: 260px; }
     }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
   </style>
@@ -193,7 +280,7 @@
 <body>
   <nav class="benton-nav">
     <a class="logo" href="/overview">
-      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&amp;width=500" alt="Benton Drones logo" loading="lazy">
     </a>
     <div class="nav-links">
       <a href="/overview">Overview</a>
@@ -202,33 +289,132 @@
   </nav>
 
   <header class="hero">
+    <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-inner">
-      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&amp;width=500" alt="Benton Drones logo" loading="lazy">
       <span class="eyebrow">Benton Drones</span>
       <h1>Lead Ingest Training Guide</h1>
       <p>How to use, administer, extend, and deploy the Benton Drones lead ingestion system.</p>
+      <div class="hero-mockup" aria-hidden="true">
+        <svg viewBox="0 0 300 150" role="img" aria-label="Dashboard preview">
+          <rect x="0" y="0" width="300" height="150" rx="10" fill="#ffffff"/>
+          <rect x="12" y="12" width="84" height="34" rx="6" fill="#f0f7f4" stroke="#809948" stroke-width="1.4"/>
+          <rect x="18" y="22" width="30" height="6" rx="3" fill="#809948"/>
+          <rect x="18" y="32" width="44" height="5" rx="2.5" fill="#c5d6a0"/>
+          <rect x="108" y="12" width="84" height="34" rx="6" fill="#e7ecff" stroke="#6184d8" stroke-width="1.4"/>
+          <rect x="114" y="22" width="30" height="6" rx="3" fill="#6184d8"/>
+          <rect x="114" y="32" width="44" height="5" rx="2.5" fill="#b9c9f3"/>
+          <rect x="204" y="12" width="84" height="34" rx="6" fill="#fffce7" stroke="#e8893a" stroke-width="1.4"/>
+          <rect x="210" y="22" width="30" height="6" rx="3" fill="#e8893a"/>
+          <rect x="210" y="32" width="44" height="5" rx="2.5" fill="#f3d9a8"/>
+          <rect x="12" y="56" width="180" height="82" rx="8" fill="#eaf0e6" stroke="#809948" stroke-width="1.4"/>
+          <path d="M30 110 Q60 80 90 100 T150 92 T175 70" fill="none" stroke="#809948" stroke-width="1.6" opacity="0.5"/>
+          <circle cx="48" cy="96" r="4" fill="#6184d8"/>
+          <circle cx="92" cy="86" r="4" fill="#6184d8"/>
+          <circle cx="130" cy="100" r="4" fill="#6184d8"/>
+          <circle cx="160" cy="78" r="4" fill="#6184d8"/>
+          <rect x="204" y="56" width="84" height="82" rx="8" fill="#f5f5f0" stroke="#d7d3c5" stroke-width="1.2"/>
+          <rect x="212" y="66" width="60" height="6" rx="3" fill="#809948"/>
+          <rect x="212" y="80" width="68" height="5" rx="2.5" fill="#c5d6a0"/>
+          <rect x="212" y="90" width="50" height="5" rx="2.5" fill="#c5d6a0"/>
+          <rect x="212" y="104" width="64" height="5" rx="2.5" fill="#c5d6a0"/>
+          <rect x="212" y="114" width="44" height="5" rx="2.5" fill="#c5d6a0"/>
+          <rect x="212" y="124" width="56" height="5" rx="2.5" fill="#c5d6a0"/>
+        </svg>
+      </div>
     </div>
   </header>
 
   <main>
     <div class="toc">
+      <a href="#glance">At a glance</a>
       <a href="#public">Public signup</a>
       <a href="#admin">Admin dashboard</a>
-      <a href="#exports">Exports & PDF</a>
+      <a href="#audit">Consent audit</a>
+      <a href="#exports">Exports &amp; PDF</a>
       <a href="#jira">JIRA integration</a>
       <a href="#dev">Developer / Code Puppy</a>
       <a href="#deploy">Deployment</a>
+      <a href="#datamodel">Data model</a>
       <a href="#security">Security</a>
       <a href="#trouble">Troubleshooting</a>
+      <a href="#faq">FAQ</a>
+      <a href="#share">Share checklist</a>
     </div>
 
+    <section id="glance">
+      <h2><span class="num">0.</span>At a glance</h2>
+      <p>Quick facts about the Benton Drones Lead Ingest system before you dive into the details.</p>
+      <div class="glance-grid">
+        <div class="glance-item">
+          <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></span>
+          <div><strong>Local Python + SQLite</strong><p>No cloud required. Runs on a laptop with the Python standard library and a single SQLite file.</p></div>
+        </div>
+        <div class="glance-item">
+          <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V4"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg></span>
+          <div><strong>281 tests pass</strong><p>A full unittest suite covers signup, consent, signatures, exports, JIRA, security, and production hardening.</p></div>
+        </div>
+        <div class="glance-item">
+          <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12l2 2 4-4"/><path d="M9 19h6"/></svg></span>
+          <div><strong>Branded signup + consent + signature</strong><p>Variant-aware form captures consent and a typed full-name signature with a full audit trail.</p></div>
+        </div>
+        <div class="glance-item">
+          <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+          <div><strong>Admin dashboard with maps</strong><p>Analytics cards, a Leaflet map of geocoded leads, breakdowns, and per-lead drill-down.</p></div>
+        </div>
+        <div class="glance-item">
+          <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="M8 11l4 4 4-4"/><path d="M5 20h14"/></svg></span>
+          <div><strong>CSV / GeoJSON / KML exports</strong><p>Download lead data for spreadsheets, Google Earth, or QGIS directly from the dashboard.</p></div>
+        </div>
+        <div class="glance-item">
+          <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/><circle cx="7.5" cy="6.5" r="0.8" fill="currentColor"/><path d="M8 13h8M8 16h5"/></svg></span>
+          <div><strong>Optional JIRA + PDF</strong><p>Creates a JIRA ticket per signup (with a local fallback queue) and prints or PDFs each completed form.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="public">
-      <h2>1. Public signup flow</h2>
+      <h2><span class="num">1.</span>Public signup flow</h2>
       <p>The public-facing pages are styled to match the Benton Drones website. There are two entry points:</p>
       <ul>
-        <li><strong>Landing page:</strong> <code>/landing-page.html</code> — a standalone branded page with a CTA to the signup form.</li>
-        <li><strong>Signup form:</strong> <code>/signup</code> or <code>/signup/&lt;variant&gt;</code> — the actual lead capture form.</li>
+        <li><strong>Landing page:</strong> <code>/landing-page.html</code> - a standalone branded page with a CTA to the signup form.</li>
+        <li><strong>Signup form:</strong> <code>/signup</code> or <code>/signup/&lt;variant&gt;</code> - the actual lead capture form.</li>
       </ul>
+
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 420 524" role="img" aria-label="Public signup flow from visitor to SQLite">
+          <rect x="105" y="12" width="210" height="56" rx="28" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+          <text x="210" y="46" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Visitor arrives</text>
+          <line x1="210" y1="68" x2="210" y2="94" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,92 216,92 210,102" fill="#809948"/>
+          <rect x="105" y="102" width="210" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="128" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Landing page</text>
+          <text x="210" y="148" text-anchor="middle" font-size="12" fill="#44464f">/landing-page.html</text>
+          <line x1="210" y1="158" x2="210" y2="184" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,182 216,182 210,192" fill="#809948"/>
+          <rect x="105" y="192" width="210" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="218" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Signup form</text>
+          <text x="210" y="238" text-anchor="middle" font-size="12" fill="#44464f">/signup or /signup/&lt;variant&gt;</text>
+          <line x1="210" y1="248" x2="210" y2="274" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,272 216,272 210,282" fill="#809948"/>
+          <rect x="105" y="282" width="210" height="56" rx="10" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="210" y="308" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00">Consent checkbox</text>
+          <text x="210" y="328" text-anchor="middle" font-size="12" fill="#44464f">reads waiver, ticks agree</text>
+          <line x1="210" y1="338" x2="210" y2="364" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,362 216,362 210,372" fill="#809948"/>
+          <rect x="105" y="372" width="210" height="56" rx="10" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="210" y="398" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00">Typed signature</text>
+          <text x="210" y="418" text-anchor="middle" font-size="12" fill="#44464f">full legal name</text>
+          <line x1="210" y1="428" x2="210" y2="454" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,452 216,452 210,462" fill="#809948"/>
+          <ellipse cx="210" cy="472" rx="80" ry="8" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <path d="M130 472 V 506 a 80 8 0 0 0 160 0 V 472" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="495" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">SQLite</text>
+        </svg>
+        <p class="diagram-caption">Public signup flow: visitor to a persisted lead with consent and signature.</p>
+      </div>
 
       <h3>What the visitor sees</h3>
       <ol class="steps">
@@ -246,13 +432,70 @@
 
       <h3>Variant tracking</h3>
       <p>You can track marketing attribution by using URLs like:</p>
-      <pre>/signup/facebook-ad?source=facebook&campaign=summer2026</pre>
+      <pre>/signup/facebook-ad?source=facebook&amp;campaign=summer2026</pre>
       <p>The form automatically captures <code>source</code>, <code>campaign</code>, and <code>variant_slug</code>. These values appear in the admin dashboard and exports.</p>
     </section>
 
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="admin">
-      <h2>2. Admin dashboard</h2>
+      <h2><span class="num">2.</span>Admin dashboard</h2>
       <p>Log in at <code>/admin-login</code> using the password set via the <code>ADMIN_PASSWORD</code> environment variable.</p>
+
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 520 412" role="img" aria-label="Admin dashboard layout wireframe">
+          <rect x="6" y="6" width="508" height="400" rx="14" fill="none" stroke="#d7d3c5" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <text x="260" y="24" text-anchor="middle" font-size="11" fill="#44464f">/admin</text>
+          <rect x="22" y="36" width="112" height="52" rx="8" fill="#f0f7f4" stroke="#809948" stroke-width="1.6"/>
+          <rect x="30" y="46" width="40" height="7" rx="3" fill="#809948"/>
+          <rect x="30" y="60" width="64" height="6" rx="3" fill="#c5d6a0"/>
+          <rect x="146" y="36" width="112" height="52" rx="8" fill="#e7ecff" stroke="#6184d8" stroke-width="1.6"/>
+          <rect x="154" y="46" width="40" height="7" rx="3" fill="#6184d8"/>
+          <rect x="154" y="60" width="64" height="6" rx="3" fill="#b9c9f3"/>
+          <rect x="270" y="36" width="112" height="52" rx="8" fill="#fffce7" stroke="#e8893a" stroke-width="1.6"/>
+          <rect x="278" y="46" width="40" height="7" rx="3" fill="#e8893a"/>
+          <rect x="278" y="60" width="64" height="6" rx="3" fill="#f3d9a8"/>
+          <rect x="394" y="36" width="104" height="52" rx="8" fill="#f5f5f0" stroke="#d7d3c5" stroke-width="1.6"/>
+          <rect x="402" y="46" width="40" height="7" rx="3" fill="#809948"/>
+          <rect x="402" y="60" width="64" height="6" rx="3" fill="#c5d6a0"/>
+          <text x="260" y="106" text-anchor="middle" font-size="10" fill="#44464f">Analytics cards: total / today / week / pending geocodes</text>
+          <rect x="22" y="118" width="296" height="150" rx="10" fill="#eaf0e6" stroke="#809948" stroke-width="1.8"/>
+          <path d="M40 220 Q90 160 150 200 T260 180" fill="none" stroke="#809948" stroke-width="1.6" opacity="0.5"/>
+          <circle cx="58" cy="196" r="5" fill="#6184d8"/>
+          <circle cx="110" cy="176" r="5" fill="#6184d8"/>
+          <circle cx="168" cy="204" r="5" fill="#6184d8"/>
+          <circle cx="224" cy="186" r="5" fill="#6184d8"/>
+          <circle cx="268" cy="210" r="5" fill="#6184d8"/>
+          <text x="170" y="138" text-anchor="middle" font-size="12" font-weight="600" fill="#1b1b1b">Leaflet map</text>
+          <rect x="334" y="118" width="164" height="150" rx="10" fill="#f5f5f0" stroke="#d7d3c5" stroke-width="1.6"/>
+          <text x="416" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#1b1b1b">Breakdowns</text>
+          <rect x="346" y="150" width="140" height="9" rx="4" fill="#809948"/>
+          <rect x="346" y="164" width="120" height="7" rx="3" fill="#c5d6a0"/>
+          <rect x="346" y="186" width="140" height="9" rx="4" fill="#6184d8"/>
+          <rect x="346" y="200" width="100" height="7" rx="3" fill="#b9c9f3"/>
+          <rect x="346" y="222" width="140" height="9" rx="4" fill="#e8893a"/>
+          <rect x="346" y="236" width="80" height="7" rx="3" fill="#f3d9a8"/>
+          <rect x="22" y="284" width="328" height="104" rx="10" fill="#ffffff" stroke="#d7d3c5" stroke-width="1.6"/>
+          <text x="40" y="304" font-size="12" font-weight="600" fill="#1b1b1b">Recent leads</text>
+          <line x1="38" y1="312" x2="334" y2="312" stroke="#ede8d8"/>
+          <rect x="40" y="320" width="120" height="8" rx="4" fill="#c5d6a0"/>
+          <rect x="40" y="334" width="90" height="8" rx="4" fill="#c5d6a0"/>
+          <rect x="40" y="350" width="140" height="8" rx="4" fill="#c5d6a0"/>
+          <rect x="40" y="366" width="100" height="8" rx="4" fill="#c5d6a0"/>
+          <text x="300" y="326" font-size="9" fill="#6184d8" font-weight="600">View</text>
+          <text x="300" y="340" font-size="9" fill="#6184d8" font-weight="600">View</text>
+          <text x="300" y="356" font-size="9" fill="#6184d8" font-weight="600">View</text>
+          <rect x="366" y="284" width="132" height="104" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="1.6"/>
+          <text x="432" y="304" text-anchor="middle" font-size="12" font-weight="600" fill="#1b1b1b">Exports</text>
+          <rect x="380" y="316" width="104" height="18" rx="9" fill="#809948"/>
+          <text x="432" y="329" text-anchor="middle" font-size="9" fill="#ffffff" font-weight="700">CSV</text>
+          <rect x="380" y="340" width="104" height="18" rx="9" fill="#809948"/>
+          <text x="432" y="353" text-anchor="middle" font-size="9" fill="#ffffff" font-weight="700">GeoJSON</text>
+          <rect x="380" y="364" width="104" height="18" rx="9" fill="#809948"/>
+          <text x="432" y="377" text-anchor="middle" font-size="9" fill="#ffffff" font-weight="700">KML</text>
+        </svg>
+        <p class="diagram-caption">Admin dashboard layout: analytics cards, Leaflet map, breakdowns, recent leads, and export buttons.</p>
+      </div>
 
       <h3>Dashboard features</h3>
       <table>
@@ -263,6 +506,35 @@
         <tr><td>Recent leads</td><td>Table of recent signups. Click <strong>View</strong> for details.</td></tr>
         <tr><td>Exports</td><td>Download CSV, GeoJSON, or KML from the Export card.</td></tr>
       </table>
+
+      <h3>Admin review flow</h3>
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 420 444" role="img" aria-label="Admin review flow">
+          <rect x="105" y="12" width="210" height="56" rx="28" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+          <text x="210" y="46" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Admin login</text>
+          <line x1="210" y1="68" x2="210" y2="94" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,92 216,92 210,102" fill="#809948"/>
+          <rect x="105" y="102" width="210" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="128" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Dashboard</text>
+          <text x="210" y="148" text-anchor="middle" font-size="12" fill="#44464f">/admin</text>
+          <line x1="210" y1="158" x2="210" y2="184" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,182 216,182 210,192" fill="#809948"/>
+          <rect x="105" y="192" width="210" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="218" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Map &amp; analytics</text>
+          <text x="210" y="238" text-anchor="middle" font-size="12" fill="#44464f">review breakdowns</text>
+          <line x1="210" y1="248" x2="210" y2="274" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,272 216,272 210,282" fill="#809948"/>
+          <rect x="105" y="282" width="210" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="308" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Lead detail</text>
+          <text x="210" y="328" text-anchor="middle" font-size="12" fill="#44464f">/admin/lead/&lt;id&gt;</text>
+          <line x1="210" y1="338" x2="210" y2="364" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,362 216,362 210,372" fill="#809948"/>
+          <rect x="70" y="372" width="280" height="56" rx="10" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="210" y="398" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00">Print / PDF / Export</text>
+          <text x="210" y="418" text-anchor="middle" font-size="12" fill="#44464f">CSV / GeoJSON / KML</text>
+        </svg>
+        <p class="diagram-caption">Admin review flow: login to dashboard to lead detail to export.</p>
+      </div>
 
       <h3>Lead detail page</h3>
       <p>Click <strong>View</strong> on any lead to see:</p>
@@ -277,8 +549,49 @@
       </ul>
     </section>
 
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
+    <section id="audit">
+      <h2><span class="num">3.</span>Consent &amp; signature audit trail</h2>
+      <p>Every signup captures a verifiable audit trail. The consent and signature records are stored in separate tables linked to the signup by a foreign key, so the exact text a user agreed to is preserved forever, even if you change the waiver later.</p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-title">Consent version + text snapshot</div>
+          <p class="tl-desc">The exact consent version (<code>2026-07-06.v1</code>) and the full consent text are copied into the <code>consent_records</code> row at the moment of signup. Changing the text later does not alter past records.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-title">Accepted timestamp</div>
+          <p class="tl-desc">An ISO 8601 UTC timestamp is written to <code>accepted_at</code> the instant the form is submitted and the row is created.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-title">IP address + user agent</div>
+          <p class="tl-desc">The visitor's IP address and browser user-agent string are captured for both the consent record and the signature record, supporting dispute resolution.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-title">Typed full legal name</div>
+          <p class="tl-desc">The visitor types their full legal name into the signature field. The typed value is stored verbatim in <code>full_name_typed</code> in the <code>signatures</code> table.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-title">Waiver version + text snapshot</div>
+          <p class="tl-desc">The waiver version (<code>2026-07-15.placeholder.v1</code>) and the complete waiver text are snapshotted into the signature row, so you always know which wording was agreed to.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-title">Signature disclaimer text</div>
+          <p class="tl-desc">The disclaimer stating that typing a name constitutes a legally binding electronic signature is itself stored alongside the signature, so the full context of agreement is preserved.</p>
+        </div>
+      </div>
+
+      <div class="card green">
+        <h3>Why two separate tables?</h3>
+        <p>Consent (the permission to be contacted) and signature (the waiver agreement) are legally distinct acts. Storing them in separate, foreign-keyed tables means each can be audited independently and survives future changes to either document without retroactively rewriting history.</p>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="exports">
-      <h2>3. Exports & PDF</h2>
+      <h2><span class="num">4.</span>Exports &amp; PDF</h2>
 
       <h3>CSV export</h3>
       <p>The CSV export at <code>/export/csv</code> includes lead data plus consent and signature metadata (signed name, signed at, waiver version). Use it for spreadsheet reporting and planning.</p>
@@ -289,28 +602,77 @@
       <h3>PDF of completed form</h3>
       <p>Each lead has two export options:</p>
       <ul>
-        <li><code>/admin/lead/&lt;id&gt;/print</code> — browser-printable HTML view. No dependencies. Use Ctrl+P / Cmd+P to save as PDF.</li>
-        <li><code>/admin/lead/&lt;id&gt;/pdf</code> — true PDF download if <code>fpdf2</code> is installed. Otherwise it falls back to the print view.</li>
+        <li><code>/admin/lead/&lt;id&gt;/print</code> - browser-printable HTML view. No dependencies. Use Ctrl+P / Cmd+P to save as PDF.</li>
+        <li><code>/admin/lead/&lt;id&gt;/pdf</code> - true PDF download if <code>fpdf2</code> is installed. Otherwise it falls back to the print view.</li>
       </ul>
-      <pre>pip install fpdf2</pre>
+      <div class="cmd-card">
+        <div class="cmd-head">
+          <span class="cmd-label"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="M8 11l4 4 4-4"/><path d="M5 20h14"/></svg>Install optional PDF dependency</span>
+          <button class="copy-btn" data-copy="pip install fpdf2"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
+        </div>
+        <pre>pip install fpdf2</pre>
+      </div>
     </section>
 
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="jira">
-      <h2>4. JIRA integration</h2>
+      <h2><span class="num">5.</span>JIRA integration</h2>
       <p>The system can create a JIRA ticket for every completed signup. Set these environment variables:</p>
-      <pre>
-JIRA_BASE_URL=https://your-domain.atlassian.net
+      <div class="cmd-card">
+        <div class="cmd-head">
+          <span class="cmd-label"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>JIRA environment variables</span>
+          <button class="copy-btn" data-copy="JIRA_BASE_URL=https://your-domain.atlassian.net
 JIRA_USER_EMAIL=you@example.com
 JIRA_API_TOKEN=your-api-token
 JIRA_PROJECT_KEY=BDS
-JIRA_ISSUE_TYPE=Task  # optional, defaults to Task
-      </pre>
+JIRA_ISSUE_TYPE=Task"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
+        </div>
+<pre>JIRA_BASE_URL=https://your-domain.atlassian.net
+JIRA_USER_EMAIL=you@example.com
+JIRA_API_TOKEN=your-api-token
+JIRA_PROJECT_KEY=BDS
+JIRA_ISSUE_TYPE=Task  # optional, defaults to Task</pre>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 420 340" role="img" aria-label="JIRA integration flow with fallback queue">
+          <rect x="110" y="12" width="200" height="48" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="40" text-anchor="middle" font-size="14" font-weight="600" fill="#1b1b1b">Signup saved to SQLite</text>
+          <line x1="210" y1="60" x2="210" y2="84" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,82 216,82 210,92" fill="#809948"/>
+          <path d="M210 96 L266 124 L210 152 L154 124 Z" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="210" y="121" text-anchor="middle" font-size="12" font-weight="600" fill="#5b3a00">JIRA env vars</text>
+          <text x="210" y="137" text-anchor="middle" font-size="12" font-weight="600" fill="#5b3a00">configured?</text>
+          <line x1="154" y1="124" x2="80" y2="124" stroke="#809948" stroke-width="2"/>
+          <line x1="80" y1="124" x2="80" y2="172" stroke="#809948" stroke-width="2"/>
+          <polygon points="74,170 86,170 80,180" fill="#809948"/>
+          <text x="116" y="118" text-anchor="middle" font-size="11" fill="#3d4d1f" font-weight="700">Yes</text>
+          <rect x="10" y="184" width="140" height="48" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="80" y="212" text-anchor="middle" font-size="13" font-weight="600" fill="#1b1b1b">Create ticket</text>
+          <line x1="80" y1="232" x2="80" y2="258" stroke="#809948" stroke-width="2"/>
+          <polygon points="74,256 86,256 80,266" fill="#809948"/>
+          <rect x="10" y="268" width="140" height="48" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="80" y="296" text-anchor="middle" font-size="12" font-weight="600" fill="#1b1b1b">Ticket key recorded</text>
+          <line x1="266" y1="124" x2="340" y2="124" stroke="#809948" stroke-width="2"/>
+          <line x1="340" y1="124" x2="340" y2="172" stroke="#809948" stroke-width="2"/>
+          <polygon points="334,170 346,170 340,180" fill="#809948"/>
+          <text x="304" y="118" text-anchor="middle" font-size="11" fill="#8a4a00" font-weight="700">No</text>
+          <rect x="270" y="184" width="140" height="48" rx="10" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="340" y="212" text-anchor="middle" font-size="13" font-weight="600" fill="#5b3a00">Queue locally</text>
+          <line x1="340" y1="232" x2="340" y2="258" stroke="#809948" stroke-width="2"/>
+          <polygon points="334,256 346,256 340,266" fill="#809948"/>
+          <rect x="270" y="268" width="140" height="48" rx="10" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="340" y="296" text-anchor="middle" font-size="12" font-weight="600" fill="#5b3a00">Replay later</text>
+        </svg>
+        <p class="diagram-caption">JIRA flow: if configured, a ticket is created; otherwise the signup is queued for later replay.</p>
+      </div>
 
       <h3>If JIRA is not configured</h3>
       <p>Signups are stored in a local <code>jira_queue</code> table with status <code>pending</code>. You can process them later by:</p>
       <ol>
         <li>Setting the JIRA env vars.</li>
-        <li>Running a future processing script (not yet built — add if needed).</li>
+        <li>Running a future processing script (not yet built - add if needed).</li>
       </ol>
 
       <div class="card green">
@@ -319,22 +681,43 @@ JIRA_ISSUE_TYPE=Task  # optional, defaults to Task
       </div>
     </section>
 
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="dev">
-      <h2>5. Developer / Code Puppy workflow</h2>
+      <h2><span class="num">6.</span>Developer / Code Puppy workflow</h2>
 
       <h3>Clone and run</h3>
-      <pre>
-git clone &lt;your-repo-url&gt;
-cd Lead-Ingest
+      <div class="cmd-card">
+        <div class="cmd-head">
+          <span class="cmd-label"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>Clone and start the server</span>
+          <button class="copy-btn" data-copy="git clone https://github.com/t-granlund/Benton-Drones-Lead-Ingest.git
+cd Benton-Drones-Lead-Ingest
 make init-db
-ADMIN_PASSWORD=yourpass make run
-      </pre>
+ADMIN_PASSWORD=yourpass make run"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
+        </div>
+<pre>git clone https://github.com/t-granlund/Benton-Drones-Lead-Ingest.git
+cd Benton-Drones-Lead-Ingest
+make init-db
+ADMIN_PASSWORD=yourpass make run</pre>
+      </div>
 
       <h3>Run tests</h3>
-      <pre>make test</pre>
+      <div class="cmd-card">
+        <div class="cmd-head">
+          <span class="cmd-label"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V4"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg>Run the full test suite</span>
+          <button class="copy-btn" data-copy="make test"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
+        </div>
+        <pre>make test</pre>
+      </div>
 
       <h3>Install optional dependencies</h3>
-      <pre>make install</pre>
+      <div class="cmd-card">
+        <div class="cmd-head">
+          <span class="cmd-label"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="M8 11l4 4 4-4"/><path d="M5 20h14"/></svg>Install optional extras</span>
+          <button class="copy-btn" data-copy="make install"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
+        </div>
+        <pre>make install</pre>
+      </div>
 
       <h3>Extend the system</h3>
       <table>
@@ -347,15 +730,41 @@ ADMIN_PASSWORD=yourpass make run
       </table>
     </section>
 
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="deploy">
-      <h2>6. Deployment</h2>
+      <h2><span class="num">7.</span>Deployment</h2>
+
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 420 354" role="img" aria-label="Deployment flow">
+          <rect x="95" y="12" width="230" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="38" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Local dev</text>
+          <text x="210" y="58" text-anchor="middle" font-size="12" fill="#44464f">python -m lead_ingest.server</text>
+          <line x1="210" y1="68" x2="210" y2="94" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,92 216,92 210,102" fill="#809948"/>
+          <rect x="95" y="102" width="230" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="210" y="128" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Tests pass</text>
+          <text x="210" y="148" text-anchor="middle" font-size="12" fill="#44464f">make test (281 tests)</text>
+          <line x1="210" y1="158" x2="210" y2="184" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,182 216,182 210,192" fill="#809948"/>
+          <rect x="95" y="192" width="230" height="56" rx="10" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+          <text x="210" y="218" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Reverse proxy</text>
+          <text x="210" y="238" text-anchor="middle" font-size="12" fill="#44464f">Caddy or nginx, TLS termination</text>
+          <line x1="210" y1="248" x2="210" y2="274" stroke="#809948" stroke-width="2"/>
+          <polygon points="204,272 216,272 210,282" fill="#809948"/>
+          <rect x="75" y="282" width="270" height="56" rx="10" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="210" y="308" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00">HTTPS production</text>
+          <text x="210" y="328" text-anchor="middle" font-size="12" fill="#44464f">leads.bentondrones.com</text>
+        </svg>
+        <p class="diagram-caption">Deployment flow: local dev to tests to reverse proxy to HTTPS production.</p>
+      </div>
 
       <h3>Environment variables for production</h3>
       <table>
         <tr><th>Variable</th><th>Required?</th><th>Notes</th></tr>
         <tr><td><code>ADMIN_PASSWORD</code></td><td>Yes</td><td>Strong password for admin login.</td></tr>
-        <tr><td><code>ADMIN_SESSION_SECRET</code></td><td>Production only</td><td>≥32 random chars. Required when <code>ENV=production</code>.</td></tr>
-        <tr><td><code>CSRF_SECRET</code></td><td>Production only</td><td>≥32 random chars. Required when <code>ENV=production</code>.</td></tr>
+        <tr><td><code>ADMIN_SESSION_SECRET</code></td><td>Production only</td><td>At least 32 random chars. Required when <code>ENV=production</code>.</td></tr>
+        <tr><td><code>CSRF_SECRET</code></td><td>Production only</td><td>At least 32 random chars. Required when <code>ENV=production</code>.</td></tr>
         <tr><td><code>COOKIE_SECURE</code></td><td>Recommended</td><td>Set to <code>1</code> when running behind HTTPS.</td></tr>
         <tr><td><code>ENV</code></td><td>No</td><td>Set to <code>production</code> to enforce strict secret checks.</td></tr>
         <tr><td><code>HOST</code></td><td>No</td><td>Bind address (default <code>127.0.0.1</code>).</td></tr>
@@ -367,7 +776,7 @@ ADMIN_PASSWORD=yourpass make run
       <ol class="steps">
         <li>Run the Python app on <code>127.0.0.1:8000</code>.</li>
         <li>Put Caddy or nginx in front for TLS termination.</li>
-        <li>Forward <code>X-Forwarded-Proto: https</code> so cookies get the Secure flag.</li>
+        <li>Forward the <code>X-Forwarded-Proto: https</code> header so cookies get the Secure flag.</li>
         <li>Set <code>COOKIE_SECURE=1</code> or rely on the forwarded header.</li>
         <li>Keep <code>ADMIN_PASSWORD</code> and secrets in a vault or environment, never in code.</li>
       </ol>
@@ -377,8 +786,93 @@ ADMIN_PASSWORD=yourpass make run
       <pre>{"status": "ok", "version": "0.2.0", "tests_passed": true}</pre>
     </section>
 
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
+    <section id="datamodel">
+      <h2><span class="num">8.</span>What gets stored (data model)</h2>
+      <p>All data lives in a single SQLite file at <code>data/lead_ingest.sqlite3</code>. The three tables below form the auditable core; the rest support variants, clustering, and JIRA.</p>
+      <div class="dm-grid">
+        <div class="dm-table core">
+          <h4>signups</h4>
+          <ul>
+            <li><b>id</b> primary key</li>
+            <li>name, email, phone</li>
+            <li>address + geocode</li>
+            <li>source, campaign, variant</li>
+            <li>shopify context</li>
+            <li>created_at, updated_at</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>consent_records</h4>
+          <ul>
+            <li><span class="dm-fk">signup_id</span> FK, unique</li>
+            <li>consent_version</li>
+            <li>consent_text (snapshot)</li>
+            <li>accepted, accepted_at</li>
+            <li>ip_address, user_agent</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>signatures</h4>
+          <ul>
+            <li><span class="dm-fk">signup_id</span> FK, unique</li>
+            <li>full_name_typed</li>
+            <li>waiver_version</li>
+            <li>waiver_text (snapshot)</li>
+            <li>signature_disclaimer_text</li>
+            <li>ip_address, user_agent, signed_at</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>landing_page_variants</h4>
+          <ul>
+            <li>slug (unique)</li>
+            <li>title, subtitle, cta_text</li>
+            <li>campaign, source</li>
+            <li>is_active</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>jira_queue</h4>
+          <ul>
+            <li><span class="dm-fk">signup_id</span> FK</li>
+            <li>ticket_key, status</li>
+            <li>attempted_at, error_message</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>jira_tickets</h4>
+          <ul>
+            <li><span class="dm-fk">signup_id</span> FK, unique</li>
+            <li>ticket_key</li>
+            <li>jira_issue_url</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>clusters</h4>
+          <ul>
+            <li>name, description</li>
+            <li>center lat / lng</li>
+            <li>radius_miles</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>cluster_members</h4>
+          <ul>
+            <li><span class="dm-fk">cluster_id</span> FK</li>
+            <li><span class="dm-fk">signup_id</span> FK</li>
+            <li>distance_from_center_miles</li>
+          </ul>
+        </div>
+      </div>
+      <p>Foreign keys are enabled on every connection. The consent and signature rows are created in the same transaction as the signup, so a lead is never partially stored.</p>
+    </section>
+
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="security">
-      <h2>7. Security checklist</h2>
+      <h2><span class="num">9.</span>Security checklist</h2>
       <ul>
         <li>Replace the placeholder waiver text with legally reviewed language.</li>
         <li>Use strong, unique <code>ADMIN_PASSWORD</code>, <code>ADMIN_SESSION_SECRET</code>, and <code>CSRF_SECRET</code>.</li>
@@ -390,17 +884,80 @@ ADMIN_PASSWORD=yourpass make run
       </ul>
     </section>
 
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
     <section id="trouble">
-      <h2>8. Troubleshooting</h2>
+      <h2><span class="num">10.</span>Troubleshooting</h2>
       <table>
         <tr><th>Symptom</th><th>Fix</th></tr>
         <tr><td>Admin login fails</td><td>Verify <code>ADMIN_PASSWORD</code> env var is set and not a weak default.</td></tr>
-        <tr><td>App won't start in production</td><td>Set <code>ADMIN_SESSION_SECRET</code> and <code>CSRF_SECRET</code> to ≥32 random characters.</td></tr>
+        <tr><td>App won't start in production</td><td>Set <code>ADMIN_SESSION_SECRET</code> and <code>CSRF_SECRET</code> to at least 32 random characters.</td></tr>
         <tr><td>Map is blank</td><td>Check that <code>static/leaflet/leaflet.js</code> and <code>.css</code> serve with HTTP 200.</td></tr>
         <tr><td>JIRA tickets not created</td><td>Check all 4 JIRA env vars are set. Check <code>jira_queue</code> table for errors.</td></tr>
         <tr><td>PDF endpoint redirects to print view</td><td>Install <code>fpdf2</code>: <code>pip install fpdf2</code>.</td></tr>
         <tr><td>Database locked errors</td><td>WAL mode and busy timeout are enabled automatically on new connections.</td></tr>
       </table>
+    </section>
+
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
+    <section id="faq">
+      <h2><span class="num">11.</span>Frequently asked questions</h2>
+
+      <details class="faq">
+        <summary><span class="faq-q">Can I run this without internet?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>Yes, mostly. The app, database, admin dashboard, map tiles (vendored locally), and all tests run entirely offline. The only features that need the network are JIRA ticket creation (calls the Atlassian REST API) and the optional real geocoder (if you swap in one that calls an external API). The default <code>MockGeocoder</code> works offline.</p></div>
+      </details>
+
+      <details class="faq">
+        <summary><span class="faq-q">Where is data stored?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>All data is in a single SQLite file at <code>data/lead_ingest.sqlite3</code>. There is no external database server, no cloud database, and no SaaS dependency. You can copy, back up, or inspect the file with any SQLite tool.</p></div>
+      </details>
+
+      <details class="faq">
+        <summary><span class="faq-q">Can I use a real geocoder instead of the mock?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>Yes. The geocoder is swappable. Replace <code>MockGeocoder</code> in <code>lead_ingest/geocoding.py</code> with a class that calls a real geocoding API (such as Nominatim, Google, or Mapbox) and returns the same <code>(latitude, longitude, display_name, provider)</code> result. The rest of the system picks it up automatically.</p></div>
+      </details>
+
+      <details class="faq">
+        <summary><span class="faq-q">Is the waiver legally valid?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>The current waiver text is a clearly labeled placeholder. It captures a full audit trail (typed name, timestamp, IP, user agent, versioned text snapshot), but the wording itself must be reviewed by legal counsel before you accept real signups. The audit trail mechanism is sound; the words are not.</p></div>
+      </details>
+
+      <details class="faq">
+        <summary><span class="faq-q">Can I integrate with Shopify?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>Yes. See <code>docs/shopify-integration-plan.md</code> for the full plan. Today the launch path is a Shopify storefront CTA button linking to <code>/signup</code>. A deeper App Proxy integration (HMAC-signed context tokens) is implemented as utilities in <code>lead_ingest/shopify_security.py</code> and deferred for production.</p></div>
+      </details>
+
+      <details class="faq">
+        <summary><span class="faq-q">How do I back up data?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>Copy the SQLite file. The database is a single file at <code>data/lead_ingest.sqlite3</code>. Because WAL mode is enabled, you may also see <code>-wal</code> and <code>-shm</code> files; copy all three together for a consistent backup, or use the <code>.backup</code> command from the SQLite CLI for a hot backup.</p></div>
+      </details>
+
+      <details class="faq">
+        <summary><span class="faq-q">What Python version is required?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>Python 3.11 or later. The code uses modern typing syntax (union pipes, <code>from __future__ import annotations</code>) and standard library modules only for the core app. The optional PDF export needs <code>fpdf2</code> from PyPI.</p></div>
+      </details>
+
+      <details class="faq">
+        <summary><span class="faq-q">How do I reset the database?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>Delete the database file and re-run <code>make init-db</code>. The file is at <code>data/lead_ingest.sqlite3</code>. Removing it (and any <code>-wal</code> / <code>-shm</code> sidecar files) wipes all leads, consent records, and signatures. Then <code>make init-db</code> recreates a fresh schema with the default landing page variant.</p></div>
+      </details>
+    </section>
+
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
+    <section id="share">
+      <h2><span class="num">12.</span>Before you share with a friend</h2>
+      <p>A quick checklist to run through before handing the repo to someone else. Each item keeps the system safe and runnable on a fresh machine.</p>
+      <ul class="checklist">
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Verify no secrets are committed.</b> Check <code>.gitignore</code> excludes <code>.env</code>, <code>data/</code>, and logs. Never hard-code passwords or API tokens.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Run the full test suite.</b> <code>make test</code> should print 281 tests and <code>OK</code>.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Confirm the waiver is a placeholder.</b> Make sure your friend knows the waiver text needs legal review before real use.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Test the clone-and-run path.</b> <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code> should work from a clean checkout.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Smoke-test the flows.</b> Open <code>/signup</code>, submit a test lead, log in at <code>/admin-login</code>, view the lead, and try an export.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Point them at the docs.</b> This training guide, the <a href="architecture-diagram.html">architecture diagram</a>, and the <a href="explainer-guide.html">explainer guide</a> cover the whole system.</span></li>
+      </ul>
     </section>
 
     <div class="card block">
@@ -413,7 +970,29 @@ ADMIN_PASSWORD=yourpass make run
   </main>
 
   <footer>
-    Benton Drones Lead Ingest · Training Guide · Local MVP · Not production-deployed
+    Benton Drones Lead Ingest | Training Guide | Local MVP | Not production-deployed
   </footer>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var text = btn.getAttribute('data-copy') || '';
+        var done = function() {
+          btn.classList.add('copied');
+          var old = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function() { btn.classList.remove('copied'); btn.textContent = old; }, 1400);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, done);
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); } catch (e) {}
+          document.body.removeChild(ta); done();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
