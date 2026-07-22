@@ -12,6 +12,8 @@ CONSENT_TEXT = (
 
 WAIVER_VERSION = "2026-07-21.v1"
 # Based on provided consent form PDF; must be reviewed by legal counsel before production use.
+# Policy URLs below are best-guess placeholders - verify and replace with the real
+# bentondrones.com policy pages before accepting real signups.
 WAIVER_TEXT = """\
 Benton Drones Confidential
 BENTON DRONES CONSENT FORM
@@ -40,8 +42,8 @@ responsibility to stay indoors and away from the photographed, filmed, and/or
 recorded portions of the property during such photography, filming, and or
 recording. For more information about how we collect, use, and retain your personal
 information and your rights, as well as Benton Drones\u2019 vision data collection
-practices, please see our Privacy Policy at [PRIVACY POLICY URL \u2014 REPLACE
-BEFORE USE] and [VISION POLICY URL \u2014 REPLACE BEFORE USE].
+practices, please see our Privacy Policy at https://bentondrones.com/policies/privacy-policy
+and https://bentondrones.com/pages/vision-policy.
 
 To the extent that other individuals are photographed, filmed, and/or recorded, I
 represent that I have obtained all necessary consents from such individuals for

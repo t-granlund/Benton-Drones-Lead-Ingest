@@ -1,0 +1,211 @@
+{
+  "generated_at": "2026-07-22T00:00:00Z",
+  "generator": "e2e-testing-expert-95bb64",
+  "project": "Lead-Ingest (Benton Drones lead intake)",
+  "stack": "python3.11 stdlib HTTP server (BaseHTTPRequestHandler + ThreadingHTTPServer), SQLite default / Neon Postgres optional",
+  "test_runner": "python -m unittest discover -s tests/e2e -t tests/e2e -v",
+  "test_dir": "tests/e2e",
+  "summary": {
+    "features_total": 34,
+    "test_files": 8,
+    "test_classes": 11,
+    "test_methods": 50
+  },
+  "features": [
+    {
+      "id": "F01",
+      "feature": "GET /healthz unauthenticated health check (JSON)",
+      "source": "lead_ingest/server.py::handle_healthz",
+      "tests": ["tests/e2e/test_e2e_health.py::HealthzTests"]
+    },
+    {
+      "id": "F02",
+      "feature": "GET / signup form page with CSRF + required fields",
+      "source": "lead_ingest/server.py::signup_page",
+      "tests": ["tests/e2e/test_e2e_public_pages.py::PublicPagesTests::test_signup_page_contains_csrf_and_required_fields"]
+    },
+    {
+      "id": "F03",
+      "feature": "GET /signup/<slug> variant signup page (falls back to default)",
+      "source": "lead_ingest/server.py::signup_page",
+      "tests": ["tests/e2e/test_e2e_signup_flow.py::SignupFlowTests::test_signup_variant_slug_accepted"]
+    },
+    {
+      "id": "F04",
+      "feature": "GET public project pages (/overview, /shopify-preview, /changelog, /roadmap, /domain-setup, /api-preflight, /current-state, /goals, /judges, /)",
+      "source": "lead_ingest/server.py::do_GET (branded pages)",
+      "tests": ["tests/e2e/test_e2e_public_pages.py::PublicPagesTests::test_each_public_page_renders_200_branded_html"]
+    },
+    {
+      "id": "F05",
+      "feature": "GET /landing-page.html static route",
+      "source": "lead_ingest/server.py::do_GET",
+      "tests": ["tests/e2e/test_e2e_public_pages.py::PublicPagesTests::test_landing_page_html_route_serves_file"]
+    },
+    {
+      "id": "F06",
+      "feature": "GET /static/* static asset serving + 404 for missing files",
+      "source": "lead_ingest/server.py::do_GET (STATIC_ROOT)",
+      "tests": ["tests/e2e/test_e2e_public_pages.py::PublicPagesTests::test_static_serves_known_asset_with_cache_header", "tests/e2e/test_e2e_public_pages.py::PublicPagesTests::test_static_unknown_file_returns_404"]
+    },
+    {
+      "id": "F07",
+      "feature": "Unknown path returns 404",
+      "source": "lead_ingest/server.py::do_GET/do_POST",
+      "tests": ["tests/e2e/test_e2e_public_pages.py::PublicPagesTests::test_unknown_path_returns_404", "tests/e2e/test_e2e_security.py::SecurityHeadersTests::test_unknown_post_path_returns_404"]
+    },
+    {
+      "id": "F08",
+      "feature": "POST /signup happy path: create lead -> success page",
+      "source": "lead_ingest/server.py::do_POST",
+      "tests": ["tests/e2e/test_e2e_signup_flow.py::SignupFlowTests::test_submit_valid_lead_returns_success"]
+    },
+    {
+      "id": "F09",
+      "feature": "POST /signup field validation (email/state/zip/consent/waiver/typed_name)",
+      "source": "lead_ingest/validation.py::validate_signup",
+      "tests": ["tests/e2e/test_e2e_signup_flow.py::SignupFlowTests::test_submit_missing_email_returns_400_with_error", "test_submit_invalid_email_format_returns_400", "test_submit_bad_state_returns_400", "test_submit_bad_zip_returns_400", "test_submit_without_consent_returns_400", "test_submit_without_waiver_returns_400", "test_submit_without_typed_name_returns_400"]
+    },
+    {
+      "id": "F10",
+      "feature": "POST /signup honeypot (website_url) rejection",
+      "source": "lead_ingest/server.py::do_POST",
+      "tests": ["tests/e2e/test_e2e_signup_flow.py::SignupFlowTests::test_submit_honeypot_filled_is_rejected"]
+    },
+    {
+      "id": "F11",
+      "feature": "POST /signup CSRF token validation (invalid + cross-action)",
+      "source": "lead_ingest/request_security.py::verify_csrf_token",
+      "tests": ["tests/e2e/test_e2e_signup_flow.py::SignupFlowTests::test_submit_invalid_csrf_returns_400", "test_submit_cross_action_csrf_rejected"]
+    },
+    {
+      "id": "F12",
+      "feature": "GET /admin-login login form with CSRF",
+      "source": "lead_ingest/server.py::login_page",
+      "tests": ["tests/e2e/test_e2e_admin_auth.py::AdminAuthTests::test_login_page_renders_with_csrf"]
+    },
+    {
+      "id": "F13",
+      "feature": "POST /admin-login auth: no CSRF 400, wrong password 401, success 302+Set-Cookie",
+      "source": "lead_ingest/server.py::handle_login",
+      "tests": ["tests/e2e/test_e2e_admin_auth.py::AdminAuthTests::test_login_without_csrf_returns_400", "test_login_wrong_password_returns_401", "test_login_correct_password_redirects_with_session_cookie", "test_login_csrf_is_scoped_to_admin_login_action"]
+    },
+    {
+      "id": "F14",
+      "feature": "GET /admin auth gating: unauthenticated -> 302 redirect to login",
+      "source": "lead_ingest/server.py::require_admin_html",
+      "tests": ["tests/e2e/test_e2e_admin_auth.py::AdminAuthTests::test_admin_unauthenticated_redirects_to_login", "test_admin_with_tampered_session_cookie_redirects", "test_admin_with_valid_session_returns_200"]
+    },
+    {
+      "id": "F15",
+      "feature": "GET /admin/lead/<id> detail page (auth required)",
+      "source": "lead_ingest/server.py::lead_detail_page",
+      "tests": ["tests/e2e/test_e2e_admin_auth.py::AdminAuthTests::test_admin_lead_detail_unauthenticated_redirects", "tests/e2e/test_e2e_admin_dashboard.py::AdminDashboardTests::test_admin_lead_detail_renders"]
+    },
+    {
+      "id": "F16",
+      "feature": "GET /admin/lead/<id>/print printable view",
+      "source": "lead_ingest/server.py::lead_print_page",
+      "tests": ["tests/e2e/test_e2e_admin_dashboard.py::AdminDashboardTests::test_admin_lead_print_renders"]
+    },
+    {
+      "id": "F17",
+      "feature": "GET /admin/lead/<id>/pdf PDF or HTML fallback (incl. invalid/missing id)",
+      "source": "lead_ingest/server.py::handle_lead_pdf",
+      "tests": ["tests/e2e/test_e2e_admin_dashboard.py::AdminDashboardTests::test_admin_lead_pdf_real_or_fallback", "test_admin_lead_pdf_invalid_id_returns_400", "test_admin_lead_pdf_missing_lead_returns_404"]
+    },
+    {
+      "id": "F18",
+      "feature": "GET /admin/leads.geojson geocoded leads GeoJSON (auth required)",
+      "source": "lead_ingest/server.py::do_GET (/admin/leads.geojson)",
+      "tests": ["tests/e2e/test_e2e_admin_dashboard.py::AdminDashboardTests::test_admin_leads_geojson_returns_feature_collection"]
+    },
+    {
+      "id": "F19",
+      "feature": "GET /admin dashboard: recent leads + analytics + map (auth)",
+      "source": "lead_ingest/server.py::admin_page",
+      "tests": ["tests/e2e/test_e2e_admin_dashboard.py::AdminDashboardTests::test_admin_dashboard_shows_recent_lead_and_sections"]
+    },
+    {
+      "id": "F20",
+      "feature": "GET /admin-logout clears session -> 302 to /admin-login",
+      "source": "lead_ingest/server.py::do_GET (/admin-logout)",
+      "tests": ["tests/e2e/test_e2e_admin_auth.py::AdminAuthTests::test_logout_redirects_and_clears_session"]
+    },
+    {
+      "id": "F21",
+      "feature": "GET /export/csv (auth: 403 unauth, 200 auth, text/csv)",
+      "source": "lead_ingest/exports.py::export_csv",
+      "tests": ["tests/e2e/test_e2e_exports.py::ExportsUnauthenticatedTests", "tests/e2e/test_e2e_exports.py::ExportsAuthenticatedTests::test_each_export_returns_200_with_content_type_and_marker", "test_csv_export_is_text_csv_with_leads"]
+    },
+    {
+      "id": "F22",
+      "feature": "GET /export/geojson (auth: 403 unauth, 200 auth)",
+      "source": "lead_ingest/exports.py::export_geojson",
+      "tests": ["tests/e2e/test_e2e_exports.py::ExportsUnauthenticatedTests", "tests/e2e/test_e2e_exports.py::ExportsAuthenticatedTests::test_each_export_returns_200_with_content_type_and_marker"]
+    },
+    {
+      "id": "F23",
+      "feature": "GET /export/kml (auth: 403 unauth, 200 auth)",
+      "source": "lead_ingest/exports.py::export_kml",
+      "tests": ["tests/e2e/test_e2e_exports.py::ExportsUnauthenticatedTests", "tests/e2e/test_e2e_exports.py::ExportsAuthenticatedTests::test_each_export_returns_200_with_content_type_and_marker"]
+    },
+    {
+      "id": "F24",
+      "feature": "Security: rate limiting (429 on POST after threshold)",
+      "source": "lead_ingest/request_security.py::RateLimiter",
+      "tests": ["tests/e2e/test_e2e_security.py::RateLimitTests::test_rate_limit_blocks_after_threshold_returns_429"]
+    },
+    {
+      "id": "F25",
+      "feature": "Security: max body size (413 on >64KiB POST)",
+      "source": "lead_ingest/server.py::do_POST (MAX_BODY_BYTES)",
+      "tests": ["tests/e2e/test_e2e_security.py::RateLimitTests::test_body_size_limit_rejects_oversized_post_413"]
+    },
+    {
+      "id": "F26",
+      "feature": "Security: baseline headers (nosniff, DENY, no-referrer)",
+      "source": "lead_ingest/server.py::send_security_headers",
+      "tests": ["tests/e2e/test_e2e_security.py::SecurityHeadersTests::test_public_pages_have_baseline_security_headers"]
+    },
+    {
+      "id": "F27",
+      "feature": "Security: Cache-Control no-store on PII/export paths",
+      "source": "lead_ingest/server.py::send_security_headers (_is_pii_path)",
+      "tests": ["tests/e2e/test_e2e_security.py::SecurityHeadersTests::test_admin_dashboard_sets_no_store_cache_control", "test_exports_set_no_store_cache_control", "test_public_page_is_not_marked_no_store"]
+    },
+    {
+      "id": "F28",
+      "feature": "Security: static path traversal blocked (403)",
+      "source": "lead_ingest/server.py::do_GET (is_relative_to STATIC_ROOT)",
+      "tests": ["tests/e2e/test_e2e_security.py::SecurityHeadersTests::test_static_path_traversal_is_blocked_403"]
+    },
+    {
+      "id": "F29",
+      "feature": "Security: production weak-password startup gate",
+      "source": "lead_ingest/server.py::validate_production_ready",
+      "tests": ["tests/e2e/test_e2e_security.py::ProductionHardeningTests::test_validate_refuses_weak_password_in_production", "test_validate_passes_with_strong_config_non_production"]
+    },
+    {
+      "id": "F30",
+      "feature": "End-to-end journey: signup -> login -> admin shows lead -> export contains lead -> lead detail",
+      "source": "lead_ingest/server.py (cross-feature)",
+      "tests": ["tests/e2e/test_e2e_signup_flow.py::SignupEndToEndJourneyTests::test_signup_then_login_then_admin_and_export_show_lead"]
+    },
+    {
+      "id": "F31",
+      "feature": "CLI: scripts/init_db.py initialises SQLite schema + tables",
+      "source": "scripts/init_db.py",
+      "tests": ["tests/e2e/test_e2e_cli.py::InitDbCliTests::test_init_db_creates_database_file", "test_init_db_creates_required_tables"]
+    }
+  ],
+  "coverage_summary": {
+    "http_get_public": "15/15",
+    "http_get_admin": "7/7",
+    "http_get_exports": "3/3",
+    "http_post": "2/2",
+    "security_features": "6/6",
+    "cli": "1/1",
+    "e2e_journey": "1/1"
+  }
+}

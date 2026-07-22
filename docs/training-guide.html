@@ -705,9 +705,10 @@ ADMIN_PASSWORD=yourpass make run</pre>
       <div class="cmd-card">
         <div class="cmd-head">
           <span class="cmd-label"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V4"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg>Run the full test suite</span>
-          <button class="copy-btn" data-copy="make test"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
+          <button class="copy-btn" data-copy="make test-all"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
         </div>
-        <pre>make test</pre>
+        <pre>make test-all</pre>
+        <p style="margin-top:12px;font-size:0.95rem;color:var(--md-sys-color-on-surface-variant)">Run <code>make test</code> for the 281 unit/integration tests, or <code>make test-e2e</code> for the 55 end-to-end tests.</p>
       </div>
 
       <h3>Install optional dependencies</h3>
@@ -758,7 +759,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
           <polygon points="204,92 216,92 210,102" fill="#809948"/>
           <rect x="95" y="102" width="230" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
           <text x="210" y="128" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Tests pass</text>
-          <text x="210" y="148" text-anchor="middle" font-size="12" fill="#44464f">make test (281 tests)</text>
+          <text x="210" y="148" text-anchor="middle" font-size="12" fill="#44464f">make test-all (336 tests)</text>
           <line x1="210" y1="158" x2="210" y2="184" stroke="#809948" stroke-width="2"/>
           <polygon points="204,182 216,182 210,192" fill="#809948"/>
           <rect x="95" y="192" width="230" height="56" rx="10" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
@@ -966,7 +967,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
       <p>A quick checklist to run through before handing the repo to someone else. Each item keeps the system safe and runnable on a fresh machine.</p>
       <ul class="checklist">
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Verify no secrets are committed.</b> Check <code>.gitignore</code> excludes <code>.env</code>, <code>data/</code>, and logs. Never hard-code passwords or API tokens.</span></li>
-        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Run the full test suite.</b> <code>make test</code> should print 281 tests and <code>OK</code>.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Run the full test suite.</b> <code>make test-all</code> should print 336 tests (281 unit/integration + 55 E2E) and <code>OK</code>. Use <code>make test-e2e</code> to run just the E2E suite.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Confirm the waiver is a placeholder.</b> Make sure your friend knows the waiver text needs legal review before real use.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Test the clone-and-run path.</b> <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code> should work from a clean checkout.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Smoke-test the flows.</b> Open <code>/signup</code>, submit a test lead, log in at <code>/admin-login</code>, view the lead, and try an export.</span></li>

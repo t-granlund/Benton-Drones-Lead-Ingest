@@ -91,12 +91,12 @@ These are read-only and safe to run anytime.
 | Google Workspace email auth | Manual login/confirmation | MX/SPF/DKIM/DMARC records from Google Admin. |
 | Shopify domain/settings | Manual login/confirmation | Required A/CNAME records and myshopify domain. |
 | Shopify landing page CTA | Manual login/design | Create page in Shopify Admin and link to `leads.bentondrones.com`. |
-| Backend deployment | Host selection | Choose where `leads.bentondrones.com` will run (e.g., Fly.io, Railway, Render, Hetzner, VPS). |
+| Backend deployment | Custom domain | Render + Neon is live; `leads.bentondrones.com` custom domain is pending. |
 
 ## What is not built yet
 
-- Production deployment at `leads.bentondrones.com`.
-- Real HTTPS + custom domain + environment secrets in production.
+- Custom domain `leads.bentondrones.com`.
+- Cloudflare DNS cutover for the custom domain.
 - Production Postgres/PostGIS database.
 - Real geocoding provider integration.
 - Map UI for internal planning.
@@ -108,34 +108,32 @@ These are read-only and safe to run anytime.
 
 ## Recommended next steps
 
-1. **Capture current platform state**
+1. **Custom domain on Render**
+   - Add `leads.bentondrones.com` as a custom domain in the Render dashboard.
+   - Create the DNS record in Cloudflare.
+   - Preserve Google Workspace MX/SPF/DKIM/DMARC records.
+
+2. **Capture current platform state**
    - Namecheap nameservers and DNS records.
    - Google Workspace MX/SPF/DKIM/DMARC.
    - Shopify A/CNAME requirements and myshopify domain.
 
-2. **Create Cloudflare read-only API token**
+3. **Create Cloudflare read-only API token**
    - Scope to `bentondrones.com`.
    - Permissions: Zone read, DNS read.
    - Run `python scripts/check_cloudflare_zone.py`.
-
-3. **Pick backend hosting**
-   - Low-cost, Python-friendly, HTTPS + custom domain.
-   - Common choices: Fly.io, Railway, Render, Hetzner, DigitalOcean droplet.
-   - Need persistent storage or external Postgres.
 
 4. **Create Shopify landing page**
    - Add CTA to `https://leads.bentondrones.com/signup/default?source=shopify&campaign=drone-delivery-page`.
    - Keep PII/consent out of Shopify metafields.
 
 5. **Migrate DNS to Cloudflare**
-   - Only after steps 1–3 are complete and verified.
-   - Add `leads.bentondrones.com` record pointing to the chosen host.
+   - Only after steps 1–4 are complete and verified.
+   - Add `leads.bentondrones.com` record pointing to Render.
    - Preserve Google Workspace MX/SPF/DKIM/DMARC.
 
-6. **Deploy backend**
-   - Set production secrets.
-   - Configure HTTPS.
-   - Run smoke tests against real domain.
+6. **Smoke test the custom domain**
+   - Test signup, admin login, exports, and JIRA against `leads.bentondrones.com`.
 
 7. **Capture design system**
    - Pull logo/colors/fonts/screenshots from Shopify.

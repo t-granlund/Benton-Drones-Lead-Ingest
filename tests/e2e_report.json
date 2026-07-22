@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-07-22T00:00:00Z",
+  "generator": "e2e-testing-expert-95bb64",
+  "project": "Lead-Ingest",
+  "command": "python -m unittest discover -s tests/e2e -t tests/e2e -v",
+  "runner": "unittest (stdlib)",
+  "execution": {
+    "total": 55,
+    "passed": 55,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 5.8,
+    "result": "OK"
+  },
+  "existing_suite_unchanged": {
+    "command": "make test  # python -m unittest discover -s tests",
+    "existing_tests": 281,
+    "existing_status": "OK",
+    "note": "E2E suite is isolated under tests/e2e (no __init__.py) and runs via its own command; make test count remains 281."
+  },
+  "test_files": [
+    {"file": "tests/e2e/e2e_base.py", "role": "shared fixture + http/csrf/login helpers", "tests": 0},
+    {"file": "tests/e2e/test_e2e_health.py", "tests": 4, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_public_pages.py", "tests": 7, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_signup_flow.py", "tests": 13, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_admin_auth.py", "tests": 10, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_admin_dashboard.py", "tests": 7, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_exports.py", "tests": 5, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_security.py", "tests": 9, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_cli.py", "tests": 2, "status": "pass"}
+  ],
+  "coverage": {
+    "http_get_public": "15/15",
+    "http_get_admin": "7/7",
+    "http_get_exports": "3/3",
+    "http_post": "2/2",
+    "security_features": "6/6",
+    "cli": "1/1",
+    "e2e_journey": "1/1"
+  },
+  "manifest": "tests/e2e_manifest.json",
+  "fixes_applied": [
+    "CI gating: added .github/workflows/ci.yml (runs `make test` + `make test-e2e` on push/PR, installs requirements) and Makefile `test-e2e`/`test-all` targets. RESOLVED.",
+    "KML export now includes the lead email in the Placemark description (lead_ingest/exports.py); e2e test strengthened to assert email in KML. RESOLVED.",
+    "fpdf2 confirmed pinned in requirements.txt (>=2.8.0); installed locally (2.8.7) to verify the real-PDF branch; CI installs via requirements; both PDF branches (real + fallback) pass. RESOLVED.",
+    "Replaced waiver placeholder policy URLs in lead_ingest/models.py with best-guess bentondrones.com URLs (privacy: /policies/privacy-policy, vision: /pages/vision-policy) + comment noting best-guess. RESOLVED (URLs need legal verification)."
+  ],
+  "ci_config": {
+    "workflow": ".github/workflows/ci.yml",
+    "triggers": ["push to main/master", "pull_request to main/master"],
+    "steps": ["checkout", "setup-python 3.11", "cache pip", "pip install -r requirements.txt", "make test + count gate (min 281)", "make test-e2e + count gate (min 55)", "summary panel"],
+    "fail_fast": true,
+    "count_thresholds": {"unit_min": 281, "e2e_min": 55},
+    "makefile_targets": ["test", "test-e2e", "test-all"]
+  },
+  "recommendations": [
+    "Legal review: the waiver policy URLs are best-guesses -- confirm bentondrones.com has a real /policies/privacy-policy page and create a real vision-policy page (no standard Shopify path exists) before accepting real signups.",
+    "Consider bumping WAIVER_VERSION when the waiver text changes (the policy-URL edit changed WAIVER_TEXT but kept WAIVER_VERSION 2026-07-21.v1) -- a legal call.",
+    "CI is fully wired: triggers on push/PR to main+master, pip cache, fail-fast (unit before e2e), test-count gates (min 281/55), and a summary panel. Default branch is main (confirmed via git)."
+  ]
+}

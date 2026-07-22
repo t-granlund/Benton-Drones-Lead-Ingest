@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit/integration tests (tests/) with count gate
+        run: |
+          make test 2>&1 | tee /tmp/unit.out
+          python -c "import re,sys; t=open('/tmp/unit.out').read(); m=re.findall(r'Ran (\d+) tests', t); n=int(m[-1]) if m else 0; print(f'Unit/integration tests: {n}'); sys.exit(1 if n < 281 else 0)"
+
+      - name: Run isolated E2E suite (tests/e2e/) with count gate
+        run: |
+          make test-e2e 2>&1 | tee /tmp/e2e.out
+          python -c "import re,sys; t=open('/tmp/e2e.out').read(); m=re.findall(r'Ran (\d+) tests', t); n=int(m[-1]) if m else 0; print(f'E2E tests: {n}'); sys.exit(1 if n < 55 else 0)"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Suite | Count | Min | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          U=$(grep -oE 'Ran [0-9]+ tests' /tmp/unit.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; U=${U:-N/A}
+          E=$(grep -oE 'Ran [0-9]+ tests' /tmp/e2e.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; E=${E:-N/A}
+          echo "| Unit/Integration (tests/) | $U | 281 | $([ "$U" != "N/A" ] && [ "$U" -ge 281 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E (tests/e2e/) | $E | 55 | $([ "$E" != "N/A" ] && [ "$E" -ge 55 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY

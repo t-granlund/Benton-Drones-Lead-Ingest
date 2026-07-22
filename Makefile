@@ -1,4 +1,4 @@
-.PHONY: install test run init-db clean
+.PHONY: install test test-e2e test-all run init-db clean
 
 PYTHON ?= python
 
@@ -7,6 +7,12 @@ install:
 
 test:
 	$(PYTHON) -m unittest discover -s tests
+
+test-e2e:
+	$(PYTHON) -m unittest discover -s tests/e2e -t tests/e2e -v
+
+# Runs the existing suite (tests/) and the isolated E2E suite (tests/e2e/).
+test-all: test test-e2e
 
 run:
 	ADMIN_PASSWORD=change-me $(PYTHON) -m lead_ingest.server

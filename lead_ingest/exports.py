@@ -76,7 +76,9 @@ def export_kml(rows: list[sqlite3.Row]) -> str:
             continue
         placemark = ET.SubElement(document, "Placemark")
         ET.SubElement(placemark, "name").text = f"{row['first_name']} {row['last_name']}"
-        ET.SubElement(placemark, "description").text = row["full_address"]
+        ET.SubElement(placemark, "description").text = (
+            f"{row['full_address']} | email: {row['email']}"
+        )
         point = ET.SubElement(placemark, "Point")
         ET.SubElement(point, "coordinates").text = f"{row['longitude']},{row['latitude']},0"
 
