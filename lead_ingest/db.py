@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sqlite3
 from pathlib import Path
 
@@ -17,7 +18,7 @@ from lead_ingest.models import (
 from lead_ingest.validation import validate_signup
 from lead_ingest.db_compat import IS_POSTGRES, pg_connect
 
-DEFAULT_DB_PATH = Path("data/lead_ingest.sqlite3")
+DEFAULT_DB_PATH = Path(os.environ.get("DEFAULT_DB_PATH", "data/lead_ingest.sqlite3"))
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -196,15 +197,38 @@ def init_db(conn) -> None:
     conn.commit()
 
 
-def ensure_signup_columns(conn) -> None:
+def _existing_signup_columns(conn) -> set[str]:
     if IS_POSTGRES:
-        return  # Schema is complete; no migrations needed.
-    existing = {row["name"] for row in conn.execute("PRAGMA table_info(signups)")}
+        rows = conn.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = 'signups'"
+        ).fetchall()
+        return {row["column_name"] for row in rows}
+    return {row["name"] for row in conn.execute("PRAGMA table_info(signups)")}
+
+
+def ensure_signup_columns(conn) -> None:
+    """Add any signups columns introduced after the initial schema deploy.
+
+    Lets the app start against older SQLite/Postgres databases without losing
+    existing data. Columns are added with safe defaults.
+    """
     desired = {
+        "address_line2": "TEXT DEFAULT ''",
+        "full_address": "TEXT NOT NULL DEFAULT ''",
+        "latitude": "REAL",
+        "longitude": "REAL",
+        "geocode_status": "TEXT NOT NULL DEFAULT 'pending'",
+        "geocode_provider": "TEXT DEFAULT ''",
+        "geocode_display_name": "TEXT DEFAULT ''",
+        "campaign": "TEXT DEFAULT ''",
+        "source": "TEXT DEFAULT ''",
+        "variant_slug": "TEXT DEFAULT 'default'",
         "shopify_shop_domain": "TEXT DEFAULT ''",
         "shopify_customer_id": "TEXT DEFAULT ''",
         "shopify_page_url": "TEXT DEFAULT ''",
+        "notes": "TEXT DEFAULT ''",
     }
+    existing = _existing_signup_columns(conn)
     for column, definition in desired.items():
         if column not in existing:
             conn.execute(f"ALTER TABLE signups ADD COLUMN {column} {definition}")
