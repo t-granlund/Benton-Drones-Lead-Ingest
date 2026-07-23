@@ -348,7 +348,7 @@ def analytics_summary(conn) -> dict:
             "SELECT COUNT(*) AS count FROM signups WHERE created_at::date = CURRENT_DATE"
         ).fetchone()["count"]
         week = conn.execute(
-            "SELECT COUNT(*) AS count FROM signups WHERE created_at >= NOW() - INTERVAL '7 days'"
+            "SELECT COUNT(*) AS count FROM signups WHERE created_at::timestamptz >= NOW() - INTERVAL '7 days'"
         ).fetchone()["count"]
     else:
         today = conn.execute(
