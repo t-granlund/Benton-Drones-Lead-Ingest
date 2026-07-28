@@ -19,7 +19,7 @@ LOG-017,task,TASK-GUIDE-001,in_progress,passed,benton-lead-orchestrator,2026-07-
 LOG-018,judge,JUDGE-LOCAL-001,ready,passed,benton-lead-orchestrator,2026-07-14T18:30:00Z,Local MVP judge passes after build,EVID-TEST-002
 LOG-019,judge,JUDGE-DESIGN-001,not_ready,passed,benton-lead-orchestrator,2026-07-14T18:30:00Z,Design system capture judge passes,EVID-BUILD-001
 LOG-020,judge,JUDGE-QA-001,ready,passed,benton-lead-orchestrator,2026-07-14T18:35:00Z,Browser QA judge passes after re-QA,EVID-QA-003
-LOG-021,task,TASK-TEST-001,passed,passed,e2e-testing-expert,2026-07-14T19:45:00Z,"E2E test suite expanded from 64 to 189 tests; 3 consecutive passes",EVID-TEST-003
+LOG-021,task,TASK-TEST-001,passed,passed,e2e-testing-expert,2026-07-14T19:45:00Z,E2E test suite expanded from 64 to 189 tests; 3 consecutive passes,EVID-TEST-003
 LOG-022,test,EVID-TEST-003,ready,passed,benton-lead-orchestrator,2026-07-14T19:45:00Z,Fixed tracking CSV header sniffing test and SQLite connection leak in server.py,EVID-TEST-003
 LOG-023,judge,JUDGE-LOCAL-001,ready,passed,benton-lead-orchestrator,2026-07-14T19:45:00Z,Local MVP judge passes with 189 tests and manual E2E verification,EVID-TEST-003
 LOG-024,task,TASK-GITHUB-001,in_progress,passed,code-puppy,2026-07-14T20:30:00Z,Project made GitHub-ready,EVID-GITHUB-001
@@ -47,3 +47,6 @@ LOG-045,task,TASK-WAIVER-001,ready,passed,code-puppy,2026-07-21T18:45:00Z,Real w
 LOG-046,task,TASK-DB-002,ready,passed,code-puppy,2026-07-21T18:45:00Z,PostgreSQL/Neon support implemented and tested,EVID-DB-001
 LOG-047,task,TASK-DEPLOY-003,ready,passed,code-puppy,2026-07-21T19:30:00Z,Render Blueprint and deployment guide created,EVID-DEPLOY-002
 LOG-048,verification,TASK-DEPLOY-003,ready,passed,benton-lead-orchestrator,2026-07-21T19:30:00Z,Live Render URL /healthz returns 200,EVID-DEPLOY-002
+LOG-049,task,TASK-TRACK-001,in_progress,passed,code-puppy-61099e,2026-07-27T22:39:41Z,Tracking CSVs are canonical and being maintained as part of completion workflow,
+LOG-050,task,TASK-QA-002,not_started,passed,code-puppy-61099e,2026-07-27T22:39:41Z,Playwright browser-automation E2E suite added and passing,EVID-QA-004
+LOG-051,judge,JUDGE-QA-001,ready,passed,code-puppy-61099e,2026-07-27T22:39:41Z,Browser QA judge re-verified with automated Playwright suite + existing HTTP E2E coverage,EVID-QA-004

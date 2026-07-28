@@ -8,7 +8,7 @@ REQ-SHOP-002,shopify-app-proxy,Future App Proxy validation,Validate Shopify sign
 REQ-DEPLOY-001,deployment,Deploy leads backend,Host backend at leads.bentondrones.com with HTTPS,goals/backend-deployment-goal.md,judges/backend-deployment-judge.md,P0,blocked,code-puppy-da30e5,,
 REQ-DESIGN-001,design,Capture Shopify design system,Capture logo colors fonts screenshots and styling,goals/design-system-capture-goal.md,judges/design-system-capture-judge.md,P1,not_started,manual,,
 REQ-HARDEN-001,security,Production hardening,Auth CSRF HTTPS rate limiting consent and secrets,goals/production-hardening-goal.md,judges/production-hardening-judge.md,P0,in_progress,code-puppy-da30e5,,
-REQ-QA-001,qa,Browser QA,Browser-based verification of key pages and flows,goals/browser-qa-goal.md,judges/browser-qa-judge.md,P0,in_progress,qa-kitten,,
+REQ-QA-001,qa,Browser QA,Browser-based verification of key pages and flows,goals/browser-qa-goal.md,judges/browser-qa-judge.md,P0,passed,qa-kitten,,2026-07-27T22:39:41Z
 REQ-SCRIPT-001,automation,Read-only preflight scripts,DNS Cloudflare and readiness checks without writes,goals/readonly-preflight-scripts-goal.md,judges/readonly-preflight-scripts-judge.md,P0,in_progress,code-puppy-da30e5,,
 REQ-TRACK-001,tracking,BDS/Dolt-style tracking,Structured auditable status and evidence tracking,goals/bds-dolt-tracking-goal.md,judges/bds-dolt-tracking-judge.md,P1,in_progress,code-puppy-da30e5,,
 REQ-DOC-001,docs,Project status and next-steps docs,Clear living documentation of built/next/blocked state and local cockpit pages,docs/current-state-and-next-steps.md,judges/bds-dolt-tracking-judge.md,P1,passed,code-puppy-da30e5,,

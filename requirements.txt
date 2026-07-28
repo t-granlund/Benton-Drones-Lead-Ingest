@@ -8,3 +8,7 @@ fpdf2>=2.8.0
 # PostgreSQL support: enables Neon (or any Postgres) when DATABASE_URL is set.
 # Without it, the app falls back to the built-in SQLite engine.
 psycopg2-binary>=2.9.0
+
+# Browser automation E2E tests (Playwright + Chromium).
+# Core app remains stdlib-only; this is only needed to run browser journeys.
+playwright>=1.45.0

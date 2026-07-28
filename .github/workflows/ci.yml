@@ -28,6 +28,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install Playwright browsers
+        run: python -m playwright install chromium
+
       - name: Run unit/integration tests (tests/) with count gate
         run: |
           make test 2>&1 | tee /tmp/unit.out
@@ -38,6 +41,11 @@ jobs:
           make test-e2e 2>&1 | tee /tmp/e2e.out
           python -c "import re,sys; t=open('/tmp/e2e.out').read(); m=re.findall(r'Ran (\d+) tests', t); n=int(m[-1]) if m else 0; print(f'E2E tests: {n}'); sys.exit(1 if n < 55 else 0)"
 
+      - name: Run browser-automation E2E suite with count gate
+        run: |
+          make test-e2e-browser 2>&1 | tee /tmp/browser.out
+          python -c "import re,sys; t=open('/tmp/browser.out').read(); m=re.findall(r'Ran (\d+) tests', t); n=int(m[-1]) if m else 0; print(f'Browser E2E tests: {n}'); sys.exit(1 if n < 12 else 0)"
+
       - name: Summary
         if: always()
         run: |
@@ -47,5 +55,7 @@ jobs:
           echo "|-------|-------|-----|--------|" >> $GITHUB_STEP_SUMMARY
           U=$(grep -oE 'Ran [0-9]+ tests' /tmp/unit.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; U=${U:-N/A}
           E=$(grep -oE 'Ran [0-9]+ tests' /tmp/e2e.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; E=${E:-N/A}
+          B=$(grep -oE 'Ran [0-9]+ tests' /tmp/browser.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; B=${B:-N/A}
           echo "| Unit/Integration (tests/) | $U | 281 | $([ "$U" != "N/A" ] && [ "$U" -ge 281 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY
           echo "| E2E (tests/e2e/) | $E | 55 | $([ "$E" != "N/A" ] && [ "$E" -ge 55 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Browser E2E (tests/e2e/) | $B | 12 | $([ "$B" != "N/A" ] && [ "$B" -ge 12 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY
