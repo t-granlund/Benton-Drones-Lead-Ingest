@@ -183,30 +183,58 @@
 
     <h2>Architecture</h2>
     <div class="diagram">
-<pre>
-Shopify storefront          Owned backend (this repo)              Cloudflare / DNS
-+----------------+          +---------------------------+           +------------------+
-| Landing page   |  CTA     |  Render web service       |           | bentondrones.com |
-| CTA link       +--------->|  /signup (variants)       |           | leads.benton...  |
-| source params  |          |  Waiver + typed signature |           +---------+--------+
-+----------------+          |  Neon PostgreSQL DB       |                     |
-                            |  /admin dashboard + map   |                     v
-                            |  CSV / GeoJSON / KML      |            [future custom domain]
-                            +---------------------------+
-                                       ^
-                                       |
-                            +----------+-----------+
-                            |  Mock geocoder       |
-                            |  (production: real   |
-                            |   geocoding provider)|
-                            +----------------------+
+      <svg viewBox="0 0 980 360" role="img" aria-label="Architecture: the Shopify storefront and visitors reach the Render-hosted app, which writes to the Neon PostgreSQL database and serves the admin dashboard and exports. A future Cloudflare custom domain will point at Render." style="display:block;width:100%;height:auto;font-family:'Jost',sans-serif">
+        <!-- Shopify storefront -->
+        <rect x="30" y="40" width="200" height="80" rx="12" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+        <text x="130" y="68" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00">Shopify Storefront</text>
+        <text x="130" y="88" text-anchor="middle" font-size="11.5" fill="#44464f">landing page + CTA link</text>
+        <text x="130" y="104" text-anchor="middle" font-size="11" fill="#8a4a00">future App Proxy</text>
 
-Local development:
-+---------------------------+
-|  python -m lead_ingest.server   |
-|  SQLite: data/lead_ingest.sqlite3 |
-+---------------------------+
-</pre>
+        <!-- Visitor -->
+        <rect x="30" y="180" width="200" height="66" rx="33" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+        <text x="130" y="208" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Visitor</text>
+        <text x="130" y="227" text-anchor="middle" font-size="11.5" fill="#44464f">direct link</text>
+
+        <!-- Owned backend / Render -->
+        <rect x="330" y="60" width="280" height="200" rx="14" fill="#f0f7f4" stroke="#809948" stroke-width="2.5"/>
+        <text x="470" y="88" text-anchor="middle" font-size="16" font-weight="700" fill="#1b1b1b">Render Web Service</text>
+        <text x="470" y="108" text-anchor="middle" font-size="11.5" fill="#44464f">Python stdlib server · Docker · HTTPS</text>
+        <rect x="352" y="124" width="236" height="34" rx="8" fill="#ffffff" stroke="#809948"/>
+        <text x="470" y="146" text-anchor="middle" font-size="12" fill="#1b1b1b">/signup · waiver · typed signature</text>
+        <rect x="352" y="166" width="236" height="34" rx="8" fill="#ffffff" stroke="#809948"/>
+        <text x="470" y="188" text-anchor="middle" font-size="12" fill="#1b1b1b">/admin dashboard · Leaflet map</text>
+        <rect x="352" y="208" width="236" height="34" rx="8" fill="#ffffff" stroke="#809948"/>
+        <text x="470" y="230" text-anchor="middle" font-size="12" fill="#1b1b1b">CSV · GeoJSON · KML exports</text>
+
+        <!-- Neon DB -->
+        <ellipse cx="790" cy="90" rx="120" ry="20" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+        <path d="M670 90 V 150 a 120 20 0 0 0 240 0 V 90" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+        <text x="790" y="122" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Neon PostgreSQL</text>
+        <text x="790" y="140" text-anchor="middle" font-size="11.5" fill="#44464f">leads · consent · signatures</text>
+
+        <!-- Geocoder -->
+        <rect x="360" y="300" width="220" height="48" rx="10" fill="#e7ecff" stroke="#6184d8" stroke-width="1.5"/>
+        <text x="470" y="321" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a5a">Geocoder</text>
+        <text x="470" y="338" text-anchor="middle" font-size="11" fill="#44464f">mock now · real provider later</text>
+
+        <!-- Cloudflare -->
+        <rect x="690" y="250" width="240" height="66" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2" stroke-dasharray="6 4"/>
+        <text x="810" y="276" text-anchor="middle" font-size="14" font-weight="600" fill="#5f1118">Cloudflare / DNS</text>
+        <text x="810" y="295" text-anchor="middle" font-size="11.5" fill="#44464f">leads.bentondrones.com (future)</text>
+
+        <!-- Arrows -->
+        <line x1="230" y1="80" x2="322" y2="110" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="318,104 332,111 320,118" fill="#809948"/>
+        <line x1="230" y1="213" x2="322" y2="180" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="318,172 332,179 320,188" fill="#809948"/>
+        <line x1="610" y1="140" x2="668" y2="120" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="662,112 676,118 664,126" fill="#809948"/>
+        <line x1="500" y1="260" x2="490" y2="294" stroke="#6184d8" stroke-width="2" stroke-dasharray="4 3"/>
+        <polygon points="482,290 489,302 496,290" fill="#6184d8"/>
+        <line x1="810" y1="250" x2="700" y2="160" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+        <polygon points="694,168 700,154 706,168" fill="#c62828"/>
+      </svg>
+      <p style="text-align:center;font-size:0.84rem;color:var(--md-sys-color-on-surface-variant);margin:10px 0 0">The owned backend on Render talks to the Neon database. Shopify sends visitors via a CTA; the custom Cloudflare domain is a future step. See the <a href="architecture-before-after.html">before &amp; after view</a> and the <a href="architecture-diagram.html">detailed diagram</a>.</p>
     </div>
 
     <h2>Data flow</h2>
@@ -305,7 +333,7 @@ ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
       <tr><td>SQLite / Neon PostgreSQL persistence</td><td><span class="chip pass">Pass</span> SQLite local; Neon on Render</td></tr>
       <tr><td>Admin dashboard with maps, drill-down, analytics</td><td><span class="chip pass">Pass</span></td></tr>
       <tr><td>CSV / GeoJSON / KML exports</td><td><span class="chip pass">Pass</span></td></tr>
-      <tr><td>Unit tests</td><td><span class="chip pass">Pass</span> 281 tests</td></tr>
+      <tr><td>Unit + E2E tests</td><td><span class="chip pass">Pass</span> 348 tests (281 unit · 55 HTTP E2E · 12 browser E2E)</td></tr>
       <tr><td>Browser QA</td><td><span class="chip pass">Pass</span></td></tr>
       <tr><td>Production deployment</td><td><span class="chip pass">Live</span> on Render + Neon; custom domain pending</td></tr>
     </table>

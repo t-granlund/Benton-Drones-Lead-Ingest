@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benton Drones — Architecture: Before &amp; After</title>
+  <meta name="description" content="Visual before-and-after architecture comparison for the Benton Drones lead ingest system: the old Google Forms / PDFfiller / Sheets / manual Earth workflow versus the new self-owned Render + Neon pipeline.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --md-sys-color-primary: #809948;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f0f7f4;
+      --md-sys-color-secondary: #6184d8;
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-container-low: #fbfbf8;
+      --md-sys-color-surface-container: #f5f5f0;
+      --md-sys-color-background: #f7f7f3;
+      --md-sys-color-on-surface: #1b1b1b;
+      --md-sys-color-on-surface-variant: #44464f;
+      --md-sys-color-outline: #d7d3c5;
+      --md-sys-color-outline-variant: #ede8d8;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-error-container: #f9dedc;
+      --olive: #809948;
+      --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
+      --cream: #fffce7;
+      --pale-blue: #e7ecff;
+      --warn: #e8893a;
+      --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
+      --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
+      --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; font-family: 'Jost', sans-serif; font-weight: 500;
+      letter-spacing: 0.02rem; background: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-surface); line-height: 1.65; font-size: 1.05rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--md-sys-color-secondary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .benton-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; height: 72px; padding: 0 32px;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--md-sys-color-outline); box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .benton-nav .logo img { height: 44px; width: auto; }
+    .benton-nav .nav-links { display: flex; gap: 4px; }
+    .benton-nav .nav-links a {
+      color: var(--md-sys-color-on-surface-variant); text-decoration: none;
+      font-weight: 600; text-transform: uppercase; font-size: 0.78rem;
+      letter-spacing: 0.08rem; padding: 10px 16px; border-radius: 999px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .benton-nav .nav-links a:hover { background: var(--md-sys-color-primary-container); color: var(--olive-deep); }
+    .hero {
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color: var(--md-sys-color-on-primary); padding: 64px 24px 72px; text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .hero img { height: 60px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); }
+    .hero .eyebrow { display: block; margin-bottom: 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.82; }
+    .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
+    .hero p { margin: 0 auto; max-width: 700px; opacity: 0.92; font-size: 1.1rem; font-weight: 500; line-height: 1.55; }
+    main { max-width: 1080px; margin: 0 auto; padding: 48px 24px 80px; }
+    h2 {
+      color: var(--md-sys-color-primary); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.2;
+      border-bottom: 1px solid var(--md-sys-color-outline); padding-bottom: 8px; margin-top: 48px;
+    }
+    h3 { color: var(--olive-deep); font-size: 1.15rem; font-weight: 700; margin: 0 0 10px; }
+    .card {
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
+      border-radius: 16px; padding: 28px; margin: 24px 0; box-shadow: var(--el-1);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--el-2); }
+    .panel-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; border: 1.5px solid;
+    }
+    .panel-label.before { background: var(--md-sys-color-error-container); color: #8e1c1c; border-color: var(--md-sys-color-error); }
+    .panel-label.after { background: var(--md-sys-color-primary-container); color: #3d4d1f; border-color: var(--olive); }
+    .panel-label .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .panel-label.before .dot { background: var(--md-sys-color-error); }
+    .panel-label.after .dot { background: var(--olive); }
+    .diagram-wrap { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px; padding: 18px; margin: 14px 0 6px; overflow-x: auto; }
+    .svg-diagram { display: block; width: 100%; height: auto; margin: 0 auto; }
+    .svg-diagram text { font-family: 'Jost', sans-serif; }
+    .diagram-caption { text-align: center; font-size: 0.84rem; color: var(--md-sys-color-on-surface-variant); margin-top: 10px; }
+    .vs-band {
+      display: flex; align-items: center; justify-content: center; gap: 18px; margin: 40px 0;
+    }
+    .vs-band .line { flex: 1; height: 1px; background: var(--md-sys-color-outline); }
+    .vs-band .vs {
+      width: 64px; height: 64px; border-radius: 50%; flex: none;
+      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.2rem; letter-spacing: 0.04em; box-shadow: var(--el-2);
+    }
+    .win-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 18px; }
+    .win {
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
+      border-top: 4px solid var(--olive); border-radius: 14px; padding: 20px; box-shadow: var(--el-1);
+    }
+    .win b { color: var(--olive-deep); display: block; margin-bottom: 6px; }
+    .win p { margin: 0; font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.5; }
+    footer { text-align: center; padding: 40px 20px 48px; color: var(--md-sys-color-on-surface-variant); font-size: 0.85rem; }
+    footer a { margin: 0 12px; font-weight: 700; color: var(--md-sys-color-primary); }
+    @media (max-width: 640px) {
+      .benton-nav { height: 60px; padding: 0 16px; }
+      .hero { padding: 48px 16px 56px; }
+      .hero h1 { font-size: 1.8rem; }
+      main { padding: 32px 16px 64px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <nav class="benton-nav">
+    <a class="logo" href="index.html"><img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy"></a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="friend-guide.html">Setup</a>
+      <a href="training-guide.html">Training</a>
+      <a href="architecture-diagram.html">Detailed Diagram</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+    <span class="eyebrow">Architecture Evolution</span>
+    <h1>Before &amp; After</h1>
+    <p>A visual comparison of the old manual workflow and the new self-owned lead ingest pipeline. No code, no jargon — just the shape of the system.</p>
+  </header>
+
+  <main>
+    <!-- ===================== BEFORE ===================== -->
+    <section class="card" id="before">
+      <span class="panel-label before"><span class="dot"></span>Before — the old way</span>
+      <h3>Four disconnected tools, manual glue, scattered data</h3>
+      <p style="margin-top:0;color:var(--md-sys-color-on-surface-variant)">
+        Every lead used to bounce through four separate services. A human had to copy information between them by hand.
+        Customer data lived in several places at once, and there was no single place to see the whole picture.
+      </p>
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 980 430" role="img" aria-label="Old workflow: a visitor fills a Google Form, a person copies it into PDFfiller for the waiver, results land in Google Sheets, and someone manually plots addresses in Google Earth. Each step is disconnected and requires manual copying.">
+          <!-- Visitor -->
+          <rect x="30" y="180" width="150" height="70" rx="35" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+          <text x="105" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Visitor</text>
+          <text x="105" y="230" text-anchor="middle" font-size="11.5" fill="#44464f">wants to sign up</text>
+
+          <!-- Google Forms -->
+          <rect x="240" y="40" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+          <text x="340" y="70" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">Google Forms</text>
+          <text x="340" y="90" text-anchor="middle" font-size="11.5" fill="#44464f">raw responses</text>
+          <text x="340" y="106" text-anchor="middle" font-size="11" fill="#8e1c1c">no waiver signing</text>
+
+          <!-- PDFfiller -->
+          <rect x="240" y="180" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+          <text x="340" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">PDFfiller</text>
+          <text x="340" y="230" text-anchor="middle" font-size="11.5" fill="#44464f">waiver by hand</text>
+          <text x="340" y="246" text-anchor="middle" font-size="11" fill="#8e1c1c">manual per lead</text>
+
+          <!-- Google Sheets -->
+          <rect x="240" y="320" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+          <text x="340" y="350" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">Google Sheets</text>
+          <text x="340" y="370" text-anchor="middle" font-size="11.5" fill="#44464f">copy-paste tracking</text>
+          <text x="340" y="386" text-anchor="middle" font-size="11" fill="#8e1c1c">error-prone</text>
+
+          <!-- Google Earth -->
+          <rect x="560" y="180" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+          <text x="660" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">Google Earth</text>
+          <text x="660" y="230" text-anchor="middle" font-size="11.5" fill="#44464f">addresses typed by hand</text>
+          <text x="660" y="246" text-anchor="middle" font-size="11" fill="#8e1c1c">manual planning</text>
+
+          <!-- Manual person -->
+          <rect x="800" y="170" width="150" height="90" rx="45" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+          <text x="875" y="205" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00">A person</text>
+          <text x="875" y="224" text-anchor="middle" font-size="11.5" fill="#5b3a00">copies everything</text>
+          <text x="875" y="240" text-anchor="middle" font-size="11.5" fill="#5b3a00">between tools</text>
+
+          <!-- Arrows: visitor -> forms -->
+          <line x1="180" y1="200" x2="232" y2="90" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+          <polygon points="228,84 240,80 236,94" fill="#c62828"/>
+          <!-- forms -> person -->
+          <line x1="440" y1="78" x2="806" y2="180" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+          <polygon points="798,174 812,180 800,190" fill="#c62828"/>
+          <!-- person -> pdffiller -->
+          <line x1="800" y1="215" x2="448" y2="218" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+          <polygon points="456,212 442,218 456,224" fill="#c62828"/>
+          <!-- person -> sheets -->
+          <line x1="806" y1="245" x2="448" y2="350" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+          <polygon points="454,344 442,352 456,356" fill="#c62828"/>
+          <!-- person -> earth -->
+          <line x1="800" y1="205" x2="766" y2="212" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+          <polygon points="774,206 760,212 774,218" fill="#c62828"/>
+
+          <!-- Scattered data callout -->
+          <text x="340" y="160" text-anchor="middle" font-size="11.5" font-style="italic" fill="#8e1c1c">data copied by hand, step to step</text>
+        </svg>
+      </div>
+      <p class="diagram-caption">The old workflow: four separate tools, no connection between them, and a person manually moving data at every step.</p>
+    </section>
+
+    <!-- ===================== VS divider ===================== -->
+    <div class="vs-band" aria-hidden="true">
+      <span class="line"></span>
+      <span class="vs">VS</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- ===================== AFTER ===================== -->
+    <section class="card" id="after">
+      <span class="panel-label after"><span class="dot"></span>After — the new way</span>
+      <h3>One pipeline, automatic steps, all data in one place</h3>
+      <p style="margin-top:0;color:var(--md-sys-color-on-surface-variant)">
+        Now the visitor does everything in a single branded form. The system handles the waiver, signature, storage,
+        mapping, and exports automatically. No copying, no re-typing, no scattered spreadsheets.
+      </p>
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 980 470" role="img" aria-label="New workflow: a visitor uses the branded signup form on the Render app. The app stores the lead, consent, and signature in the Neon database, creates a JIRA ticket, and the admin sees everything on one dashboard with a map and one-click exports.">
+          <!-- Visitor -->
+          <rect x="30" y="200" width="140" height="70" rx="35" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+          <text x="100" y="228" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Visitor</text>
+          <text x="100" y="248" text-anchor="middle" font-size="11.5" fill="#44464f">fills one form</text>
+
+          <!-- Signup form -->
+          <rect x="230" y="195" width="180" height="80" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="320" y="224" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Signup Form</text>
+          <text x="320" y="243" text-anchor="middle" font-size="11.5" fill="#44464f">waiver + typed</text>
+          <text x="320" y="259" text-anchor="middle" font-size="11.5" fill="#44464f">signature built in</text>
+
+          <!-- Render app -->
+          <rect x="470" y="60" width="200" height="90" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="570" y="88" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Render App</text>
+          <text x="570" y="107" text-anchor="middle" font-size="11.5" fill="#44464f">checks &amp; validates</text>
+          <text x="570" y="123" text-anchor="middle" font-size="11.5" fill="#44464f">auto-geocodes address</text>
+          <text x="570" y="139" text-anchor="middle" font-size="11" fill="#3d4d1f">spam &amp; bot protection</text>
+
+          <!-- Neon DB (cylinder) -->
+          <ellipse cx="570" cy="225" rx="95" ry="18" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <path d="M475 225 V 300 a 95 18 0 0 0 190 0 V 225" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="570" y="258" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Neon Database</text>
+          <text x="570" y="276" text-anchor="middle" font-size="11.5" fill="#44464f">leads + consent + signatures</text>
+          <text x="570" y="292" text-anchor="middle" font-size="11" fill="#3d4d1f">one safe home for data</text>
+
+          <!-- JIRA -->
+          <rect x="470" y="370" width="200" height="64" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="570" y="396" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">JIRA Ticket</text>
+          <text x="570" y="415" text-anchor="middle" font-size="11.5" fill="#44464f">created automatically</text>
+
+          <!-- Admin dashboard -->
+          <rect x="760" y="60" width="190" height="90" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="855" y="88" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Admin Dashboard</text>
+          <text x="855" y="107" text-anchor="middle" font-size="11.5" fill="#44464f">map + analytics</text>
+          <text x="855" y="123" text-anchor="middle" font-size="11.5" fill="#44464f">every lead in one view</text>
+          <text x="855" y="139" text-anchor="middle" font-size="11" fill="#3d4d1f">password protected</text>
+
+          <!-- Exports -->
+          <rect x="760" y="200" width="190" height="80" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="855" y="228" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">One-Click Exports</text>
+          <text x="855" y="247" text-anchor="middle" font-size="11.5" fill="#44464f">CSV spreadsheet</text>
+          <text x="855" y="263" text-anchor="middle" font-size="11.5" fill="#44464f">GeoJSON / KML for maps</text>
+
+          <!-- Arrows -->
+          <line x1="170" y1="235" x2="222" y2="235" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="218,229 232,235 218,241" fill="#809948"/>
+
+          <line x1="410" y1="220" x2="464" y2="130" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="458,136 466,124 470,138" fill="#809948"/>
+
+          <line x1="570" y1="150" x2="570" y2="200" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="564,196 570,208 576,196" fill="#809948"/>
+
+          <line x1="620" y1="150" x2="640" y2="364" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="636,358 642,370 646,356" fill="#809948"/>
+
+          <line x1="665" y1="245" x2="752" y2="240" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="746,234 760,240 746,246" fill="#809948"/>
+
+          <line x1="670" y1="105" x2="752" y2="105" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="746,99 760,105 746,111" fill="#809948"/>
+
+          <!-- Automatic note -->
+          <text x="320" y="300" text-anchor="middle" font-size="11.5" font-style="italic" fill="#3d4d1f">everything after the form is automatic</text>
+        </svg>
+      </div>
+      <p class="diagram-caption">The new workflow: one form, then the system does the rest — storage, mapping, ticketing, and exports all happen automatically.</p>
+    </section>
+
+    <!-- ===================== What improved ===================== -->
+    <h2>What actually improved</h2>
+    <div class="win-grid">
+      <div class="win">
+        <b>No more manual copying</b>
+        <p>The waiver, signature, and address are captured once in the form and stored directly. Nobody re-types anything.</p>
+      </div>
+      <div class="win">
+        <b>One home for data</b>
+        <p>Leads, consent records, and signatures live together in one database instead of being scattered across forms, PDFs, and spreadsheets.</p>
+      </div>
+      <div class="win">
+        <b>Automatic mapping</b>
+        <p>Addresses are geocoded and placed on a live map automatically — no more typing addresses into Google Earth by hand.</p>
+      </div>
+      <div class="win">
+        <b>Instant exports</b>
+        <p>CSV, GeoJSON, and KML come straight from the dashboard with one click, ready for spreadsheets or Google Earth.</p>
+      </div>
+      <div class="win">
+        <b>Built-in legal trail</b>
+        <p>Every signup records the exact waiver text, the typed signature, and a timestamp — automatically, every time.</p>
+      </div>
+      <div class="win">
+        <b>Owned, not rented</b>
+        <p>The whole pipeline runs on infrastructure Benton Drones controls, rather than depending on four separate third-party tools.</p>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--pale-blue);border-color:#6184d8">
+      <h3 style="color:#1a2a5a">Want the technical version?</h3>
+      <p style="margin:0;color:var(--md-sys-color-on-surface-variant)">
+        This page is the plain-language overview. For the full component-by-component diagram with status badges and the
+        data-flow walkthrough, see the <a href="architecture-diagram.html">detailed architecture diagram</a>.
+        To run the system yourself, start with the <a href="friend-guide.html">setup guide</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <a href="friend-guide.html">Setup Guide</a>
+    <a href="training-guide.html">Training Guide</a>
+    <a href="architecture-diagram.html">Detailed Diagram</a>
+    <p>© 2026 Benton Drones · Architecture: Before &amp; After · Fully visual, no code</p>
+  </footer>
+</body>
+</html>

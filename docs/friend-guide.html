@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Benton Drones Lead Ingest — Friend's Setup Guide</title>
-  <meta name="description" content="End-to-end guide for cloning, running, and using the Benton Drones lead ingest system on a Mac, plus the live Render + Neon hosted app.">
+  <title>Benton Drones Lead Ingest — Anderson's Guide</title>
+  <meta name="description" content="A plain-language, no-code guide for Anderson to run and use the Benton Drones lead ingest system — how it works, how to use the live app, and how to run it locally.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,20 +16,17 @@
       --md-sys-color-on-primary-container: #1b1b1b;
       --md-sys-color-secondary: #6184d8;
       --md-sys-color-on-secondary: #ffffff;
-      --md-sys-color-tertiary: #0000ff;
       --md-sys-color-surface: #ffffff;
       --md-sys-color-surface-container-low: #fbfbf8;
       --md-sys-color-surface-container: #f5f5f0;
-      --md-sys-color-surface-container-high: #efefe9;
       --md-sys-color-background: #f7f7f3;
       --md-sys-color-on-surface: #1b1b1b;
       --md-sys-color-on-surface-variant: #44464f;
       --md-sys-color-outline: #d7d3c5;
       --md-sys-color-outline-variant: #ede8d8;
       --md-sys-color-error: #b3261e;
-      --md-sys-color-on-error: #ffffff;
       --md-sys-color-error-container: #f9dedc;
-      --olive: var(--md-sys-color-primary);
+      --olive: #809948;
       --olive-dark: #6f853d;
       --olive-deep: #5a6f30;
       --cream: #fffce7;
@@ -37,146 +34,97 @@
       --warn: #e8893a;
       --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
       --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
-      --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
-      --md-elevation-1: var(--el-1);
-      --md-elevation-2: var(--el-2);
-      --md-elevation-3: var(--el-3);
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      margin: 0;
-      font-family: 'Jost', sans-serif;
-      font-weight: 500;
-      letter-spacing: 0.02rem;
-      background: var(--md-sys-color-background);
-      color: var(--md-sys-color-on-surface);
-      line-height: 1.65;
-      font-size: 1.05rem;
-      -webkit-font-smoothing: antialiased;
+      margin: 0; font-family: 'Jost', sans-serif; font-weight: 500; letter-spacing: 0.02rem;
+      background: var(--md-sys-color-background); color: var(--md-sys-color-on-surface);
+      line-height: 1.65; font-size: 1.05rem; -webkit-font-smoothing: antialiased;
     }
     .benton-nav {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; height: 72px; padding: 0 32px;
-      background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--md-sys-color-outline);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      height: 72px; padding: 0 32px; background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--md-sys-color-outline); box-shadow: 0 1px 3px rgba(0,0,0,0.04);
       position: sticky; top: 0; z-index: 100;
     }
-    .benton-nav .logo img { height: 44px; width: auto; transition: transform 0.2s ease, opacity 0.2s ease; }
-    .benton-nav .logo:hover img { transform: scale(1.03); opacity: 0.92; }
+    .benton-nav .logo img { height: 44px; width: auto; }
     .benton-nav .nav-links { display: flex; gap: 4px; }
     .benton-nav .nav-links a {
-      color: var(--md-sys-color-on-surface-variant); text-decoration: none;
-      font-weight: 600; text-transform: uppercase; font-size: 0.78rem;
-      letter-spacing: 0.08rem; padding: 10px 16px; border-radius: 999px;
-      transition: background 0.2s ease, color 0.2s ease;
+      color: var(--md-sys-color-on-surface-variant); text-decoration: none; font-weight: 600;
+      text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.08rem;
+      padding: 10px 16px; border-radius: 999px; transition: background 0.2s ease, color 0.2s ease;
     }
     .benton-nav .nav-links a:hover { background: var(--md-sys-color-primary-container); color: var(--olive-deep); }
-    .benton-nav a.logo { padding: 0; }
-    .benton-nav a.logo:hover { background: transparent; }
     .hero {
       background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
       color: var(--md-sys-color-on-primary); padding: 64px 24px 72px; text-align: center;
       box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
-    .hero img { height: 60px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); transition: transform 0.2s ease, opacity 0.2s ease; }
-    .hero img:hover { transform: scale(1.03); opacity: 0.92; }
+    .hero img { height: 60px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); }
     .hero .eyebrow { display: block; margin-bottom: 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.82; }
-    .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
-    .hero p { margin: 0 auto; max-width: 680px; opacity: 0.92; font-size: 1.1rem; font-weight: 500; line-height: 1.55; }
-    main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+    .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; line-height: 1.15; }
+    .hero p { margin: 0 auto; max-width: 700px; opacity: 0.92; font-size: 1.1rem; line-height: 1.55; }
+    main { max-width: 880px; margin: 0 auto; padding: 48px 24px 80px; }
     h2 {
-      color: var(--md-sys-color-primary); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.2;
+      color: var(--md-sys-color-primary); font-size: 1.7rem; font-weight: 700; line-height: 1.2;
       border-bottom: 1px solid var(--md-sys-color-outline); padding-bottom: 8px; margin-top: 48px;
     }
-    h3 { color: var(--md-sys-color-primary); font-size: 1.3rem; font-weight: 600; margin-top: 28px; line-height: 1.3; }
+    h3 { color: var(--md-sys-color-primary); font-size: 1.3rem; font-weight: 600; margin-top: 28px; }
     h4 { color: var(--olive-deep); font-size: 1.05rem; font-weight: 700; margin: 20px 0 8px; }
     a { color: var(--md-sys-color-secondary); text-decoration: none; }
     a:hover { text-decoration: underline; }
     .card {
       background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
-      border-radius: 16px; padding: 28px; margin: 20px 0;
-      box-shadow: var(--el-1); transition: transform 0.22s ease, box-shadow 0.22s ease;
+      border-radius: 16px; padding: 28px; margin: 20px 0; box-shadow: var(--el-1);
     }
-    .card:hover { transform: translateY(-2px); box-shadow: var(--el-2); }
-    .card.cream { background: #fffce7; }
-    .card.blue { background: #e7ecff; }
+    .card.cream { background: var(--cream); }
+    .card.blue { background: var(--pale-blue); }
     .card.green { background: var(--md-sys-color-primary-container); }
-    .card.warn { border-color: #e8893a; background: #fff8e1; }
+    .card.warn { border-color: var(--warn); background: #fff8e1; }
     .card.block { border-color: var(--md-sys-color-error); background: var(--md-sys-color-error-container); }
-    pre, code {
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-      font-size: 0.9rem; letter-spacing: 0;
-    }
-    pre {
-      background: #1b1b1b; color: #e5e7eb; border: 1px solid var(--md-sys-color-outline);
-      border-radius: 8px; padding: 16px; overflow-x: auto; margin: 0;
-    }
+    pre, code { font-family: 'SFMono-Regular', Consolas, Menlo, monospace; font-size: 0.9rem; letter-spacing: 0; }
+    pre { background: #1b1b1b; color: #e5e7eb; border: 1px solid var(--md-sys-color-outline); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 0; }
     code { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline); border-radius: 6px; padding: 2px 6px; }
     ol.steps { counter-reset: step; list-style: none; padding: 0; }
-    ol.steps > li {
-      position: relative; padding-left: 48px; margin-bottom: 20px; min-height: 32px;
-    }
+    ol.steps > li { position: relative; padding-left: 48px; margin-bottom: 20px; min-height: 32px; }
     ol.steps > li::before {
-      counter-increment: step;
-      content: counter(step);
-      position: absolute; left: 0; top: 0;
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
-      display: flex; align-items: center; justify-content: center;
+      counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0;
+      width: 32px; height: 32px; border-radius: 50%; background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary); display: flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: 0.9rem;
     }
     ul.check { padding-left: 22px; margin: 0; }
     ul.check li { margin-bottom: 10px; }
-    table {
-      width: 100%; border-collapse: collapse; background: var(--md-sys-color-surface);
-      border: 1px solid var(--md-sys-color-outline); border-radius: 12px; overflow: hidden;
-    }
-    th, td { border-bottom: 1px solid var(--md-sys-color-outline-variant); padding: 14px 16px; text-align: left; }
+    table { width: 100%; border-collapse: collapse; background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline); border-radius: 12px; overflow: hidden; }
+    th, td { border-bottom: 1px solid var(--md-sys-color-outline-variant); padding: 14px 16px; text-align: left; vertical-align: top; }
     th { background: var(--md-sys-color-surface-container); color: var(--olive-deep); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.08rem; text-transform: uppercase; }
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--md-sys-color-surface-container-low); }
     .toc { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 32px; }
     .toc a {
-      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
-      color: var(--md-sys-color-primary); padding: 10px 18px; border-radius: 999px;
-      font-weight: 600; letter-spacing: 0.08rem; text-decoration: none; font-size: 0.78rem;
-      text-transform: uppercase; box-shadow: var(--el-1);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline); color: var(--md-sys-color-primary);
+      padding: 10px 18px; border-radius: 999px; font-weight: 600; letter-spacing: 0.08rem; text-decoration: none;
+      font-size: 0.78rem; text-transform: uppercase; box-shadow: var(--el-1);
     }
-    .toc a:hover { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); transform: translateY(-1px); box-shadow: var(--el-2); text-decoration: none; }
-    .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 22px 0; }
-    .link-card {
-      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
-      border-top: 4px solid var(--md-sys-color-primary); border-radius: 14px; padding: 20px;
-      box-shadow: var(--el-1); transition: transform 0.22s ease, box-shadow 0.22s ease;
-    }
-    .link-card:hover { transform: translateY(-3px); box-shadow: var(--el-2); }
-    .link-card a { display: block; font-weight: 700; color: var(--olive-deep); margin-bottom: 6px; }
-    .link-card p { margin: 0; font-size: 0.9rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.45; }
-    .diagram {
-      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
-      border-radius: 12px; padding: 20px; overflow-x: auto; font-size: 0.85rem; line-height: 1.4;
-      box-shadow: var(--md-elevation-1);
-    }
-    .pill {
-      display: inline-block; padding: 5px 14px; border-radius: 999px;
-      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06rem;
-      text-transform: uppercase; border: 1.5px solid;
-    }
+    .toc a:hover { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+    .pill { display: inline-block; padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06rem; text-transform: uppercase; border: 1.5px solid; }
     .pill.pass { background: var(--md-sys-color-primary-container); color: #3d4d1f; border-color: var(--md-sys-color-primary); }
-    .pill.warn { background: #fff3e0; color: #8a4a00; border-color: #e8893a; }
+    .pill.warn { background: #fff3e0; color: #8a4a00; border-color: var(--warn); }
     .pill.block { background: var(--md-sys-color-error-container); color: #8e1c1c; border-color: var(--md-sys-color-error); }
     .cmd { background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline); border-radius: 12px; box-shadow: var(--el-1); margin: 18px 0; overflow: hidden; }
     .cmd .cmd-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--md-sys-color-surface-container); border-bottom: 1px solid var(--md-sys-color-outline-variant); }
     .cmd .cmd-label { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08rem; color: var(--olive-deep); }
     .cmd pre { border: none; border-radius: 0; }
+    .diagram-wrap { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px; padding: 18px; margin: 18px 0 6px; overflow-x: auto; }
+    .svg-diagram { display: block; width: 100%; height: auto; margin: 0 auto; }
+    .svg-diagram text { font-family: 'Jost', sans-serif; }
+    .diagram-caption { text-align: center; font-size: 0.84rem; color: var(--md-sys-color-on-surface-variant); margin-top: 10px; }
+    .analogy { border-left: 5px solid var(--md-sys-color-secondary); background: var(--pale-blue); border-radius: 0 12px 12px 0; padding: 16px 20px; margin: 18px 0; }
+    .analogy b { color: #1a2a5a; }
     footer { text-align: center; padding: 40px 20px 48px; color: var(--md-sys-color-on-surface-variant); font-size: 0.85rem; }
     @media (max-width: 600px) {
       .benton-nav { height: 60px; padding: 0 16px; }
-      .benton-nav .logo img { height: 36px; }
-      .benton-nav .nav-links a { padding: 8px 12px; font-size: 0.72rem; }
       .hero { padding: 48px 16px 56px; }
       .hero h1 { font-size: 1.8rem; }
       main { padding: 32px 16px 64px; }
@@ -187,323 +135,280 @@
 </head>
 <body>
   <nav class="benton-nav">
-    <a class="logo" href="/overview">
-      <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
-    </a>
+    <a class="logo" href="../index.html"><img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy"></a>
     <div class="nav-links">
-      <a href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/">Home</a>
+      <a href="../index.html">Home</a>
       <a href="training-guide.html">Training</a>
-      <a href="architecture-diagram.html">Architecture</a>
+      <a href="architecture-before-after.html">Before / After</a>
+      <a href="architecture-diagram.html">Diagram</a>
     </div>
   </nav>
 
   <header class="hero">
     <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
-    <span class="eyebrow">End-to-End Setup Guide</span>
-    <h1>Lead Ingest — For Friends</h1>
-    <p>Everything you need to clone this repo to a Mac, run it locally, and use the live hosted app on Render with a Neon PostgreSQL database.</p>
+    <span class="eyebrow">Written for Anderson</span>
+    <h1>Your Lead Ingest System, Explained</h1>
+    <p>This is your system, built for Benton Drones. This guide explains what it does, how to use it, and how to run it — in plain language, no coding required. You bring the engineering brain; this fills in the software part.</p>
   </header>
 
   <main>
     <div class="toc">
-      <a href="#links">Quick links</a>
-      <a href="#what">What it is</a>
-      <a href="#hosted">Use the hosted app</a>
-      <a href="#clone">Clone to your Mac</a>
-      <a href="#flow">Data flow</a>
-      <a href="#neon">Render + Neon</a>
-      <a href="#notes">Important notes</a>
-      <a href="#trouble">Troubleshooting</a>
+      <a href="#what">What you have</a>
+      <a href="#how">How it works</a>
+      <a href="#live">Use the live app</a>
+      <a href="#local">Run it yourself</a>
+      <a href="#parts">The moving parts</a>
+      <a href="#notes">Good to know</a>
+      <a href="#trouble">If something breaks</a>
     </div>
 
-    <section id="links">
-      <h2>Quick links</h2>
-      <div class="link-grid">
-        <div class="link-card">
-          <a href="https://github.com/t-granlund/Benton-Drones-Lead-Ingest">GitHub repo</a>
-          <p>Source code, issues, and the README.</p>
-        </div>
-        <div class="link-card">
-          <a href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/">GitHub Pages</a>
-          <p>Static guides, architecture diagram, and this page.</p>
-        </div>
-        <div class="link-card">
-          <a href="https://benton-drones-lead-ingest.onrender.com">Live app on Render</a>
-          <p>Public signup form and admin dashboard.</p>
-        </div>
-        <div class="link-card">
-          <a href="https://github.com/t-granlund/Benton-Drones-Lead-Ingest/blob/main/docs/render-deployment-guide.md">Render deployment guide</a>
-          <p>Full walkthrough for Render + Neon.</p>
-        </div>
+    <section id="what">
+      <h2>What you have</h2>
+      <p>
+        Anderson — this is a <strong>lead capture system</strong> built specifically for Benton Drones. It replaces the
+        old routine of Google Forms, PDFfiller, Google Sheets, and manually plotting addresses in Google Earth.
+        All of that now happens in one place, automatically.
+      </p>
+      <p>Here's the short version of what it does:</p>
+      <ul class="check">
+        <li>A customer visits your branded signup page and fills out one form — including reading and signing the waiver by typing their name.</li>
+        <li>The system checks the info, pinpoints the address on a map, and files everything away safely.</li>
+        <li>You log into a private dashboard and see every lead on a map, with totals and breakdowns.</li>
+        <li>With one click you download the data as a spreadsheet (CSV) or map files (GeoJSON / KML) for Google Earth.</li>
+      </ul>
+      <div class="analogy">
+        <b>Think of it like a well-run front desk.</b> The old way was like having customers write their info on sticky notes,
+        then you copying each note into a logbook, then a filing cabinet, then a map on the wall — by hand, every time.
+        The new way is a single front-desk clerk who takes the info once, files it, marks the map, and hands you a
+        summary whenever you ask. You never touch the paperwork.
       </div>
     </section>
 
-    <section id="what">
-      <h2>What this is</h2>
+    <section id="how">
+      <h2>How it works (the 30-second version)</h2>
+      <p>You don't need to know code to understand the shape of this. There are exactly three pieces:</p>
+
+      <div class="diagram-wrap">
+        <svg class="svg-diagram" viewBox="0 0 900 240" role="img" aria-label="Three boxes left to right: the customer-facing form, the app running on Render, and the Neon database. Arrows flow from the form into the app and into the database, and from the database back out to your admin dashboard.">
+          <rect x="30" y="70" width="220" height="100" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="140" y="105" text-anchor="middle" font-size="16" font-weight="600" fill="#1b1b1b">The Signup Form</text>
+          <text x="140" y="128" text-anchor="middle" font-size="12" fill="#44464f">what your customer sees</text>
+          <text x="140" y="146" text-anchor="middle" font-size="12" fill="#44464f">(a web page)</text>
+
+          <rect x="340" y="70" width="220" height="100" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="450" y="100" text-anchor="middle" font-size="16" font-weight="600" fill="#1b1b1b">The App</text>
+          <text x="450" y="122" text-anchor="middle" font-size="12" fill="#44464f">runs on Render</text>
+          <text x="450" y="140" text-anchor="middle" font-size="12" fill="#44464f">(a rented computer, always on)</text>
+
+          <ellipse cx="740" cy="95" rx="105" ry="20" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <path d="M635 95 V 160 a 105 20 0 0 0 210 0 V 95" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="740" y="125" text-anchor="middle" font-size="16" font-weight="600" fill="#1b1b1b">The Database</text>
+          <text x="740" y="146" text-anchor="middle" font-size="12" fill="#44464f">runs on Neon (stores leads)</text>
+
+          <line x1="250" y1="120" x2="332" y2="120" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="326,114 340,120 326,126" fill="#809948"/>
+          <line x1="560" y1="120" x2="628" y2="120" stroke="#809948" stroke-width="2.5"/>
+          <polygon points="622,114 636,120 622,126" fill="#809948"/>
+
+          <text x="140" y="200" text-anchor="middle" font-size="12" font-style="italic" fill="#5a6f30">1. Customer fills it out</text>
+          <text x="450" y="200" text-anchor="middle" font-size="12" font-style="italic" fill="#5a6f30">2. Checks &amp; processes it</text>
+          <text x="740" y="200" text-anchor="middle" font-size="12" font-style="italic" fill="#5a6f30">3. Saved for you</text>
+        </svg>
+      </div>
+      <p class="diagram-caption">The whole system in three boxes. The form is the front door, the app is the clerk doing the work, and the database is the filing cabinet.</p>
+
+      <div class="analogy">
+        <b>The three pieces, in workshop terms:</b> the <b>form</b> is the intake sheet on the counter.
+        The <b>app</b> (hosted on a service called Render) is the shop hand who reads the sheet, checks it's filled in
+        correctly, and puts a pin on the map. The <b>database</b> (hosted on a service called Neon) is the parts bin
+        where everything is stored, labeled, and kept safe. The app and the database live in two separate places on
+        purpose — so if one restarts, your data is still safe in the other.
+      </div>
+
       <p>
-        The <strong>Benton Drones Lead Ingest</strong> system replaces Google Forms + PDFfiller + Google Sheets + manual Google Earth planning with one self-owned, Shopify-aware pipeline.
+        When you want to see your leads, you visit the <strong>admin dashboard</strong> — a private page that reads from
+        the database and shows you everything on a map, with buttons to download the data.
       </p>
-      <ul class="check">
-        <li>Visitors fill out a branded signup form with an electronic waiver and typed-name signature.</li>
-        <li>Leads, consent records, and signatures are stored in a real database (Neon PostgreSQL in production; SQLite locally).</li>
-        <li>Admins log in to a dashboard with analytics, a Leaflet map, breakdowns, and per-lead drill-downs.</li>
-        <li>Exports come out as CSV, GeoJSON, or KML for planning and reporting.</li>
-        <li>Optional JIRA integration creates a ticket per signup.</li>
-      </ul>
-      <p>
-        There are three ways to interact with it:
-      </p>
-      <ol class="steps">
-        <li><strong>Use the hosted app</strong> — the easiest path. Open the Render URL, submit signups, and log into the admin dashboard.</li>
-        <li><strong>Clone and run locally</strong> — great for development, testing, or playing with the code on your own Mac.</li>
-        <li><strong>Read the docs</strong> — this page, the training guide, and the architecture diagram explain how everything fits together.</li>
-      </ol>
     </section>
 
-    <section id="hosted">
-      <h2>1. Use the hosted app on Render</h2>
+    <section id="live">
+      <h2>Use the live app (the easy way)</h2>
       <p>
-        The production app is deployed on <strong>Render</strong> and connected to a <strong>Neon PostgreSQL</strong> database. You do not need to install anything to use it.
+        The system is already running on the internet. You don't have to install or set up anything to use it.
+        Here are the only three web addresses you need:
       </p>
-
-      <h3>Live URLs</h3>
       <table>
-        <tr><th>Page</th><th>URL</th><th>Purpose</th></tr>
-        <tr><td>Root / redirect</td><td><a href="https://benton-drones-lead-ingest.onrender.com">https://benton-drones-lead-ingest.onrender.com</a></td><td>Health check and root redirect.</td></tr>
-        <tr><td>Signup form</td><td><a href="https://benton-drones-lead-ingest.onrender.com/signup">/signup</a></td><td>Public lead capture with waiver + signature.</td></tr>
-        <tr><td>Admin login</td><td><a href="https://benton-drones-lead-ingest.onrender.com/admin-login">/admin-login</a></td><td>Password-protected admin entry.</td></tr>
-        <tr><td>Admin dashboard</td><td><a href="https://benton-drones-lead-ingest.onrender.com/admin">/admin</a></td><td>Analytics, map, recent leads, exports.</td></tr>
+        <tr><th>What</th><th>Web address</th><th>What it's for</th></tr>
+        <tr><td>Signup form</td><td><a href="https://benton-drones-lead-ingest.onrender.com/signup">benton-drones-lead-ingest.onrender.com/signup</a></td><td>The public page your customers fill out. Share this link.</td></tr>
+        <tr><td>Admin login</td><td><a href="https://benton-drones-lead-ingest.onrender.com/admin-login">…/admin-login</a></td><td>Where you enter your admin password.</td></tr>
+        <tr><td>Admin dashboard</td><td><a href="https://benton-drones-lead-ingest.onrender.com/admin">…/admin</a></td><td>Your private view: map, totals, every lead, downloads.</td></tr>
       </table>
 
-      <h3>End-to-end on the hosted app</h3>
+      <h3>Try it end-to-end (5 minutes)</h3>
       <ol class="steps">
-        <li>Open the signup form in a browser: <a href="https://benton-drones-lead-ingest.onrender.com/signup">https://benton-drones-lead-ingest.onrender.com/signup</a>.</li>
-        <li>Fill in name, email, phone, and address.</li>
-        <li>Read the waiver, check the consent box, and type your full legal name as a signature.</li>
-        <li>Submit. You will see a confirmation page.</li>
-        <li>Go to <code>/admin-login</code> and enter the admin password (ask Tyler for it).</li>
-        <li>Open <code>/admin</code> to see the new lead on the map and in the recent-leads table.</li>
-        <li>Click <strong>View</strong> on a lead to see details, consent, and signature.</li>
-        <li>Click <strong>CSV</strong>, <strong>GeoJSON</strong>, or <strong>KML</strong> to export the lead data.</li>
+        <li>Open the <a href="https://benton-drones-lead-ingest.onrender.com/signup">signup form</a> and fill it out like a customer would. Use a real-sounding address so the map works.</li>
+        <li>Read the waiver box, tick the consent checkbox, and type your full name in the signature field.</li>
+        <li>Submit. You'll see a confirmation page.</li>
+        <li>Go to <code>…/admin-login</code> and enter the admin password. <strong>Ask Tyler for it</strong> — it's a secret that isn't written down anywhere public.</li>
+        <li>Once you're in, open <code>…/admin</code>. Your test lead will be on the map and in the "recent leads" table.</li>
+        <li>Click <strong>View</strong> on your lead to see the full record, including the signature and consent.</li>
+        <li>Click <strong>CSV</strong>, <strong>GeoJSON</strong>, or <strong>KML</strong> at the top to download your leads. Open the KML file in Google Earth to see your leads plotted.</li>
       </ol>
 
       <div class="card warn">
-        <h4><span class="pill warn">Note</span> Free Render tier</h4>
+        <h4><span class="pill warn">Heads up</span> The free tier naps</h4>
         <p>
-          The free Render plan spins the web service down after ~15 minutes of inactivity. The first request after that will take roughly 50 seconds to wake up. Upgrading to Render's Starter plan removes spin-down.
+          The app runs on Render's free plan, which puts the app to sleep after about 15 minutes of nobody using it.
+          The first visit after a nap takes roughly <strong>50 seconds</strong> to wake up — the page will look like it's
+          loading slowly, then it appears. After that it's fast. If this gets annoying, Render's paid "Starter" plan
+          (about $7/month) keeps it awake all the time.
         </p>
       </div>
     </section>
 
-    <section id="clone">
-      <h2>2. Clone to your Mac and run locally</h2>
+    <section id="local">
+      <h2>Run it yourself on your own computer (optional)</h2>
       <p>
-        This is a pure Python project. No Node, no npm, no Docker required — just Python 3.11+.
+        You never <em>have</em> to do this — the live app above is the real thing. But if you ever want to tinker, test
+        an idea, or just see it run on your own machine, here's how. Think of this as running a copy of the shop in your
+        garage: same tools, but it's <em>your</em> sandbox and nothing you break here affects the real one.
       </p>
 
-      <h3>Prerequisites</h3>
+      <h3>What you need first</h3>
       <ul class="check">
-        <li><strong>macOS</strong> with Terminal (or iTerm).</li>
-        <li><strong>Python 3.11 or newer</strong>. Check with <code>python3 --version</code>.</li>
-        <li><strong>Git</strong>. Check with <code>git --version</code>.</li>
-        <li>(Optional) <strong>pip</strong> for installing <code>fpdf2</code> if you want true PDF export.</li>
+        <li><strong>A Mac</strong> (these steps assume macOS) with the Terminal app.</li>
+        <li><strong>Python 3.11 or newer</strong> — the programming language the app is written in. To check, open Terminal and type <code>python3 --version</code> then press return. If it prints 3.11 or higher, you're set. If not, download it free from python.org.</li>
+        <li><strong>Git</strong> — the tool that downloads the code. Type <code>git --version</code>; if you get a number, you have it. If not, macOS will offer to install it the first time you try.</li>
       </ul>
 
-      <h3>Step 1: clone the repo</h3>
+      <h3>Step 1: download the code</h3>
+      <p>In Terminal, paste this and press return. It creates a folder with the whole project inside:</p>
       <div class="cmd">
         <div class="cmd-head"><span class="cmd-label">Terminal</span></div>
         <pre>git clone https://github.com/t-granlund/Benton-Drones-Lead-Ingest.git
 cd Benton-Drones-Lead-Ingest</pre>
       </div>
 
-      <h3>Step 2: (optional) install dependencies</h3>
-      <p>
-        The core app uses only the Python standard library. Running the tests with <code>make test</code> also works without installing anything extra. If you want true PDF downloads instead of the print view fallback, install the optional requirements:
-      </p>
-      <div class="cmd">
-        <div class="cmd-head"><span class="cmd-label">Terminal</span></div>
-        <pre>pip3 install -r requirements.txt</pre>
-      </div>
-
-      <h3>Step 3: initialize the database</h3>
+      <h3>Step 2: set up the database</h3>
       <div class="cmd">
         <div class="cmd-head"><span class="cmd-label">Terminal</span></div>
         <pre>python3 scripts/init_db.py</pre>
       </div>
-      <p>
-        This creates <code>data/lead_ingest.sqlite3</code> in the project folder.
-      </p>
+      <p>This creates an empty, ready-to-use database file. Locally it's a single file on your disk (SQLite) — no separate service needed.</p>
 
-      <h3>Step 4: start the server</h3>
+      <h3>Step 3: start it</h3>
       <div class="cmd">
         <div class="cmd-head"><span class="cmd-label">Terminal</span></div>
-        <pre>ADMIN_PASSWORD=choose-a-strong-password python3 -m lead_ingest.server</pre>
+        <pre>ADMIN_PASSWORD=pick-a-password python3 -m lead_ingest.server</pre>
       </div>
       <p>
-        You should see output like <code>Serving on http://127.0.0.1:8000</code>.
+        Replace <code>pick-a-password</code> with any password you like — this becomes your local admin password.
+        You'll see a line saying it's serving on <code>http://127.0.0.1:8000</code>. That address means "this computer."
+        Leave this Terminal window open while you use it.
       </p>
 
-      <h3>Step 5: open in a browser</h3>
+      <h3>Step 4: use it in your browser</h3>
       <table>
-        <tr><th>URL</th><th>What it is</th></tr>
-        <tr><td><code>http://127.0.0.1:8000/signup</code></td><td>Public signup form.</td></tr>
-        <tr><td><code>http://127.0.0.1:8000/admin-login</code></td><td>Admin login (use the password from Step 4).</td></tr>
-        <tr><td><code>http://127.0.0.1:8000/admin</code></td><td>Admin dashboard with map and exports.</td></tr>
-        <tr><td><code>http://127.0.0.1:8000/landing-page.html</code></td><td>Branded static landing page.</td></tr>
-        <tr><td><code>http://127.0.0.1:8000/overview</code></td><td>Project overview generated by the app.</td></tr>
+        <tr><th>Address</th><th>What it is</th></tr>
+        <tr><td><code>http://127.0.0.1:8000/signup</code></td><td>The signup form (your local copy).</td></tr>
+        <tr><td><code>http://127.0.0.1:8000/admin-login</code></td><td>Admin login (use the password from Step 3).</td></tr>
+        <tr><td><code>http://127.0.0.1:8000/admin</code></td><td>Your local dashboard.</td></tr>
       </table>
+      <p>To stop the local app, click back into the Terminal window and press <code>Ctrl + C</code>.</p>
 
-      <h3>Step 6: test the full flow locally</h3>
-      <ol class="steps">
-        <li>Submit a test signup at <code>/signup</code>.</li>
-        <li>Log in at <code>/admin-login</code> with the password you set.</li>
-        <li>Go to <code>/admin</code> and confirm the lead appears.</li>
-        <li>Click <strong>View</strong>, then <strong>Print / PDF</strong> to see the consent form.</li>
-        <li>Download CSV, GeoJSON, or KML exports from the dashboard.</li>
-      </ol>
-
-      <h3>Run the test suite</h3>
-      <div class="cmd">
-        <div class="cmd-head"><span class="cmd-label">Terminal</span></div>
-        <pre>python3 -m unittest discover -s tests
-
-# Or use the Makefile:
-make test</pre>
+      <div class="analogy">
+        <b>Local vs. live, in workshop terms:</b> the live app is the storefront — customers actually walk in there.
+        Running it locally is a workbench in your garage where you can take things apart safely. They look and behave
+        the same, but the workbench has its own separate parts bin (a local database file), so your experiments never
+        touch real customer data.
       </div>
-      <p>
-        The suite has 281 unit/integration tests plus 55 E2E tests. All should pass.
-      </p>
     </section>
 
-    <section id="flow">
-      <h2>How a lead flows through the system</h2>
-      <div class="diagram">
-<pre>
-Visitor / Friend
-       |
-       v
-+---------------------------+        +---------------------------+
-|  Shopify storefront CTA   |   or   |  Direct link to signup    |
-|  (future custom domain)   |        |  /signup or /signup/&lt;variant&gt;  |
-+---------------------------+        +---------------------------+
-       |
-       v
-+---------------------------+
-|  Render web service       |
-|  Python backend           |
-|  HTTPS / health check     |
-+---------------------------+
-       |
-       | validates, geocodes, stores
-       v
-+---------------------------+
-|  Neon PostgreSQL          |
-|  signups / consent_records|
-|  signatures / jira_queue  |
-+---------------------------+
-       |
-       v
-+---------------------------+        +---------------------------+
-|  Admin dashboard /admin   |  <---> |  CSV / GeoJSON / KML      |
-|  Leaflet map, analytics   |        |  exports                  |
-+---------------------------+        +---------------------------+
-</pre>
-      </div>
-      <ol class="steps">
-        <li>A visitor clicks a link or a Shopify CTA and lands on <code>/signup</code>.</li>
-        <li>The form captures name, contact info, service interest, consent, and a typed-name signature.</li>
-        <li>The Render backend validates the input, checks CSRF and honeypot, geocodes the address, and writes to Neon PostgreSQL.</li>
-        <li>If JIRA is configured, a ticket is created; otherwise the signup is queued locally.</li>
-        <li>An admin logs in and reviews leads on the dashboard, map, and detail pages.</li>
-        <li>Admins export data as CSV, GeoJSON, or KML for planning and reporting.</li>
-      </ol>
-    </section>
-
-    <section id="neon">
-      <h2>Render + Neon: what does what</h2>
+    <section id="parts">
+      <h2>The moving parts, and who runs them</h2>
       <p>
-        The public app has three layers. It helps to know which one does what, especially when something breaks.
+        When something isn't working, it helps to know which "shop" is responsible for which part. There are three,
+        and they're run by three different companies:
       </p>
       <table>
-        <tr><th>Layer</th><th>Host</th><th>What it does</th></tr>
-        <tr><td>Static guides &amp; landing page</td><td>GitHub Pages</td><td>This guide, the architecture diagram, the training guide, and the marketing landing page. No server-side code.</td></tr>
-        <tr><td>Python app</td><td>Render</td><td>Signup form, admin dashboard, exports, JIRA hooks, health checks. Runs as a Docker container.</td></tr>
-        <tr><td>Database</td><td>Neon</td><td>PostgreSQL that stores leads, consent, signatures, variants, and JIRA queue. Persists even if Render restarts.</td></tr>
+        <tr><th>Part</th><th>Run by</th><th>What it does</th><th>If it breaks</th></tr>
+        <tr><td>The guides &amp; docs</td><td>GitHub Pages</td><td>This guide, the diagrams, the training manual. Just reading material.</td><td>Docs unreachable, but the app still works fine.</td></tr>
+        <tr><td>The app</td><td>Render</td><td>The signup form, the admin dashboard, the downloads. The actual "clerk."</td><td>Signups stop. Check Render first.</td></tr>
+        <tr><td>The database</td><td>Neon</td><td>Where every lead, consent, and signature is actually stored.</td><td>Data errors. Check Neon. Your data persists even if Render restarts.</td></tr>
       </table>
-
-      <h3>Why Neon?</h3>
       <p>
-        Render's free web service has an ephemeral filesystem. If we used SQLite on Render, the database would disappear every time the container restarted or moved. Neon PostgreSQL lives outside the container, so the data persists. The app automatically switches from SQLite to PostgreSQL when the <code>DATABASE_URL</code> environment variable is set.
+        The app and database are deliberately separate so that restarting or updating the app never touches your stored
+        leads. The app reads the database's address from a private setting (<code>DATABASE_URL</code>) and connects to it
+        automatically — you never have to wire them together by hand.
       </p>
-
-      <h3>Environment variables on Render</h3>
-      <p>
-        These are already set in the live Render service. You do not need to touch them to use the hosted app, but this is what makes it work:
-      </p>
-      <table>
-        <tr><th>Variable</th><th>Purpose</th></tr>
-        <tr><td><code>ADMIN_PASSWORD</code></td><td>Password for <code>/admin-login</code>.</td></tr>
-        <tr><td><code>ADMIN_SESSION_SECRET</code></td><td>Random 32+ char string that signs admin session cookies.</td></tr>
-        <tr><td><code>CSRF_SECRET</code></td><td>Random 32+ char string that signs CSRF tokens.</td></tr>
-        <tr><td><code>COOKIE_SECURE</code></td><td>Set to <code>1</code> because Render serves HTTPS.</td></tr>
-        <tr><td><code>ENV</code></td><td>Set to <code>production</code> to enforce strict secret checks.</td></tr>
-        <tr><td><code>DATABASE_URL</code></td><td>Neon connection string with <code>?sslmode=require</code>.</td></tr>
-      </table>
     </section>
 
     <section id="notes">
-      <h2>Important notes</h2>
+      <h2>Good to know</h2>
 
       <div class="card block">
-        <h4><span class="pill block">Legal</span> Waiver text is a placeholder</h4>
+        <h4><span class="pill block">Legal</span> The waiver wording is a placeholder</h4>
         <p>
-          The waiver currently shown in the signup form is clearly marked as a placeholder. Before accepting real customer signups, replace the text in <code>lead_ingest/models.py</code> with language reviewed by a qualified attorney.
+          The waiver text customers see right now is <strong>placeholder wording</strong>, clearly marked as such. The
+          <em>system</em> for capturing signatures and consent is solid — it records the exact text shown, the typed name,
+          and a timestamp every single time. But the <em>words themselves</em> need a lawyer's sign-off before you use
+          this with real customers. That's a one-time swap of text, not a rebuild.
         </p>
       </div>
 
       <div class="card warn">
-        <h4><span class="pill warn">Security</span> Do not put secrets in the repo</h4>
+        <h4><span class="pill warn">Security</span> Keep secrets out of public view</h4>
         <p>
-          The <code>DATABASE_URL</code>, admin password, and signing secrets live only in the Render dashboard environment variables. They are never committed to GitHub. If you run locally, set them in your terminal session, not in the code.
+          The admin password, the database address, and the security keys live only in private settings on Render —
+          never in the code, and never in these public docs. If you run it locally, the password you type in Terminal
+          stays on your machine. Don't email the admin password or paste it into any shared doc.
         </p>
       </div>
 
       <div class="card green">
-        <h4><span class="pill pass">Good to know</span> GitHub Pages is public</h4>
+        <h4><span class="pill pass">Privacy</span> Your data is yours</h4>
         <p>
-          The repo and the GitHub Pages site are public. Do not paste PII, passwords, or database connection strings into any file in the repo.
+          Leads are stored in your own Neon database, not in a third-party form tool. Nothing is shared with Google,
+          and no customer info sits in a spreadsheet that could get forwarded around. Exports only happen when you,
+          the logged-in admin, click download.
         </p>
       </div>
     </section>
 
     <section id="trouble">
-      <h2>Troubleshooting</h2>
+      <h2>If something breaks</h2>
       <table>
-        <tr><th>Problem</th><th>Fix</th></tr>
-        <tr><td>Hosted app is slow the first time</td><td>Render free tier spins down after inactivity. Wait ~50 seconds or upgrade to Starter.</td></tr>
-        <tr><td>Admin login fails</td><td>Make sure you are using the current admin password. Ask Tyler if it changed.</td></tr>
-        <tr><td>Local server won't start</td><td>Check <code>python3 --version</code> is 3.11+. Run <code>python3 scripts/init_db.py</code> first.</td></tr>
-        <tr><td>Tests fail locally</td><td>Run <code>python3 -m unittest discover -s tests</code> from the repo root.</td></tr>
-        <tr><td>Map is blank</td><td>Check that <code>static/leaflet/leaflet.js</code> and <code>.css</code> are present.</td></tr>
-        <tr><td>PDF endpoint shows the print view instead</td><td>Install optional deps: <code>pip3 install -r requirements.txt</code>.</td></tr>
-        <tr><td>"Database locked" locally</td><td>WAL mode is enabled automatically; close other connections to the SQLite file.</td></tr>
+        <tr><th>What you see</th><th>What's probably happening</th><th>What to do</th></tr>
+        <tr><td>First visit is very slow (~50s)</td><td>The free Render plan was asleep and is waking up.</td><td>Wait for it. Consider the paid plan to keep it awake.</td></tr>
+        <tr><td>Can't log into admin</td><td>Wrong password, or it changed.</td><td>Confirm the current admin password with Tyler.</td></tr>
+        <tr><td>The map on the dashboard is empty</td><td>Your test address couldn't be pinpointed, or no leads yet.</td><td>Submit a lead with a real street address.</td></tr>
+        <tr><td>Local copy won't start</td><td>Python too old, or database not created.</td><td>Check <code>python3 --version</code> is 3.11+, and run <code>python3 scripts/init_db.py</code> first.</td></tr>
+        <tr><td>Something looks off and you can't tell why</td><td>Could be the app (Render) or the database (Neon).</td><td>Tell Tyler which of the three parts is misbehaving — that narrows it down fast.</td></tr>
       </table>
+
+      <div class="card blue">
+        <h4>Stuck? Here's all you need to report</h4>
+        <p>
+          You don't need to debug anything. Just note: <strong>(1)</strong> which web address you were on,
+          <strong>(2)</strong> what you clicked, and <strong>(3)</strong> what happened (or didn't). A screenshot helps.
+          Send that to Tyler and it's enough to pinpoint the problem.
+        </p>
+      </div>
     </section>
 
     <section id="next">
-      <h2>What to do next</h2>
+      <h2>Where to go next</h2>
       <ol class="steps">
-        <li>Send this guide to your friend.</li>
-        <li>Have them open the live app and submit a test signup.</li>
-        <li>Log into the admin dashboard together and verify the lead appears on the map.</li>
-        <li>If they want to hack on the code, have them clone it and run <code>make test</code>.</li>
-        <li>Read the full <a href="https://github.com/t-granlund/Benton-Drones-Lead-Ingest/blob/main/docs/render-deployment-guide.md">Render deployment guide</a> if you ever need to rebuild or move the hosted service.</li>
+        <li>Do the 5-minute end-to-end tryout in the <a href="#live">live app section</a>.</li>
+        <li>Look at the <a href="architecture-before-after.html">before &amp; after diagram</a> to see how this replaces the old workflow.</li>
+        <li>When you're ready for more depth, the <a href="training-guide.html">training guide</a> goes feature-by-feature.</li>
+        <li>The <a href="architecture-diagram.html">detailed architecture diagram</a> shows every component and how they connect, when you want the full technical picture.</li>
       </ol>
     </section>
   </main>
 
   <footer>
-    <p>Benton Drones Lead Ingest · Live on Render + Neon · Guides hosted on GitHub Pages</p>
+    <p>Benton Drones Lead Ingest · Written for Anderson · Live on Render + Neon · Guides on GitHub Pages</p>
   </footer>
 </body>
 </html>

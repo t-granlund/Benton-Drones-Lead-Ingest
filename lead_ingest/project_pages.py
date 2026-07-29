@@ -187,6 +187,9 @@ https://leads.bentondrones.com/signup/default?source=shopify&campaign=drone-deli
 def changelog_page() -> bytes:
     body = """
 <h2>Changelog</h2>
+<p>A running history of what has been built, fixed, and shipped. Newest entries are at the bottom of the build phase and the top of the release log.</p>
+
+<h3>Build phases</h3>
 <table>
   <tr><th>Iteration</th><th>Completed</th><th>Outcome</th></tr>
   <tr><td>0</td><td>Workflow modernization plan</td><td>Defined owned replacement for Google Forms, PDFfiller, Sheets, and manual Google Earth planning.</td></tr>
@@ -196,11 +199,27 @@ def changelog_page() -> bytes:
   <tr><td>4</td><td>Admin/export protection</td><td>Protected admin and exports with password login and signed session cookies.</td></tr>
   <tr><td>5</td><td>CSRF + spam resistance</td><td>Added CSRF tokens, honeypot field, and in-memory POST rate limiting.</td></tr>
   <tr><td>6</td><td>Project communication pages</td><td>Added overview, Shopify preview, changelog, and roadmap pages for clear MVP review.</td></tr>
+  <tr><td>7</td><td>Waiver + signature + audit trail</td><td>Real waiver text from PDF, typed-name signature capture, and a full consent/signature audit trail.</td></tr>
+  <tr><td>8</td><td>Branding + dashboard upgrade</td><td>Material 3 + Benton design system across all pages; admin dashboard with Leaflet map, analytics cards, and breakdowns.</td></tr>
+  <tr><td>9</td><td>Production hardening</td><td>Security headers, secret validation, body-size limits, and production-readiness review.</td></tr>
+  <tr><td>10</td><td>Hosted deployment</td><td>Dockerfile, Railway config, then Render + Neon PostgreSQL. App live at benton-drones-lead-ingest.onrender.com.</td></tr>
+</table>
+
+<h3>Release log</h3>
+<table>
+  <tr><th>Type</th><th>Change</th></tr>
+  <tr><td><span class="pill done">Feature</span></td><td>Playwright browser-automation E2E suite — 12 real-Chromium tests covering public pages, signup flow, admin journey, and exports. New <code>make test-e2e-browser</code> and <code>make test-e2e-live</code> targets; CI installs Chromium and gates on the count.</td></tr>
+  <tr><td><span class="pill done">Feature</span></td><td>CI workflow (GitHub Actions) with pip caching and test-count gates so a deleted test can never silently pass.</td></tr>
+  <tr><td><span class="pill next">Fix</span></td><td>Auto-migrate older signups tables by adding missing columns on startup.</td></tr>
+  <tr><td><span class="pill next">Fix</span></td><td>Cast text <code>created_at</code> to timestamptz in the Postgres weekly-analytics query.</td></tr>
+  <tr><td><span class="pill done">Feature</span></td><td>Render deployment blueprint (<code>render.yaml</code>) + deployment guide; live URL added to README.</td></tr>
+  <tr><td><span class="pill done">Feature</span></td><td>Neon PostgreSQL support via <code>DATABASE_URL</code> with automatic SQLite fallback; real waiver extracted from PDF.</td></tr>
+  <tr><td><span class="pill done">Docs</span></td><td>Visual before &amp; after architecture page, Anderson plain-language guide, and refreshed training/explainer guides with fully visual SVG diagrams.</td></tr>
 </table>
 
 <h2>Current test posture</h2>
 <div class="card">
-  <p>The suite covers validation, database persistence, consent persistence, Shopify context, exports, clustering, authentication, protected routes, CSRF, rate limiting, Shopify security helpers, and local page availability.</p>
+  <p><strong>348 tests, all passing.</strong> 281 unit/integration + 55 HTTP end-to-end + 12 real-browser (Playwright) end-to-end. The suite covers validation, database persistence, consent &amp; signature audit, Shopify context, exports, clustering, authentication, protected routes, CSRF, rate limiting, security headers, production hardening, and the full signup-to-admin-to-export journey in a real browser.</p>
 </div>
 """
     return shell("MVP Changelog", body)

@@ -352,7 +352,7 @@
         </div>
         <div class="glance-item">
           <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V4"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg></span>
-          <div><strong>281 tests pass</strong><p>A full unittest suite covers signup, consent, signatures, exports, JIRA, security, and production hardening.</p></div>
+          <div><strong>348 tests pass</strong><p>281 unit/integration + 55 HTTP E2E + 12 real-browser Playwright E2E tests cover signup, consent, signatures, exports, JIRA, security, and the full user journey.</p></div>
         </div>
         <div class="glance-item">
           <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12l2 2 4-4"/><path d="M9 19h6"/></svg></span>
@@ -708,7 +708,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
           <button class="copy-btn" data-copy="make test-all"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
         </div>
         <pre>make test-all</pre>
-        <p style="margin-top:12px;font-size:0.95rem;color:var(--md-sys-color-on-surface-variant)">Run <code>make test</code> for the 281 unit/integration tests, or <code>make test-e2e</code> for the 55 end-to-end tests.</p>
+        <p style="margin-top:12px;font-size:0.95rem;color:var(--md-sys-color-on-surface-variant)">Run <code>make test</code> for the 281 unit/integration tests, <code>make test-e2e</code> for the 55 HTTP end-to-end tests, and <code>make test-e2e-browser</code> for the 12 real-browser Playwright tests (348 total). Browser tests need Playwright Chromium installed via <code>make install</code>.</p>
       </div>
 
       <h3>Install optional dependencies</h3>
@@ -963,15 +963,15 @@ ADMIN_PASSWORD=yourpass make run</pre>
     <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
 
     <section id="share">
-      <h2><span class="num">12.</span>Before you share with a friend</h2>
-      <p>A quick checklist to run through before handing the repo to someone else. Each item keeps the system safe and runnable on a fresh machine.</p>
+      <h2><span class="num">12.</span>Handing this to Anderson</h2>
+      <p>A quick checklist to run through before handing the system to Anderson (the owner). Each item keeps the system safe and runnable on a fresh machine. Anderson's starting point is the <a href="friend-guide.html">plain-language setup guide</a> — no coding assumed.</p>
       <ul class="checklist">
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Verify no secrets are committed.</b> Check <code>.gitignore</code> excludes <code>.env</code>, <code>data/</code>, and logs. Never hard-code passwords or API tokens.</span></li>
-        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Run the full test suite.</b> <code>make test-all</code> should print 336 tests (281 unit/integration + 55 E2E) and <code>OK</code>. Use <code>make test-e2e</code> to run just the E2E suite.</span></li>
-        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Confirm the waiver is a placeholder.</b> Make sure your friend knows the waiver text needs legal review before real use.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Run the full test suite.</b> <code>make test-all</code> covers 336 tests (281 unit/integration + 55 HTTP E2E); add <code>make test-e2e-browser</code> for the 12 real-browser Playwright tests (348 total). All should print <code>OK</code>.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Confirm the waiver is a placeholder.</b> Make sure Anderson knows the waiver text needs legal review before real customer use.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Test the clone-and-run path.</b> <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code> should work from a clean checkout.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Smoke-test the flows.</b> Open <code>/signup</code>, submit a test lead, log in at <code>/admin-login</code>, view the lead, and try an export.</span></li>
-        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Point them at the docs.</b> This training guide, the <a href="architecture-diagram.html">architecture diagram</a>, and the <a href="explainer-guide.html">explainer guide</a> cover the whole system.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Point Anderson at the docs.</b> Start with the <a href="friend-guide.html">plain-language guide</a>, then the <a href="architecture-before-after.html">before &amp; after diagram</a>, this training guide, the <a href="architecture-diagram.html">detailed architecture diagram</a>, and the <a href="explainer-guide.html">explainer guide</a>.</span></li>
       </ul>
     </section>
 
