@@ -11,6 +11,30 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 ## [Unreleased]
 
 ### Added
+- **Real geocoder chain** (`lead_ingest/geocoding.py`) — US Census Geocoder primary
+  + Nominatim fallback, results cached in a new `geocode_cache` table, gated by
+  `GEOCODER_MODE` (`mock` default for offline/dev, `live` for real lookups).
+  `scripts/backfill_geocode.py` backfills existing signups (dry-run by default).
+  Judge JUDGE-GEO-001 PASS.
+- **Persistent rate limiting** (`lead_ingest/request_security.py`) —
+  token-bucket-in-DB (`rate_limit_buckets` table) with atomic compare-and-set,
+  per-route-class limits (signup 5/min, admin-login 30/min, public 60/min, all
+  env-overridable), 429 responses now send `Retry-After`, and storage failures
+  fall back to a loud conservative in-memory limiter. Judge JUDGE-RATELIMIT-001 PASS.
+- **JIRA queue replay worker** (`lead_ingest/jira_replay.py`) — on-read sweep
+  (signup path + admin dashboard) plus an optional daemon, exponential backoff
+  with jitter, dead-letter after 5 attempts, and idempotency keys that prevent
+  duplicate tickets after ambiguous timeouts. `scripts/replay_jira_queue.py` for
+  manual sweeps. Judge JUDGE-JIRA-002 PASS.
+- **Email notifications** (`lead_ingest/notify.py`) — stdlib `smtplib` sender,
+  DB-backed `email_queue` with backoff + dead-letter, customer confirmation and
+  internal alert templates, enqueued inside the signup transaction so a signup
+  never partially fails. Live-send activates with `SMTP_USER` + `SMTP_PASSWORD`
+  (Google Workspace app password); degrades gracefully without them.
+- **Backup & monitoring tooling** — DB-aware `/healthz` (bare `SELECT 1`, no DDL
+  on the health path), strictly read-only `scripts/verify_backup.py` (SQLite
+  `mode=ro`, Postgres read-only session), and `docs/backup-recovery-playbook.md`
+  with restore procedures and human placeholders for Neon/monitor evidence.
 - **Visual before & after architecture page** (`docs/architecture-before-after.html`) —
   fully visual, hand-rolled SVG panels comparing the old manual workflow
   (Google Forms → PDFfiller → Sheets → manual Google Earth) against the new
@@ -22,8 +46,15 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 - This `CHANGELOG.md`.
 
 ### Changed
-- `docs/training-guide.html` — updated test counts to 348, refreshed the closing
-  checklist to be an Anderson handoff, and pointed readers at the new guides.
+- All status surfaces synced to the post-wiggum-loop state: in-app pages
+  (`/changelog`, `/roadmap`, `/goals`, `/judges`, `/current-state`, `/prd`,
+  `/completion-guide`, `/overview`) and static docs (training guide, explainer,
+  architecture diagram, friend guide, completion/PRD twins) now show the real
+  geocoder, persistent rate limiting, JIRA replay, email queue, and backup
+  tooling as built, with 429 test counts.
+- `index.html` — links to the live app's roadmap and completion guide pages.
+- `docs/training-guide.html` — new email-notifications and backups sections,
+  JIRA replay worker docs, new data-model tables, updated geocoder FAQ.
 - `docs/explainer-guide.html` — replaced the ASCII architecture diagram with a
   fully visual SVG; updated test counts.
 - `docs/architecture-diagram.html` — cross-linked the before/after page and the
@@ -71,13 +102,13 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 
 ## Test posture
 
-**348 tests, all passing** — 281 unit/integration, 55 HTTP end-to-end, and 12
+**429 tests, all passing** — 360 unit/integration, 57 HTTP end-to-end, and 12
 real-browser (Playwright) end-to-end.
 
 Run them with:
 
 ```bash
-make test              # 281 unit/integration
-make test-e2e          # 55 HTTP E2E
+make test              # 360 unit/integration
+make test-e2e          # 57 HTTP E2E
 make test-e2e-browser  # 12 browser E2E (needs Playwright Chromium)
 ```

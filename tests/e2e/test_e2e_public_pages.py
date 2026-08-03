@@ -2,7 +2,7 @@
 
 Covers: /, /signup, /signup/<slug>, /overview, /shopify-preview, /changelog,
 /roadmap, /domain-setup, /api-preflight, /current-state, /goals, /judges,
-/landing-page.html, and /static/* serving.
+/completion-guide, /finish, /landing-page.html, and /static/* serving.
 """
 import os
 import sys
@@ -34,6 +34,8 @@ class PublicPagesTests(E2ETestBase):
         "/current-state",
         "/goals",
         "/judges",
+        "/completion-guide",
+        "/finish",
     ]
 
     def test_each_public_page_renders_200_branded_html(self):
@@ -45,6 +47,16 @@ class PublicPagesTests(E2ETestBase):
                 self.assertTrue(content, f"{path} returned empty body")
                 self.assertTrue(_is_branded_html(content),
                                 f"{path} did not render branded HTML")
+
+    def test_completion_guide_contains_human_and_agent_sections(self):
+        response, content = self.get("/completion-guide")
+        self.assertEqual(response.status, 200)
+        self.assertIn(b"Project Completion Guide", content)
+        for marker in ("What YOU Need to Do", "What the AGENTS Will Do",
+                       "Definition of Done", "Human Session",
+                       "leads.bentondrones.com"):
+            self.assertIn(marker.encode(), content,
+                          f"completion guide missing section {marker}")
 
     def test_signup_page_contains_csrf_and_required_fields(self):
         response, content = self.get("/signup")

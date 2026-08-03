@@ -22,12 +22,12 @@
   "test_files": [
     {"file": "tests/e2e/e2e_base.py", "role": "shared fixture + http/csrf/login helpers", "tests": 0},
     {"file": "tests/e2e/test_e2e_health.py", "tests": 4, "status": "pass"},
-    {"file": "tests/e2e/test_e2e_public_pages.py", "tests": 7, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_public_pages.py", "tests": 6, "status": "pass"},
     {"file": "tests/e2e/test_e2e_signup_flow.py", "tests": 13, "status": "pass"},
     {"file": "tests/e2e/test_e2e_admin_auth.py", "tests": 10, "status": "pass"},
     {"file": "tests/e2e/test_e2e_admin_dashboard.py", "tests": 7, "status": "pass"},
-    {"file": "tests/e2e/test_e2e_exports.py", "tests": 5, "status": "pass"},
-    {"file": "tests/e2e/test_e2e_security.py", "tests": 9, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_exports.py", "tests": 3, "status": "pass"},
+    {"file": "tests/e2e/test_e2e_security.py", "tests": 10, "status": "pass"},
     {"file": "tests/e2e/test_e2e_cli.py", "tests": 2, "status": "pass"}
   ],
   "coverage": {

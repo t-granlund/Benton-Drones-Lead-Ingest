@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Completion Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --olive: #809948;
+      --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
+      --md-sys-color-primary: #809948;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f0f7f4;
+      --md-sys-color-secondary: #6184d8;
+      --md-sys-color-tertiary: #0000ff;
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-container-low: #fbfbf8;
+      --md-sys-color-surface-container: #f5f5f0;
+      --md-sys-color-background: #f7f7f3;
+      --md-sys-color-on-surface: #1b1b1b;
+      --md-sys-color-on-surface-variant: #44464f;
+      --md-sys-color-outline: #d7d3c5;
+      --md-sys-color-outline-variant: #ede8d8;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-error-container: #f9dedc;
+      --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
+      --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
+      --md-elevation-1: var(--el-1);
+      --md-elevation-2: var(--el-2);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin:0; font-family:'Jost', sans-serif; font-weight:500; letter-spacing:0.02rem;
+      color:#1b1b1b; background:var(--md-sys-color-background); line-height:1.65;
+      font-size:1.05rem; -webkit-font-smoothing: antialiased;
+    }
+    /* Hero — logo, eyebrow, title, subtitle */
+    .hero {
+      background:linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color:#fff; padding:64px 24px 72px; text-align:center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .hero-inner { max-width:820px; margin:0 auto; }
+    .hero img {
+      height:60px; width:auto; margin-bottom:20px;
+      filter:drop-shadow(0 2px 6px rgba(0,0,0,.22));
+      transition:transform 0.2s ease, opacity 0.2s ease;
+    }
+    .hero img:hover { transform:scale(1.03); opacity:0.92; }
+    .hero .eyebrow {
+      display:block; margin-bottom:14px;
+      font-size:0.75rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.14em; opacity:0.82;
+    }
+    .hero h1 {
+      margin:0 0 14px; font-size:2.4rem; font-weight:700;
+      letter-spacing:0.01rem; line-height:1.15;
+    }
+    .hero .subtitle {
+      max-width:740px; margin:0 auto; font-size:1.1rem;
+      font-weight:500; opacity:0.92; line-height:1.55;
+    }
+    main { max-width:1080px; margin:0 auto; padding:48px 24px 80px; }
+    h2 {
+      margin-top:48px; padding-bottom:8px; color:var(--md-sys-color-primary);
+      font-size:1.7rem; font-weight:700; letter-spacing:0.01rem; line-height:1.2;
+      border-bottom:1px solid var(--md-sys-color-outline);
+    }
+    h3 { margin-bottom:8px; color:var(--md-sys-color-primary); font-size:1.3rem; font-weight:600; line-height:1.3; }
+    a { color:var(--md-sys-color-secondary); text-decoration:none; transition:opacity 0.2s ease; }
+    a:hover { text-decoration:underline; opacity:0.88; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
+    .card {
+      background:var(--md-sys-color-surface); border:1px solid var(--md-sys-color-outline);
+      border-top:4px solid var(--md-sys-color-primary);
+      border-radius:16px; padding:28px; box-shadow:var(--el-1);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .card:hover { transform:translateY(-2px); box-shadow:var(--el-2); }
+    .button {
+      display:inline-block; margin-top:16px; padding:16px 28px;
+      border:none; border-radius:10px;
+      background:linear-gradient(180deg, #8ba855 0%, var(--olive) 100%);
+      color:var(--md-sys-color-on-primary); text-decoration:none;
+      font-weight:600; text-transform:uppercase; font-size:0.82rem; letter-spacing:0.08rem;
+      box-shadow: var(--el-1); transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .button:hover { transform:translateY(-1px); box-shadow:var(--el-2); text-decoration:none; }
+    .button:active { transform:translateY(0); box-shadow:var(--el-1); }
+    .button.secondary {
+      background:transparent; color:var(--md-sys-color-secondary);
+      border:1.5px solid var(--md-sys-color-secondary); box-shadow:none;
+    }
+    .button.secondary:hover { background:#e7ecff; border-color:var(--md-sys-color-secondary); }
+    .button:focus-visible { outline:2px solid var(--md-sys-color-primary); outline-offset:2px; }
+    .pill {
+      display:inline-block; padding:6px 14px; border-radius:999px;
+      font-weight:700; font-size:0.78rem; letter-spacing:0.08rem;
+      text-transform:uppercase; border:1.5px solid;
+    }
+    .done { color:#3d4d1f; background:var(--md-sys-color-primary-container); border-color:var(--md-sys-color-primary); }
+    .next { color:#8a4a00; background:#fffce7; border-color:#e8893a; }
+    .muted { color:var(--md-sys-color-on-surface-variant); }
+    table {
+      width:100%; border-collapse:collapse; background:var(--md-sys-color-surface);
+      border:1px solid var(--md-sys-color-outline); border-radius:12px; overflow:hidden;
+      box-shadow:var(--el-1);
+    }
+    th, td { padding:16px 18px; border-bottom:1px solid var(--md-sys-color-outline-variant); text-align:left; vertical-align:top; }
+    th { background:var(--md-sys-color-surface-container); color:var(--olive-deep); font-weight:700; font-size:0.78rem; letter-spacing:0.08rem; text-transform:uppercase; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:var(--md-sys-color-surface-container-low); }
+    code, pre { font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace; font-size:0.9rem; letter-spacing:0; }
+    code { background:var(--md-sys-color-surface-container-low); border:1px solid var(--md-sys-color-outline); border-radius:6px; padding:2px 6px; }
+    pre { background:#1b1b1b; color:#e5e7eb; border-radius:10px; padding:16px; overflow:auto; }
+    ol, ul { padding-left:20px; }
+    li { margin-bottom:10px; }
+    @media (max-width:600px) {
+      .hero { padding:48px 16px 56px; }
+      .hero h1 { font-size:1.8rem; }
+      .hero .subtitle { font-size:1rem; }
+      main { padding:32px 16px 64px; }
+      h2 { font-size:1.4rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } .card:hover { transform:none; } }
+  </style>
+</head>
+<body>
+<header class="hero"><div class="hero-inner">
+  <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+  <span class="eyebrow">Benton Drones</span>
+  <h1>Project Completion Guide</h1>
+  <p class="subtitle">The exact path to launch: what you need to do, what the agents will build, and how we split the work.</p>
+</div></header>
+<main>
+<h2>Where We Are &mdash; The Big Picture</h2>
+<div class="card">
+  <p><strong>429 tests green</strong> (360 unit/integration + 57 HTTP E2E + 12 real-browser Playwright). The app is live on Render, and the agent-buildable engineering is DONE: real geocoder, persistent rate limiting, JIRA queue replay, email notification code, and backup tooling &mdash; on top of the signup/consent/dashboard/export/JIRA MVP.</p>
+  <p><strong>The critical path to launch is ONE human session for account access &mdash; not more engineering.</strong> All six agent-buildable gaps are closed. The rest only need your logins and a few decisions.</p>
+  <p><span class="pill done">Agent engineering done</span> <span class="pill next">One human session left</span> <span class="pill next">3 gaps to close (G2, G3 creds, G4 creds)</span></p>
+</div>
+
+<h2>The Road to Launch</h2>
+<p>Build order, left to right. Everything before the human gate is DONE ( -marked); everything after it unblocks the moment the session happens.</p>
+<div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:20px 0;">
+  <span style="background:var(--md-sys-color-primary-container); color:#3d4d1f; border:1.5px solid var(--olive); border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G1 Geocoder </span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:var(--md-sys-color-primary-container); color:#3d4d1f; border:1.5px solid var(--olive); border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G6 JIRA Replay </span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:var(--md-sys-color-primary-container); color:#3d4d1f; border:1.5px solid var(--olive); border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G5 Rate Limit </span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:var(--md-sys-color-primary-container); color:#3d4d1f; border:1.5px solid var(--olive); border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G3 Email Code </span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:var(--md-sys-color-primary-container); color:#3d4d1f; border:1.5px solid var(--olive); border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G4 Backup Code </span>
+  <span style="color:#b3261e; font-weight:700;">&rarr;</span>
+  <span style="background:var(--md-sys-color-error-container); color:var(--md-sys-color-error); border:2px solid var(--md-sys-color-error); border-radius:10px; padding:10px 16px; font-weight:700; font-size:0.85rem; letter-spacing:0.05rem; text-transform:uppercase;">Human Session</span>
+  <span style="color:#b3261e; font-weight:700;">&rarr;</span>
+  <span style="background:#fffce7; color:#8a4a00; border:1.5px solid #e8893a; border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G2 Domain</span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:#fffce7; color:#8a4a00; border:1.5px solid #e8893a; border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G3/G4 Credentials</span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%); color:#ffffff; border:2px solid var(--olive-deep); border-radius:10px; padding:10px 16px; font-weight:700; font-size:0.85rem; letter-spacing:0.05rem; text-transform:uppercase;">Launch</span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:var(--md-sys-color-surface-container); color:var(--md-sys-color-on-surface-variant); border:1.5px solid var(--md-sys-color-outline); border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G7 Shopify Proxy</span>
+  <span style="color:var(--olive-deep); font-weight:700;">&rarr;</span>
+  <span style="background:var(--md-sys-color-surface-container); color:var(--md-sys-color-on-surface-variant); border:1.5px solid var(--md-sys-color-outline); border-radius:10px; padding:10px 14px; font-weight:600; font-size:0.85rem;">G8 Map UI</span>
+</div>
+<p><span class="pill done">Agents build</span> green &nbsp; <span class="pill next">Needs human input</span> amber &nbsp; <span class="pill" style="color:var(--md-sys-color-error); background:var(--md-sys-color-error-container); border-color:var(--md-sys-color-error);">Human gate</span> red &nbsp; <span class="pill muted">Post-launch</span> grey</p>
+
+<h2>What YOU Need to Do</h2>
+<p>Six steps, roughly 70&ndash;90 minutes total, doable in one sitting. An agent can ride along on a call or screenshare and do the technical parts live &mdash; you just provide the logins.</p>
+<table>
+  <tr><th>#</th><th>What to do</th><th>Where</th><th>Time</th><th>What it unblocks</th></tr>
+  <tr><td><strong>1</strong></td><td>Create a read-only API token scoped to <code>bentondrones.com</code> with Zone read + DNS read permissions.</td><td>Cloudflare dashboard &rarr; My Profile &rarr; API Tokens</td><td>~10 min</td><td>DNS automation preflight (<code>scripts/check_cloudflare_zone.py</code>)</td></tr>
+  <tr><td><strong>2</strong></td><td>Screenshot the current nameservers and every DNS record exactly as they exist today.</td><td>Namecheap &rarr; Domain List &rarr; Advanced DNS</td><td>~10 min</td><td>Safe DNS cutover with a rollback reference</td></tr>
+  <tr><td><strong>3</strong></td><td>Confirm the MX / SPF / DKIM / DMARC records, and create an SMTP app password for the notification sender (set as <code>SMTP_USER</code> + <code>SMTP_PASSWORD</code> on Render).</td><td>Google Admin console</td><td>~20 min</td><td>G3 email notifications go live + preserves email through the DNS cutover</td></tr>
+  <tr><td><strong>4</strong></td><td>Note the <code>myshopify.com</code> domain and the A/CNAME requirements; draft the landing page with a CTA linking to the signup.</td><td>Shopify Admin</td><td>~20 min</td><td>Shopify landing page + future App Proxy (G7)</td></tr>
+  <tr><td><strong>5</strong></td><td>Add <code>leads.bentondrones.com</code> as a custom domain on the Render service.</td><td>Render dashboard &rarr; service &rarr; Settings &rarr; Custom Domains</td><td>~10 min</td><td>G2 domain cutover + TLS certificate</td></tr>
+  <tr><td><strong>6</strong></td><td>Fill the <code>&lt;&lt;HUMAN:&gt;&gt;</code> placeholders in <code>docs/backup-recovery-playbook.md</code> (Neon retention + project values) and create a free external uptime monitor (UptimeRobot/BetterStack) pointed at <code>/healthz</code>.</td><td>Neon console + monitor signup</td><td>~15 min</td><td>G4 backups evidence + alerting</td></tr>
+  <tr><td><strong>7</strong></td><td>Decide the open legal/business questions (listed below).</td><td>Anywhere &mdash; just answers</td><td>Varies</td><td>Final go/no-go</td></tr>
+</table>
+<div class="card">
+  <h3>Open questions to decide (step 6)</h3>
+  <ul>
+    <li>Final waiver legal text sign-off (confirm policy URLs are real; decide whether to bump <code>WAIVER_VERSION</code>).</li>
+    <li>Notification sender identity: which <code>@bentondrones.com</code> from-address sends customer confirmations (<code>NOTIFY_FROM</code> / <code>NOTIFY_INTERNAL_TO</code>).</li>
+    <li>Domain cutover timing: before or after the first real marketing push.</li>
+  </ul>
+  <p class="muted">Total human time: ~90 minutes. One sitting. Agents do everything else. (Production database is already Neon Postgres &mdash; that decision is made.)</p>
+</div>
+
+<h2>What the AGENTS Will Do</h2>
+<p>The autonomous build phase is complete &mdash; G1, G5, G6, G3(code), and G4(code) all shipped in wiggum loop iterations 11&ndash;15 with judge verdicts recorded. What remains for agents is the credential-gated activation during/after your session, then post-launch work.</p>
+<table>
+  <tr><th>ID</th><th>What we built / will do</th><th>Effort</th><th>Status</th></tr>
+  <tr><td><strong>G1</strong></td><td>Real geocoder: US Census primary + Nominatim fallback, DB cache, backfill script. <code>GEOCODER_MODE=live</code> activates it on Render.</td><td>M</td><td><span class="pill done">DONE &mdash; judge PASS</span></td></tr>
+  <tr><td><strong>G5</strong></td><td>Persistent token-bucket-in-DB rate limiting, shared across processes and restarts.</td><td>S</td><td><span class="pill done">DONE &mdash; judge PASS</span></td></tr>
+  <tr><td><strong>G6</strong></td><td>JIRA queue replay worker: on-read sweep + daemon, exponential backoff, dead-letter, idempotency keys.</td><td>S</td><td><span class="pill done">DONE &mdash; judge PASS</span></td></tr>
+  <tr><td><strong>G3</strong> (code)</td><td><code>smtplib</code> email notifications + DB-backed queue + templates. Agents flip it live the moment <code>SMTP_USER</code>/<code>SMTP_PASSWORD</code> exist.</td><td>M</td><td><span class="pill done">Code DONE</span> <span class="pill next">live-send waits on credential</span></td></tr>
+  <tr><td><strong>G4</strong> (code)</td><td>DB-aware <code>/healthz</code>, read-only <code>verify_backup.py</code>, recovery playbook. Agents wire the monitor once the account exists.</td><td>S</td><td><span class="pill done">Code+docs DONE</span> <span class="pill next">evidence waits on console</span></td></tr>
+  <tr><td><strong>G2</strong></td><td>Domain cutover: Cloudflare DNS + Render custom domain + TLS, executed live during your session with rollback ready.</td><td>S</td><td><span class="pill next">During human session</span></td></tr>
+  <tr><td><strong>G7</strong></td><td>Shopify App Proxy signature verification against real Shopify requests (post-launch).</td><td>S</td><td><span class="pill next">Post-launch</span></td></tr>
+  <tr><td><strong>G8</strong></td><td>Internal map UI for leads, clusters, and service zones (post-launch polish).</td><td>L</td><td><span class="pill next">Post-launch</span></td></tr>
+</table>
+
+<h2>How We&rsquo;ll Work Together</h2>
+<div class="grid">
+  <div class="card" style="border-top-color:var(--md-sys-color-error);">
+    <span class="pill" style="color:var(--md-sys-color-error); background:var(--md-sys-color-error-container); border-color:var(--md-sys-color-error);">You &mdash; the human</span>
+    <ul>
+      <li>Account logins: Cloudflare, Namecheap, Google Workspace, Shopify, Render.</li>
+      <li>Legal sign-off on the final waiver text.</li>
+      <li>The final go/no-go call before cutover and launch.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <span class="pill done">The agents</span>
+    <ul>
+      <li>All code, tests, and documentation.</li>
+      <li>Deployment configuration and verification.</li>
+      <li>DNS record creation once the Cloudflare token exists.</li>
+      <li>Cutover execution during your session, with rollback ready.</li>
+    </ul>
+  </div>
+</div>
+<div class="card" style="margin-top:24px;">
+  <p><strong>The rule:</strong> agents never touch production DNS or email, and never deploy to the branded domain, without your explicit go. You hold the keys; we do the typing.</p>
+</div>
+
+<h2>Definition of Done &mdash; Launch Checklist</h2>
+<div class="card">
+  <ol>
+    <li>All 8 production gaps (G1&ndash;G8) closed or consciously deferred. (G1, G5, G6 already closed; G3/G4 code-complete awaiting credentials.)</li>
+    <li>Test suite still 429+ green across unit, HTTP E2E, and browser E2E.</li>
+    <li><code>leads.bentondrones.com</code> live with valid TLS.</li>
+    <li>First real signup tested end-to-end on the custom domain: signup &rarr; consent audit &rarr; email notification &rarr; admin dashboard &rarr; exports &rarr; JIRA ticket.</li>
+    <li>Anderson trained on the admin workflow.</li>
+  </ol>
+</div>
+
+<p><a class="button" href="/prd">PRD &amp; UAT Plan</a> <a class="button secondary" href="/current-state">Current State</a> <a class="button secondary" href="/roadmap">Roadmap</a></p>
+</main>
+</body>
+</html>

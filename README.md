@@ -19,9 +19,11 @@ Features:
 - Consent capture with version/text/timestamp/audit metadata
 - Admin dashboard at `/admin` with analytics, lead map, and exports (CSV, GeoJSON, KML)
 - PDF / print view of completed consent forms at `/admin/lead/<id>/print` and `/admin/lead/<id>/pdf`
-- JIRA ticket creation per signup (or local queue if JIRA is not configured)
+- JIRA ticket creation per signup, with a replayable local queue (backoff, dead-letter, idempotency) if JIRA is not configured
+- Real geocoding: US Census Geocoder + Nominatim fallback, cached in the database (`GEOCODER_MODE=live` to enable)
+- Email notifications: customer confirmation + internal alert via Google Workspace SMTP, queued in the database with retries
 - Shopify context capture for future Shopify page/theme/app-proxy integration
-- CSRF protection, honeypot, rate limiting, and admin session auth
+- CSRF protection, honeypot, persistent DB-backed rate limiting, and admin session auth
 - Fully stdlib Python — zero required pip dependencies
 
 ## Quick start
@@ -57,8 +59,13 @@ Then open:
 | `JIRA_API_TOKEN` | No | JIRA API token |
 | `JIRA_PROJECT_KEY` | No | JIRA project key (e.g. `BDS`) |
 | `JIRA_ISSUE_TYPE` | No | Issue type name (default: `Task`) |
+| `GEOCODER_MODE` | No | `mock` (default, offline) or `live` (Census + Nominatim chain) |
+| `SMTP_USER` / `SMTP_PASSWORD` | No | Google Workspace SMTP credentials — enable email notifications |
+| `SMTP_HOST` / `SMTP_PORT` | No | SMTP relay (default: `smtp.gmail.com:587`) |
+| `NOTIFY_FROM` | No | From-address for notification emails (default: `SMTP_USER`) |
+| `NOTIFY_INTERNAL_TO` | No | Internal alert recipient (default: `SMTP_USER`) |
 
-If JIRA env vars are not set, signups are queued in `jira_queue` for later processing.
+If JIRA env vars are not set, signups are queued in `jira_queue` and replayed automatically with backoff (see `scripts/replay_jira_queue.py`). If SMTP env vars are not set, notification emails stay queued in `email_queue` and signups are unaffected.
 
 ## Features
 
@@ -81,7 +88,24 @@ If JIRA env vars are not set, signups are queued in `jira_queue` for later proce
 ### JIRA integration
 - Creates a JIRA ticket per signup when config is present
 - Queues signups locally in `jira_queue` when JIRA is unavailable
+- Replay worker: on-read sweep + daemon mode, exponential backoff, dead-letter after 5 attempts, idempotency keys prevent duplicate tickets
 - Uses only Python stdlib (`urllib.request`, `json`)
+
+### Geocoding
+- Real provider chain: US Census Geocoder (primary, keyless) → Nominatim (fallback)
+- Results cached in `geocode_cache` keyed by normalized address — repeat lookups are free
+- `GEOCODER_MODE=mock` (default) keeps local runs and tests offline; `live` enables the chain
+- Provider failures never break a signup — the lead is marked `unresolved` and can be backfilled with `scripts/backfill_geocode.py --live`
+
+### Email notifications
+- Customer confirmation + internal alert enqueued inside the signup transaction
+- DB-backed `email_queue` with exponential backoff and dead-letter; drains on-read and via the admin dashboard
+- Activates with `SMTP_USER` + `SMTP_PASSWORD` (Google Workspace app password); degrades gracefully without them
+
+### Backups & monitoring
+- `/healthz` is DB-aware (bare `SELECT 1`, returns 200/503) — safe for external uptime monitors
+- `python -m scripts.verify_backup` verifies any database strictly read-only
+- Full restore procedures in `docs/backup-recovery-playbook.md`
 
 ### Landing page
 - Standalone `static/landing-page.html` with Benton branding
@@ -91,9 +115,10 @@ If JIRA env vars are not set, signups are queued in `jira_queue` for later proce
 ## Testing
 
 ```bash
-make test               # python -m unittest discover -s tests (281 tests)
-make test-e2e           # python -m unittest discover -s tests/e2e -t tests/e2e (55 tests)
-make test-all           # both suites in sequence (336 tests)
+make test               # python -m unittest discover -s tests (360 tests)
+make test-e2e           # python -m unittest discover -s tests/e2e -t tests/e2e (57 tests)
+make test-all           # both suites in sequence (417 tests)
+make test-e2e-browser   # 12 real-browser Playwright tests (429 total)
 ```
 
 Tests use in-memory or temp databases — no `data/` directory needed.
@@ -159,7 +184,7 @@ For the full step-by-step guide, environment variable reference, Neon setup, and
 
 1. Fork the repo.
 2. Create a feature branch.
-3. Run `make test-all` and ensure all 336 tests pass.
+3. Run `make test-all` and ensure all 417 tests pass (429 with the browser suite).
 4. Keep the core app stdlib-only — no new required pip dependencies.
 5. Optional deps go in `requirements.txt` and `pyproject.toml` under `[project.optional-dependencies]`.
 6. Submit a pull request.
@@ -175,6 +200,8 @@ For the full step-by-step guide, environment variable reference, Neon setup, and
 - `/goals` — end-to-end implementation goal stack
 - `/judges` — acceptance criteria and evidence requirements
 - `/current-state` — one-page “what is built / what is next / what is blocked” summary
+- `/completion-guide` (alias `/finish`) — the human credential session that unlocks launch
+- `/prd` (alias `/plan`) — PRD, UAT plan, and production-gap tracker
 
 ## Notes
 

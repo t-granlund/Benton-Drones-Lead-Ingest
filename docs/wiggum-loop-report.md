@@ -1128,3 +1128,311 @@ Same as before, but now clearly documented in:
 docs/current-state-and-next-steps.md
 http://127.0.0.1:8000/current-state
 ```
+
+## Iteration 11 (Autonomous Build Phase — Loop 1 of 5)
+
+### What was inspected
+
+- `goals/geocoding-provider-goal.md` (G1 / REQ-GEO-001)
+- `judges/geocoding-provider-judge.md` (JUDGE-GEO-001)
+- `lead_ingest/geocoding.py`, `lead_ingest/db.py`, `tests/test_geocoding.py`
+
+### Gaps found
+
+Geocoding was `MockGeocoder` — deterministic fake coordinates hard-wired into the signup
+insert path (`db.py:246`). Every map pin was made up. Judge JUDGE-GEO-001 fails any
+fabricated coordinates and requires a real provider chain with caching.
+
+### Changes made
+
+- Rewrote `lead_ingest/geocoding.py` into a provider chain: `CensusGeocoder` (primary, US
+  Census oneline API, free/keyless) → `NominatimGeocoder` (fallback, identifying
+  User-Agent, 1 req/s politeness throttle). Added `precision` field + `.resolved` to
+  `GeocodeResult`. Kept `MockGeocoder` unchanged for offline/test use.
+- Added DB-backed `geocode_cache` table keyed by normalized address (lowercase, commas→
+  space, whitespace collapse, ZIP+4→5). Cache hit = zero network. Unresolved results cached
+  too. Works on SQLite + Postgres via the db_compat wrapper.
+- Failure handling: no-match falls through the chain; exception/timeout returns an explicit
+  unresolved result (provider="unresolved", NULL coords). Signup capture never crashes.
+- Signup integration gated by `GEOCODER_MODE` (default `mock`, `live` for real) plus an
+  injectable `geocoder=` arg so tests stay offline. Sets geocode_status to
+  resolved/unresolved/pending correctly.
+- Added `scripts/backfill_geocode.py` — live-gated (`--live` or GEOCODER_MODE=live),
+  idempotent, dry-run by default so mock coords can never poison a real DB.
+
+### Tests added or changed
+
+Added `tests/test_geocode.py` (21 tests, all network mocked): Census success, Nominatim
+fallback, User-Agent + rate limit, cache hit = 0 HTTP calls, normalization cache hits,
+timeout/no-match returns unresolved without raising, backfill, and signup stores
+lat/lng/provider/status via injected fake.
+
+### Test run results
+
+`python -m unittest discover -s tests` → **Ran 302 tests, OK** (3 consecutive).
+`python -m unittest discover -s tests/e2e -t tests/e2e` → **56 tests, OK** (3 consecutive).
+
+Live verification (real APIs, autonomous): Census primary resolved 1600 Amphitheatre
+Parkway; Nominatim fallback resolved an address Census could not (Bentonville, AR is not in
+the Census oneline API coverage — the fallback earns its keep in our actual service area);
+cache hit = 0.0 ms, zero network.
+
+### Judge status
+
+**PASS** — JUDGE-GEO-001. Evidence: EVID-GEO-001. Requirement REQ-GEO-001 → passed.
+Tasks TASK-GEO-001, TASK-GEO-002 → passed.
+
+### Remaining gaps
+
+- Postgres cache path exercised only via db_compat code-conformance (no live Neon DB touched
+  by design); risk minimal (plain CREATE TABLE IF NOT EXISTS, ? → %s translation).
+
+### Recommended next iteration task
+
+Loop 2 — G5 / REQ-RATELIMIT-001: replace in-memory rate limiting with a token-bucket-in-DB
+limiter (atomic cross-process, per-route-class limits, refill-on-read, 429 + Retry-After,
+loud-fallback on storage error, no Redis). Judge: JUDGE-RATELIMIT-001.
+
+## Iteration 12 (Autonomous Build Phase — Loop 2 of 5)
+
+### What was inspected
+
+- `goals/persistent-rate-limiting-goal.md` (G5 / REQ-RATELIMIT-001)
+- `judges/persistent-rate-limiting-judge.md` (JUDGE-RATELIMIT-001)
+- `lead_ingest/request_security.py`, `lead_ingest/server.py`, `lead_ingest/db.py`
+
+### Gaps found
+
+Rate limiting was in-memory only (`RateLimiter` sliding window dict). It reset on restart and
+broke under multi-process. No `Retry-After` header on 429s. Judge JUDGE-RATELIMIT-001 fails
+any limiter that resets on restart or differs across processes.
+
+### Changes made
+
+- Added `rate_limit_buckets` table (bucket_key, route_class, tokens, last_refill; PK on
+  bucket_key+route_class) created in `init_db` for SQLite + Postgres.
+- Built `TokenBucketStore` + `PersistentRateLimiter` in `request_security.py` (CSRF and the
+  in-memory `RateLimiter` left untouched). Refill-on-read token bucket — no sweeper.
+- Atomic cross-process correctness via compare-and-set UPDATEs (optimistic CAS, retry ≤3×,
+  fail closed). Postgres serializes via row locks; SQLite via single-writer. Two processes
+  sharing a DB cannot jointly exceed the limit (2-thread test).
+- Per-route-class limits: signup POST strictest (5/60s), admin-login (30/60s), public
+  (60/60s); all env-overridable.
+- 429 now returns a `Retry-After` header + generic body that leaks no limit internals.
+- Loud-fallback on storage error: latched warning log + conservative shared in-memory
+  limiter (never silently allows).
+- Fixed a latent flake: `tests/test_protected_routes.py` was the only server-test file not
+  patching the limiter, so it hit the real persistent limiter on the dev DB.
+
+### Tests added or changed
+
+Added `tests/test_ratelimit.py` (14 tests): bucket math, refill-on-read, boundary, 2-thread
+CAS atomicity, restart persistence, per-class limits + env overrides, 3 storage-fallback
+tests. Added 1 HTTP-level e2e test for 429/Retry-After/generic-body.
+
+### Test run results
+
+`python -m unittest discover -s tests` → **Ran 316 tests, OK** (3 consecutive).
+`python -m unittest discover -s tests/e2e -t tests/e2e` → **57 tests, OK** (3 consecutive).
+
+### Judge status
+
+**PASS** — JUDGE-RATELIMIT-001. Evidence: EVID-RATELIMIT-001. Requirement REQ-RATELIMIT-001
+→ passed. Task TASK-RATELIMIT-001 → passed.
+
+### Remaining gaps
+
+- True multi-process Postgres concurrency not directly exercised (no live PG in this env);
+  the CAS design is Postgres-correct by construction and SQLite multi-connection threading
+  proves the concurrency logic.
+
+### Recommended next iteration task
+
+Loop 3 — G6 / REQ-JIRA-002: JIRA queue replay worker (on-read sweep + optional daemon,
+exponential backoff with jitter, dead-letter, idempotency keys, all state in DB). Judge:
+JUDGE-JIRA-002.
+
+## Iteration 13 (Autonomous Build Phase — Loop 3 of 5)
+
+### What was inspected
+
+- `goals/jira-queue-replay-goal.md` (G6 / REQ-JIRA-002)
+- `judges/jira-queue-replay-judge.md` (JUDGE-JIRA-002)
+- `lead_ingest/jira.py`, `lead_ingest/db.py` (jira_queue + jira_tickets), `lead_ingest/server.py`
+
+### Gaps found
+
+The `jira_queue` table captured failures but nothing retried them — failed tickets sat
+forever until manually replayed. No attempts count, no next_attempt_at, no idempotency key.
+Judge JUDGE-JIRA-002 fails if a replay can create duplicate JIRA issues after an ambiguous
+failure, or if dead-lettered items keep retrying.
+
+### Changes made
+
+- Migrated `jira_queue`: +`attempts` (default 0), +`next_attempt_at`, +`idempotency_key`
+  (`signup-<id>`), via the existing auto-migrate pattern (SQLite + Postgres).
+  `queue_jira_ticket` now dedupes per signup.
+- New `lead_ingest/jira_replay.py`: `next_delay_seconds` (exponential 30s*2^attempts with
+  jitter, capped 3600s), `due_items`, `sweep` (on-read), `run_daemon`, `queue_stats`.
+- Idempotency: sweep checks `jira_tickets` before any API call; ambiguous failure (create
+  succeeded but response lost) short-circuits with zero API calls — no duplicates.
+- Dead-letter at MAX_ATTEMPTS=5; dead items excluded from future sweeps, error retained.
+- Wired the on-read sweep into the signup-enqueue path AND the admin dashboard view
+  (best-effort try/except so a broken JIRA never breaks signup/render). Added 3 JIRA metrics
+  to the dashboard. New CLI `scripts/replay_jira_queue.py` (`--once` / `--interval N`).
+
+### Tests added or changed
+
+Added `tests/test_jira_replay.py` (13 tests, JIRA HTTP mocked): on-read sweep without daemon,
+backoff schedule + jitter bounds + cap, dead-letter transition/retention/exclusion, idempotent
+no-duplicate on ambiguous failure, enqueue dedupe, daemon tick + clean stop, success upsert,
+stats counts. `tests/test_jira.py` still passes.
+
+### Test run results
+
+`python -m unittest discover -s tests` → **Ran 329 tests, OK** (3 consecutive).
+`python -m unittest discover -s tests/e2e -t tests/e2e` → **57 tests, OK** (3 consecutive).
+
+### Judge status
+
+**PASS** — JUDGE-JIRA-002. Evidence: EVID-JIRA-002. Requirement REQ-JIRA-002 → passed.
+Task TASK-JIRA-002 → passed.
+
+### Remaining gaps
+
+- Live JIRA Cloud delivery needs real JIRA_* credentials (part of the existing JIRA
+  integration task, not this judge). All replay logic proven against mocked HTTP.
+
+### Recommended next iteration task
+
+Loop 4 — G3 / REQ-NOTIFY-001: email notifications (stdlib smtplib + Google Workspace SMTP,
+DB-backed send queue, backoff + dead-letter, idempotency, customer confirmation + internal
+alert templates, graceful degradation without creds). Build all code + mocked tests now; the
+ONE live-send criterion stays BLOCKED on the human's SMTP app password. Judge: JUDGE-NOTIFY-001.
+
+## Iteration 14 (Autonomous Build Phase — Loop 4 of 5)
+
+### What was inspected
+
+- `goals/email-notifications-goal.md` (G3 / REQ-NOTIFY-001)
+- `judges/email-notifications-judge.md` (JUDGE-NOTIFY-001)
+- `lead_ingest/db.py` (schema/auto-migrate), `lead_ingest/server.py` (signup flow), G6 jira_replay patterns
+
+### Gaps found
+
+Zero notification code existed — a customer signed up and got silence; the operator got only
+a JIRA ticket. Judge JUDGE-NOTIFY-001 requires stdlib smtplib + DB queue + backoff +
+dead-letter + idempotency + graceful degradation.
+
+### Changes made
+
+- New `email_queue` table (recipient, subject, body, template, status, attempts,
+  next_attempt_at, last_error, idempotency_key, signup_id, created_at) via auto-migrate
+  (SQLite + Postgres).
+- New `lead_ingest/notify.py`: `smtp_config_from_env` (env-only creds, None → degradation),
+  `send_email` (smtplib SMTP→STARTTLS→login→plain-text), `enqueue_notification`
+  (idempotency_key `<template>-signup-<id>` + orphan-retry cleanup), `process_queue`
+  (sweep + exponential backoff/jitter + dead-letter at 5), two plain-text templates
+  (customer_confirmation, internal_alert).
+- Wired into signup: both notifications enqueue in the SAME transaction as the signup insert
+  (rollback test proves no partial state), then a best-effort process_queue (SMTP failure
+  never breaks signup). Graceful degradation logs one loud warning when creds absent. Admin
+  dashboard shows Emails pending/sent/dead-lettered.
+
+### Tests added or changed
+
+Added `tests/test_notify.py` (20 tests, smtplib mocked): enqueue correctness, idempotent
+re-enqueue, send success (STARTTLS+login asserted), SMTP failure→backoff→dead-letter,
+missing-credential degradation, both templates render, transactional both-enqueue + full
+rollback, retried-request no-double-queue, backoff schedule/jitter/cap.
+
+### Test run results
+
+`python -m unittest discover -s tests` → **Ran 349 tests, OK** (3 consecutive).
+`python -m unittest discover -s tests/e2e -t tests/e2e` → **57 tests, OK** (3 consecutive).
+
+### Judge status
+
+**CODE COMPLETE / LIVE-SEND BLOCKED** — JUDGE-NOTIFY-001. All autonomous criteria PASS
+(evidence EVID-NOTIFY-001). The single live-send criterion stays BLOCKED on the human's
+Google Workspace SMTP app password (set SMTP_USER + SMTP_PASSWORD, optionally
+NOTIFY_INTERNAL_TO). Requirement REQ-NOTIFY-001 → in_progress (code done, cred pending).
+Task TASK-NOTIFY-001 (code) → passed; TASK-NOTIFY-002 (live-send, manual) → not_started.
+
+### Remaining gaps
+
+- Live-send verification requires the human's Google Workspace SMTP app password.
+
+### Recommended next iteration task
+
+Loop 5 — G4 / REQ-BACKUP-001: backups + uptime monitoring (DB-aware /healthz, read-only
+verify_backup.py, backup-recovery-playbook.md skeleton). Build code + docs now; Neon console
+evidence + external monitor account stay BLOCKED on the human. Judge: JUDGE-BACKUP-001.
+
+## Iteration 15 (Autonomous Build Phase — Loop 5 of 5)
+
+### What was inspected
+
+- `goals/backups-monitoring-goal.md` (G4 / REQ-BACKUP-001)
+- `judges/backups-monitoring-judge.md` (JUDGE-BACKUP-001)
+- `lead_ingest/server.py` (/healthz), `scripts/`, `docs/`
+
+### Gaps found
+
+/healthz existed and pinged the DB, but routed through `self.conn()` which runs `init_db()` —
+every health check executed DDL writes + variant seeding (bad for read-only DBs, slow for a
+monitor). No backup/restore verification, no recovery playbook, no uptime-monitor config.
+
+### Changes made
+
+- Hardened `handle_healthz`: bare `connect()` + `SELECT 1` + close, no `init_db` (test asserts
+  init_db is never called). 200 when app+DB healthy, 503 on DB unreachable. Unauthenticated,
+  read-only, fast.
+- New `scripts/verify_backup.py`: strictly read-only (SQLite opened URI mode=ro so writes are
+  impossible; Postgres uses a readonly session). Reports REACHABLE/UNREACHABLE + row counts for
+  all 7 key tables; warns on missing tables / empty signups; exit 0/1.
+- New `docs/backup-recovery-playbook.md`: current-state → healthz monitor target → verify-first
+  workflow → PITR restore → branch restore → Render DATABASE_URL re-pointing → post-restore
+  housekeeping → uptime-monitor config-as-doc → alert routing → restore-drill log. 8+
+  `<<HUMAN: ... >>` placeholders for console-specific values.
+
+### Tests added or changed
+
+Added `tests/test_backup.py` (11 tests): healthz 200-healthy / 503-DB-down / read-only
+no-init_db; verify counts + mode=ro spy + unreachable/no-target exit codes; playbook exists
+with key phrases + ≥5 human placeholders.
+
+### Test run results
+
+`python -m unittest discover -s tests` → **Ran 360 tests, OK** (3 consecutive).
+`python -m unittest discover -s tests/e2e -t tests/e2e` → **57 tests, OK** (3 consecutive).
+
+### Judge status
+
+**CODE+DOCS COMPLETE / CONSOLE EVIDENCE BLOCKED** — JUDGE-BACKUP-001. All code+docs criteria
+PASS (evidence EVID-BACKUP-001). Neon console-settings + external-monitor-account evidence
+stays BLOCKED on the human session. Requirement REQ-BACKUP-001 → in_progress. Tasks
+TASK-BACKUP-001, TASK-BACKUP-002 → passed.
+
+### Remaining gaps
+
+- Human: Neon console backup/retention settings + external uptime monitor account.
+
+---
+
+## Autonomous build phase summary (Loops 1-5)
+
+| Loop | Gap | Requirement | Judge | Result |
+|---|---|---|---|---|
+| 1 | G1 Real geocoder | REQ-GEO-001 | JUDGE-GEO-001 | **PASS** |
+| 2 | G5 Persistent rate limiting | REQ-RATELIMIT-001 | JUDGE-RATELIMIT-001 | **PASS** |
+| 3 | G6 JIRA queue replay | REQ-JIRA-002 | JUDGE-JIRA-002 | **PASS** |
+| 4 | G3 Email notifications | REQ-NOTIFY-001 | JUDGE-NOTIFY-001 | **Code PASS / live-send BLOCKED** (needs SMTP app password) |
+| 5 | G4 Backups + monitoring | REQ-BACKUP-001 | JUDGE-BACKUP-001 | **Code+docs PASS / console evidence BLOCKED** (needs Neon + monitor) |
+
+Test growth across the phase: 281 → 302 → 316 → 329 → 349 → **360 unit** (+79), 56 → **57 e2e**.
+All suites green 3 consecutive runs per iteration.
+
+Everything buildable without a human credential is now DONE. The remaining work is human-gated:
+G2 (domain cutover), G3 live-send (SMTP app password), G4 console evidence (Neon + monitor),
+G7 (Shopify App Proxy), G8 (map UI, post-launch).

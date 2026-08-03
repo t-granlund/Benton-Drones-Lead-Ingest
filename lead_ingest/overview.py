@@ -126,7 +126,7 @@ def overview_page() -> bytes:
 
   <h2>Executive Summary</h2>
   <div class="card">
-    <p>This MVP proves the core owned workflow: a visitor signs up, consent is captured, the address is geocoded locally with a mock provider, data is stored in an owned SQLite database, and internal users can view/export leads after admin login.</p>
+    <p>This MVP proves the core owned workflow: a visitor signs up, consent is captured, the address is geocoded by the real provider chain (US Census primary + Nominatim fallback, cached in the database), data is stored in an owned database (SQLite locally, Neon Postgres in production), and internal users can view/export leads after admin login.</p>
     <p>Shopify remains the storefront/presentation layer. The owned backend remains the source of truth for sensitive lead, consent, address, geospatial, and planning data.</p>
   </div>
 
@@ -137,10 +137,10 @@ def overview_page() -> bytes:
 Public signup form with consent + CSRF + honeypot
         |
         v
-Server-side validation
+Server-side validation + DB-backed rate limiting
         |
         v
-SQLite database
+Database (SQLite local / Neon Postgres in prod)
   |----------------------|----------------------|
   v                      v                      v
 Signup record       Consent record        Geocode status
@@ -166,9 +166,9 @@ CSV          GeoJSON          KML</div>
 
   <h2>What Is Built</h2>
   <div class="grid">
-    <div class="card"><h3>Data Ownership</h3><ul><li>SQLite database</li><li>Signup records</li><li>Consent records</li><li>Shopify context fields</li><li>Cluster tables ready</li></ul></div>
-    <div class="card"><h3>Security Basics</h3><ul><li>Server-side validation</li><li>Required consent</li><li>Admin password login</li><li>Signed session cookies</li><li>CSRF tokens</li><li>Honeypot spam trap</li></ul></div>
-    <div class="card"><h3>Planning Data</h3><ul><li>Mock local geocoder</li><li>Latitude/longitude fields</li><li>Haversine distance utility</li><li>Radius clustering utility</li><li>CSV/GeoJSON/KML exports</li></ul></div>
+    <div class="card"><h3>Data Ownership</h3><ul><li>SQLite locally / Neon Postgres in production</li><li>Signup records</li><li>Consent records</li><li>Shopify context fields</li><li>Cluster tables ready</li></ul></div>
+    <div class="card"><h3>Security Basics</h3><ul><li>Server-side validation</li><li>Required consent</li><li>Admin password login</li><li>Signed session cookies</li><li>CSRF tokens</li><li>Honeypot spam trap</li><li>Persistent token-bucket rate limiting (DB-backed)</li></ul></div>
+    <div class="card"><h3>Planning Data</h3><ul><li>Real geocoder: Census + Nominatim + DB cache (mock retained for offline tests)</li><li>Latitude/longitude fields</li><li>Haversine distance utility</li><li>Radius clustering utility</li><li>CSV/GeoJSON/KML exports</li></ul></div>
     <div class="card"><h3>Shopify Fit</h3><ul><li>Shop domain capture</li><li>Customer ID capture</li><li>Page URL capture</li><li>App proxy HMAC helpers</li><li>Signed context token handoff</li></ul></div>
   </div>
 
@@ -180,12 +180,15 @@ ADMIN_PASSWORD=change-me ADMIN_SESSION_SECRET=change-me-too python -m lead_inges
   <h2>Roadmap</h2>
   <table>
     <tr><th>Phase</th><th>What It Means</th><th>Status</th></tr>
-    <tr><td>Local MVP</td><td>Owned signup, consent, admin, exports, Shopify context, and tests.</td><td><span class="status done">Mostly complete</span></td></tr>
-    <tr><td>Production Shopify Integration</td><td>Choose Shopify page link, iframe/theme section, or app proxy. Validate exact Shopify app proxy signing rules against current Shopify docs.</td><td><span class="status next">Next</span></td></tr>
-    <tr><td>Real Geocoding</td><td>Replace mock geocoding with Nominatim, US Census Geocoder, or another provider using caching and provider abstraction.</td><td><span class="status next">Next</span></td></tr>
-    <tr><td>Mapping UI</td><td>Add a visual map for leads and clusters using Leaflet/MapLibre or future frontend stack.</td><td><span class="status next">Planned</span></td></tr>
-    <tr><td>Production Database</td><td>Move from SQLite to PostgreSQL/PostGIS when deployed beyond local MVP.</td><td><span class="status next">Planned</span></td></tr>
-    <tr><td>Notifications</td><td>Email/SMS confirmations and internal alerts after signup.</td><td><span class="status next">Optional</span></td></tr>
+    <tr><td>Local MVP</td><td>Owned signup, consent, admin, exports, Shopify context, and tests.</td><td><span class="status done">Complete</span></td></tr>
+    <tr><td>Real Geocoding</td><td>US Census primary + Nominatim fallback, cached in the database. Judge PASS (EVID-GEO-001).</td><td><span class="status done">Built</span></td></tr>
+    <tr><td>Persistent Rate Limiting</td><td>Token-bucket-in-DB, shared across processes and restarts. Judge PASS (EVID-RATELIMIT-001).</td><td><span class="status done">Built</span></td></tr>
+    <tr><td>JIRA Queue Replay</td><td>On-read sweep + daemon with backoff, dead-letter, idempotency. Judge PASS (EVID-JIRA-002).</td><td><span class="status done">Built</span></td></tr>
+    <tr><td>Production Database</td><td>Neon PostgreSQL via <code>DATABASE_URL</code> on Render, SQLite fallback locally.</td><td><span class="status done">Live</span></td></tr>
+    <tr><td>Notifications</td><td>Email confirmations + internal alerts: code and queue built; live-send waits on the Workspace SMTP app password.</td><td><span class="status next">Code built, creds pending</span></td></tr>
+    <tr><td>Custom Domain</td><td><code>leads.bentondrones.com</code> via Cloudflare + Render custom domain. Needs the human credential session.</td><td><span class="status next">Human-gated</span></td></tr>
+    <tr><td>Production Shopify Integration</td><td>App proxy signing validation against real Shopify requests.</td><td><span class="status next">Post-launch</span></td></tr>
+    <tr><td>Mapping UI</td><td>Full map UI for leads, clusters, and service zones beyond the admin preview.</td><td><span class="status next">Post-launch</span></td></tr>
   </table>
 
   <h2>Known Production Risks</h2>
@@ -193,7 +196,7 @@ ADMIN_PASSWORD=change-me ADMIN_SESSION_SECRET=change-me-too python -m lead_inges
     <ul>
       <li><strong>HTTPS is required</strong> before production cookies or Shopify app proxy use.</li>
       <li><strong>Secure cookie flag</strong> should be enabled behind HTTPS.</li>
-      <li><strong>Rate limiting is local-memory only</strong> and should be upgraded for multi-process/cloud deployments.</li>
+      <li><strong>Rate limiting</strong> is DB-backed token-bucket (persists across restarts); on storage failure it falls back to a loud, conservative in-memory limiter.</li>
       <li><strong>Consent language needs legal review.</strong> The software stores audit data; it does not provide legal advice.</li>
       <li><strong>Shopify app proxy HMAC canonicalization</strong> should be verified against current Shopify docs before launch.</li>
     </ul>
@@ -202,7 +205,7 @@ ADMIN_PASSWORD=change-me ADMIN_SESSION_SECRET=change-me-too python -m lead_inges
   <h2>Plain-English Bottom Line</h2>
   <div class="card">
     <p>The MVP now demonstrates the end-to-end workflow Benton Drones needs: collect leads, capture consent, store data in an owned database, preserve Shopify compatibility, protect internal data, and export planning data for operational use.</p>
-    <p>The next leap is not more random features. The next leap is choosing the Shopify integration mode and deploying a hardened version with HTTPS, production secrets, real geocoding, and a production database.</p>
+    <p>The next leap is not more random features. HTTPS, production secrets, real geocoding, and the production database are all live &mdash; the remaining leap is the one human credential session to cut over the branded domain and activate email + monitoring. Detail lives on the <a href="/roadmap">roadmap</a> and <a href="/completion-guide">completion guide</a>.</p>
   </div>
 </main>
 </body>

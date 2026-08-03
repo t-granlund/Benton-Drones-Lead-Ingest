@@ -8,7 +8,7 @@ install:
 test:
 	$(PYTHON) -m unittest discover -s tests
 
-# HTTP-level E2E suite (55 tests).
+# HTTP-level E2E suite (57 tests).
 # Default pattern test_*.py naturally excludes browser_test_*.py.
 test-e2e:
 	$(PYTHON) -m unittest discover -s tests/e2e -t tests/e2e -v

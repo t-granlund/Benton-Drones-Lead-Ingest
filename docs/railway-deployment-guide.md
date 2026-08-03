@@ -365,7 +365,7 @@ ADMIN_PASSWORD=local-dev make run
 ```
 
 The app creates `data/lead_ingest.sqlite3` and runs exactly as before.
-All 281 tests run against SQLite in memory — no PostgreSQL required for
+All 360 tests run against SQLite in memory — no PostgreSQL required for
 testing.
 
 ### Migrating existing data from SQLite to Neon

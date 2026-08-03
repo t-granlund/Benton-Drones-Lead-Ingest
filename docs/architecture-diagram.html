@@ -281,7 +281,7 @@
         <article class="comp">
           <div class="head"><span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="6" rx="1"/><rect x="4" y="14" width="16" height="6" rx="1"/><path d="M7.5 7h.01M7.5 17h.01"/></svg></span><span class="badge badge--impl"><span class="dot"></span>Implemented</span></div>
           <div><h3>Owned Backend</h3></div>
-          <p>Python stdlib <code>ThreadingHTTPServer</code> handler. Validates input, checks CSRF tokens, trips the honeypot, rate-limits by IP+path (20/min), geocodes the address (swappable mock), and persists the signup with linked consent + signature rows. SQLite locally; switches to Neon PostgreSQL automatically when <code>DATABASE_URL</code> is set (Render deployment).</p>
+          <p>Python stdlib <code>ThreadingHTTPServer</code> handler. Validates input, checks CSRF tokens, trips the honeypot, rate-limits by IP+route-class with a persistent token bucket in the database (signup: 5/min), geocodes the address via the real Census + Nominatim chain (DB-cached; mock mode for local dev), and persists the signup with linked consent + signature rows. SQLite locally; switches to Neon PostgreSQL automatically when <code>DATABASE_URL</code> is set (Render deployment).</p>
           <div class="foot"><span class="route">lead_ingest/server.py</span></div>
         </article>
 

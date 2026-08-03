@@ -44,6 +44,13 @@ from lead_ingest.jira import (
     jira_config_from_env,
     jira_issue_url,
 )
+from lead_ingest.jira_replay import queue_stats as jira_queue_stats
+from lead_ingest.jira_replay import sweep as jira_sweep
+from lead_ingest.notify import (
+    process_queue as email_process_queue,
+    queue_counts as email_queue_counts,
+    smtp_config_from_env,
+)
 from lead_ingest.pdf import render_signup_html, try_render_pdf
 from lead_ingest.exports import export_csv, export_geojson, export_kml
 from lead_ingest.models import CONSENT_TEXT, SIGNATURE_DISCLAIMER, WAIVER_TEXT, SignupInput
@@ -51,14 +58,21 @@ from lead_ingest.overview import overview_page
 from lead_ingest.project_pages import (
     api_preflight_page,
     changelog_page,
+    completion_guide_page,
     current_state_page,
     domain_setup_page,
     goals_page,
     judges_page,
+    prd_uat_plan_page,
     roadmap_page,
     shopify_preview_page,
 )
-from lead_ingest.request_security import RateLimiter, create_csrf_token, verify_csrf_token
+from lead_ingest.request_security import (
+    PersistentRateLimiter,
+    RateLimiter,
+    create_csrf_token,
+    verify_csrf_token,
+)
 from lead_ingest.shopify_security import (
     context_from_params,
     sign_context,
@@ -73,6 +87,62 @@ VERSION = "0.2.0"
 MAX_BODY_BYTES = 65_536  # 64 KB
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
 RATE_LIMITER = RateLimiter(max_requests=20, window_seconds=60)
+
+
+def route_class_for(path: str, method: str) -> str:
+    """Map a request to its rate-limit route class.
+
+    ``signup`` (the public signup POST) is the strictest class. Admin
+    login POST rides the ``admin`` class (brute-force protection); admin
+    page GETs are plain traffic and land in ``public``.
+    """
+    if path == "/signup" and method == "POST":
+        return "signup"
+    if path == "/admin-login" and method == "POST":
+        return "admin"
+    return "public"
+
+
+class LimiterAdapter:
+    """Presents the old ``RATE_LIMITER.allow(key)`` interface over the
+    persistent limiter so existing callers/test patches keep working.
+
+    Keys look like ``ip:path`` (or ``ip:path:METHOD``); the route class
+    is derived from the embedded path. ``clear()`` resets only the
+    fallback limiter -- persistent DB state intentionally survives.
+    """
+
+    def __init__(self, inner):
+        self.inner = inner
+
+    def allow(self, key: str) -> bool:
+        path, _, method = key.split(":", 1)[1].partition(":")
+        return self.inner.allow(key, route_class_for(path, method or "GET"))
+
+    def retry_after(self, key: str, route_class: str = "public") -> int:
+        return self.inner.retry_after(key, route_class)
+
+    def clear(self) -> None:
+        fallback = getattr(self.inner, "FALLBACK", None)
+        if fallback is not None:
+            fallback.clear()
+
+
+def build_rate_limiter():
+    """Default limiter for the app: persistent token-bucket-in-DB.
+
+    State lives in ``rate_limit_buckets`` (shared across processes,
+    survives restarts). Limits are on by default in dev AND prod.
+    """
+    def _connect():
+        conn = connect(DEFAULT_DB_PATH)
+        init_db(conn)  # idempotent; guarantees rate_limit_buckets exists
+        return conn
+
+    return LimiterAdapter(PersistentRateLimiter(_connect))
+
+
+RATE_LIMITER = build_rate_limiter()
 WEAK_PASSWORDS = {"change-me", "testpass", "password", "admin", ""}
 
 logger = logging.getLogger("lead_ingest.server")
@@ -157,6 +227,10 @@ class Handler(BaseHTTPRequestHandler):
             self.respond_html(goals_page())
         elif path == "/judges":
             self.respond_html(judges_page())
+        elif path in {"/prd", "/plan"}:
+            self.respond_html(prd_uat_plan_page())
+        elif path in {"/completion-guide", "/finish"}:
+            self.respond_html(completion_guide_page())
         elif path == "/admin-login":
             self.respond_html(self.login_page())
         elif path == "/admin-logout":
@@ -226,8 +300,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         payload = self.rfile.read(length).decode("utf-8")
         form = {key: values[0] for key, values in parse_qs(payload).items()}
-        if not self.allow_request(path):
-            self.respond_text("Too many requests", "text/plain", 429)
+        if not self.allow_request(path, method="POST"):
+            self.respond_too_many_requests(path, "POST")
             return
         if path == "/admin-login":
             self.handle_login(form)
@@ -265,10 +339,15 @@ class Handler(BaseHTTPRequestHandler):
             waiver_accepted=form.get("waiver_accepted") == "yes",
             typed_name=form.get("typed_name", ""),
         )
+        smtp_config = smtp_config_from_env()
         try:
             conn = self.conn()
             signup_id = create_signup(
-                conn, data, self.client_address[0], self.headers.get("User-Agent", "")
+                conn,
+                data,
+                self.client_address[0],
+                self.headers.get("User-Agent", ""),
+                notify_internal_to=(smtp_config or {}).get("internal_to", ""),
             )
         except ValidationError as exc:
             self.respond_html(self.signup_page("/signup", exc.errors), 400)
@@ -276,6 +355,17 @@ class Handler(BaseHTTPRequestHandler):
 
         # Attempt JIRA ticket creation; queue locally if unavailable.
         self.try_create_jira_ticket(conn, signup_id)
+        # On-read sweep: replay any other due queue items (best-effort;
+        # a broken JIRA must never break signup capture).
+        try:
+            jira_sweep(conn, jira_config_from_env())
+        except Exception:
+            logger.warning("JIRA on-read sweep failed", exc_info=True)
+        # Best-effort email delivery: an SMTP failure never breaks signup.
+        try:
+            email_process_queue(conn, smtp_config)
+        except Exception:
+            logger.warning("Email queue sweep failed", exc_info=True)
 
         self.respond_html(
             branded_page(
@@ -365,9 +455,35 @@ class Handler(BaseHTTPRequestHandler):
         self.respond_text("Forbidden: admin login required", "text/plain", 403)
         return False
 
-    def allow_request(self, path: str) -> bool:
+    def allow_request(self, path: str, method: str = "GET") -> bool:
+        limiter = RATE_LIMITER
         key = f"{self.client_address[0]}:{path}"
-        return RATE_LIMITER.allow(key)
+        if hasattr(limiter, "allow") and not hasattr(limiter, "retry_after"):
+            # Legacy/test-injected in-memory RateLimiter: unchanged behavior
+            # (single shared bucket per ip:path, as before).
+            return limiter.allow(key)
+        return limiter.allow(f"{key}:{method}")
+
+    def respond_too_many_requests(self, path: str, method: str = "POST") -> None:
+        """HTTP 429 with Retry-After and a generic body.
+
+        The body deliberately leaks NOTHING about limits, buckets, or
+        internals -- just that the caller should slow down.
+        """
+        limiter = RATE_LIMITER
+        key = f"{self.client_address[0]}:{path}"
+        if hasattr(limiter, "retry_after"):
+            retry = limiter.retry_after(key, route_class_for(path, method))
+        else:
+            retry = 60
+        self.send_response(429)
+        self.send_header("Content-Type", "text/plain")
+        self.send_header("Retry-After", str(retry))
+        self.send_security_headers()
+        self.end_headers()
+        self.wfile.write(
+            b"Too many requests - please wait a moment and try again."
+        )
 
     def valid_csrf(self, form: dict[str, str], action: str) -> bool:
         return verify_csrf_token(form.get("csrf_token", ""), self.security_secret(), action)
@@ -496,6 +612,20 @@ class Handler(BaseHTTPRequestHandler):
 
     def admin_page(self) -> bytes:
         conn = self.conn()
+        # On-read sweep on the admin view: due JIRA queue items replay
+        # inline so the dashboard reflects reality even with no daemon.
+        jira_outcome = {}
+        try:
+            jira_outcome = jira_sweep(conn, jira_config_from_env())
+        except Exception:
+            logger.warning("JIRA admin sweep failed", exc_info=True)
+        jstats = jira_queue_stats(conn, jira_outcome)
+        # On-read email sweep on the admin view, then surface queue counts.
+        try:
+            email_process_queue(conn, smtp_config_from_env())
+        except Exception:
+            logger.warning("Email admin sweep failed", exc_info=True)
+        estats = email_queue_counts(conn)
         stats = analytics_summary(conn)
         rows = recent_leads(conn, limit=50)
         geocoded = self.geocoded_leads()
@@ -536,6 +666,12 @@ class Handler(BaseHTTPRequestHandler):
           <div class="metric"><div class="value">{stats['today']}</div><div class="label">Today</div></div>
           <div class="metric"><div class="value">{stats['this_week']}</div><div class="label">This week</div></div>
           <div class="metric"><div class="value">{stats['pending_geocodes']}</div><div class="label">Pending geocodes</div></div>
+          <div class="metric"><div class="value">{jstats['pending']}</div><div class="label">JIRA queue pending</div></div>
+          <div class="metric"><div class="value">{jstats['created']}</div><div class="label">JIRA tickets created</div></div>
+          <div class="metric"><div class="value">{jstats['dead']}</div><div class="label">JIRA dead-lettered</div></div>
+          <div class="metric"><div class="value">{estats['pending']}</div><div class="label">Emails pending</div></div>
+          <div class="metric"><div class="value">{estats['sent']}</div><div class="label">Emails sent</div></div>
+          <div class="metric"><div class="value">{estats['dead']}</div><div class="label">Emails dead-lettered</div></div>
         </div>
         <div class="card">
           <h2>Lead map</h2>
@@ -698,15 +834,33 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(pdf_bytes)
 
     def handle_healthz(self) -> None:
-        """Unauthenticated health check with a lightweight DB ping."""
+        """Unauthenticated health check: 200 only when app AND DB are up.
+
+        Uses a bare connection + ``SELECT 1`` -- deliberately NOT the
+        shared ``self.conn()`` helper, which runs ``init_db`` (DDL
+        writes + variant seeding) on every call. A health check must be
+        read-only, fast, and safe against a read-only database.
+        """
+        conn = None
         try:
-            conn = self.conn()
+            conn = connect(DEFAULT_DB_PATH)
             conn.execute("SELECT 1").fetchone()
-            payload = json.dumps({"status": "ok", "version": VERSION, "tests_passed": True})
+            payload = json.dumps(
+                {"status": "ok", "version": VERSION, "db": "ok", "tests_passed": True}
+            )
             self.respond_text(payload, "application/json", 200)
         except Exception:
-            payload = json.dumps({"status": "error", "version": VERSION, "tests_passed": False})
+            payload = json.dumps(
+                {"status": "error", "version": VERSION, "db": "unreachable",
+                 "tests_passed": False}
+            )
             self.respond_text(payload, "application/json", 503)
+        finally:
+            if conn is not None:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
 
     def respond_html(self, content: bytes, status: int = 200) -> None:
         self.send_response(status)

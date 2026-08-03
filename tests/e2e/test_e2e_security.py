@@ -66,6 +66,36 @@ class RateLimitTests(E2ETestBase):
         self.assertEqual(statuses[:3], [400, 400, 400])
         self.assertEqual(statuses[3], 429)
 
+    def test_429_includes_retry_after_and_generic_body(self):
+        """Over-limit 429 must carry Retry-After and leak no internals."""
+        from unittest.mock import patch
+        from lead_ingest.request_security import PersistentRateLimiter
+        from lead_ingest.server import LimiterAdapter
+        from lead_ingest.db import connect as db_connect, init_db
+
+        def _connect():
+            conn = db_connect(self._db_path)
+            init_db(conn)
+            return conn
+
+        from lead_ingest.request_security import RouteLimit
+
+        limits = {"signup": RouteLimit(1, 30), "public": RouteLimit(1000, 60)}
+        limiter = LimiterAdapter(PersistentRateLimiter(_connect, limits))
+        with patch("lead_ingest.server.RATE_LIMITER", limiter):
+            r1, _ = self.post_form("/signup", {"csrf_token": "x"})
+            r2, body2 = self.post_form("/signup", {"csrf_token": "x"})
+        self.assertEqual(r1.status, 400)  # first request processed (bad CSRF)
+        self.assertEqual(r2.status, 429)
+        retry = r2.getheader("Retry-After")
+        self.assertIsNotNone(retry)
+        self.assertGreaterEqual(int(retry), 1)
+        # Generic body: no limit values, no internals.
+        self.assertNotIn(b"1", body2.replace(b"a moment", b""))
+        self.assertNotIn(b"bucket", body2.lower())
+        self.assertNotIn(b"token", body2.lower())
+        self.assertIn(b"Too many requests", body2)
+
     def test_body_size_limit_rejects_oversized_post_413(self):
         # /admin-login accepts POST; an enormous body is rejected before handling.
         big = b"x" * 70_000  # > 64 KiB server limit

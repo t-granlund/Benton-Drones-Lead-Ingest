@@ -346,6 +346,16 @@ cd Benton-Drones-Lead-Ingest</pre>
     <section id="notes">
       <h2>Good to know</h2>
 
+      <div class="card green">
+        <h4><span class="pill pass">New</span> Recent upgrades (you don't have to do anything)</h4>
+        <ul>
+          <li><strong>Real map pins.</strong> Addresses are now pinpointed by real mapping services (US Census + OpenStreetMap) and remembered, so repeat addresses are instant. No more made-up coordinates.</li>
+          <li><strong>Nothing gets lost.</strong> If JIRA or email is ever unreachable, the system remembers and retries on its own with growing delays — and gives up gracefully instead of breaking a signup.</li>
+          <li><strong>Spam protection that survives restarts.</strong> The rate limiter now keeps its memory in the database.</li>
+          <li><strong>Coming soon:</strong> automatic email confirmations to customers after they sign up (waiting on one email password from Tyler), and the pretty web address <code>leads.bentondrones.com</code>.</li>
+        </ul>
+      </div>
+
       <div class="card block">
         <h4><span class="pill block">Legal</span> The waiver wording is a placeholder</h4>
         <p>
@@ -381,7 +391,7 @@ cd Benton-Drones-Lead-Ingest</pre>
         <tr><th>What you see</th><th>What's probably happening</th><th>What to do</th></tr>
         <tr><td>First visit is very slow (~50s)</td><td>The free Render plan was asleep and is waking up.</td><td>Wait for it. Consider the paid plan to keep it awake.</td></tr>
         <tr><td>Can't log into admin</td><td>Wrong password, or it changed.</td><td>Confirm the current admin password with Tyler.</td></tr>
-        <tr><td>The map on the dashboard is empty</td><td>Your test address couldn't be pinpointed, or no leads yet.</td><td>Submit a lead with a real street address.</td></tr>
+        <tr><td>The map on the dashboard is empty</td><td>Your test address couldn't be pinpointed, or no leads yet.</td><td>Submit a lead with a real street address. Odd addresses may show as "unresolved" — the lead is still saved and can be pinpointed later.</td></tr>
         <tr><td>Local copy won't start</td><td>Python too old, or database not created.</td><td>Check <code>python3 --version</code> is 3.11+, and run <code>python3 scripts/init_db.py</code> first.</td></tr>
         <tr><td>Something looks off and you can't tell why</td><td>Could be the app (Render) or the database (Neon).</td><td>Tell Tyler which of the three parts is misbehaving — that narrows it down fast.</td></tr>
       </table>

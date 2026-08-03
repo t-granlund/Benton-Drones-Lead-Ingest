@@ -12,22 +12,22 @@ Autonomous end-to-end tests for Lead-Ingest. Two layers:
 ## Run
 
 ```bash
-# HTTP E2E suite (55 tests, ~6s)
+# HTTP E2E suite (57 tests, ~6s)
 make test-e2e
 
 # Browser E2E suite (12 tests, ~15s); requires Playwright Chromium
 make test-e2e-browser
 
 # Unit/integration + HTTP E2E
-make test-all        # 336 tests
+make test-all        # 417 tests
 
 # Everything including browser E2E (run after `make install`)
-make test-all && make test-e2e-browser   # 348 tests
+make test-all && make test-e2e-browser   # 429 tests
 ```
 
 ## What it covers
 
-### HTTP E2E (55 tests)
+### HTTP E2E (57 tests)
 
 | Area | Coverage | File |
 |---|---|---|
@@ -59,10 +59,10 @@ make test-all && make test-e2e-browser   # 348 tests
 ## CI
 
 `.github/workflows/ci.yml` runs `make test`, `make test-e2e`, and
-`make test-e2e-browser` with count gates (281 / 55 / 12 minimums).
+`make test-e2e-browser` with count gates (360 / 57 / 12 minimums).
 
 ## Idempotency
 
 Re-running on an unchanged codebase produces zero changes to the test files and
-the same 55/55 pass result. Features removed in future are marked `skip`, never
+the same 57/57 pass result. Features removed in future are marked `skip`, never
 deleted.

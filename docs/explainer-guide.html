@@ -215,7 +215,7 @@
         <!-- Geocoder -->
         <rect x="360" y="300" width="220" height="48" rx="10" fill="#e7ecff" stroke="#6184d8" stroke-width="1.5"/>
         <text x="470" y="321" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1a2a5a">Geocoder</text>
-        <text x="470" y="338" text-anchor="middle" font-size="11" fill="#44464f">mock now · real provider later</text>
+        <text x="470" y="338" text-anchor="middle" font-size="11" fill="#44464f">Census + Nominatim, DB-cached</text>
 
         <!-- Cloudflare -->
         <rect x="690" y="250" width="240" height="66" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2" stroke-dasharray="6 4"/>
@@ -273,7 +273,7 @@
     <ul>
       <li>Python standard library <code>http.server</code> and <code>sqlite3</code>.</li>
       <li>Vendored Leaflet (CSS + JS) in <code>static/leaflet/</code> for the admin map.</li>
-      <li>Mock geocoder (<code>lead_ingest/geocoding.py</code>) for local development; production will swap in a real provider.</li>
+      <li>Real geocoder chain (<code>lead_ingest/geocoding.py</code>): US Census primary + Nominatim fallback, cached in the database; mock mode retained for offline dev/tests.</li>
     </ul>
 
     <h2>Run it locally</h2>
@@ -310,7 +310,7 @@ ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
         <li><strong>Host:</strong> Render web service running the Docker image from this repo.</li>
         <li><strong>Database:</strong> Neon PostgreSQL connected via <code>DATABASE_URL</code> with <code>?sslmode=require</code>.</li>
         <li><strong>Custom domain:</strong> Migrate DNS authority to Cloudflare and add the <code>leads</code> A/CNAME record for <code>leads.bentondrones.com</code>.</li>
-        <li><strong>Remaining:</strong> swap the mock geocoder for a real provider, replace the placeholder waiver text with legally reviewed language, and configure backups/monitoring.</li>
+        <li><strong>Remaining:</strong> cut over the custom domain (human credential session), activate email notifications with the Workspace SMTP app password, complete backups/monitoring evidence, and replace the placeholder waiver text with legally reviewed language.</li>
       </ol>
     </div>
 
@@ -333,7 +333,7 @@ ADMIN_PASSWORD=your-admin-password python -m lead_ingest.server
       <tr><td>SQLite / Neon PostgreSQL persistence</td><td><span class="chip pass">Pass</span> SQLite local; Neon on Render</td></tr>
       <tr><td>Admin dashboard with maps, drill-down, analytics</td><td><span class="chip pass">Pass</span></td></tr>
       <tr><td>CSV / GeoJSON / KML exports</td><td><span class="chip pass">Pass</span></td></tr>
-      <tr><td>Unit + E2E tests</td><td><span class="chip pass">Pass</span> 348 tests (281 unit · 55 HTTP E2E · 12 browser E2E)</td></tr>
+      <tr><td>Unit + E2E tests</td><td><span class="chip pass">Pass</span> 429 tests (360 unit · 57 HTTP E2E · 12 browser E2E)</td></tr>
       <tr><td>Browser QA</td><td><span class="chip pass">Pass</span></td></tr>
       <tr><td>Production deployment</td><td><span class="chip pass">Live</span> on Render + Neon; custom domain pending</td></tr>
     </table>

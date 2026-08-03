@@ -4,7 +4,13 @@ import os
 import sqlite3
 from pathlib import Path
 
-from lead_ingest.geocoding import MockGeocoder
+from lead_ingest.geocoding import GEOCODE_CACHE_DDL, CachedGeocoder, get_default_geocoder
+from lead_ingest.request_security import RATE_LIMIT_DDL
+from lead_ingest.notify import (
+    EMAIL_QUEUE_DDL,
+    enqueue_notification,
+    notification_idempotency_key,
+)
 from lead_ingest.models import (
     CONSENT_TEXT,
     CONSENT_VERSION,
@@ -107,6 +113,9 @@ CREATE TABLE IF NOT EXISTS jira_queue (
     status TEXT NOT NULL DEFAULT 'pending',
     attempted_at TEXT,
     error_message TEXT DEFAULT '',
+    attempts INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at TEXT,
+    idempotency_key TEXT DEFAULT '',
     created_at TEXT NOT NULL,
     FOREIGN KEY (signup_id) REFERENCES signups(id) ON DELETE CASCADE
 );
@@ -146,6 +155,29 @@ _DEFAULT_VARIANT_VALUES = (
     "default",
     "local",
 )
+
+
+def ensure_jira_queue_columns(conn) -> None:
+    """Add jira_queue columns introduced for the replay worker (G6).
+
+    Same auto-migrate pattern as ensure_signup_columns: ALTER TABLE only
+    for columns missing from the live DB, on both SQLite and Postgres.
+    """
+    desired = {
+        "attempts": "INTEGER NOT NULL DEFAULT 0",
+        "next_attempt_at": "TEXT",
+        "idempotency_key": "TEXT DEFAULT ''",
+    }
+    if IS_POSTGRES:
+        rows = conn.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = 'jira_queue'"
+        ).fetchall()
+        existing = {row["column_name"] for row in rows}
+    else:
+        existing = {row["name"] for row in conn.execute("PRAGMA table_info(jira_queue)")}
+    for column, definition in desired.items():
+        if column not in existing:
+            conn.execute(f"ALTER TABLE jira_queue ADD COLUMN {column} {definition}")
 
 
 def _seed_default_variant(conn) -> None:
@@ -193,6 +225,10 @@ def connect(path: Path | str = DEFAULT_DB_PATH):
 def init_db(conn) -> None:
     conn.executescript(_pg_schema() if IS_POSTGRES else SCHEMA)
     ensure_signup_columns(conn)
+    ensure_jira_queue_columns(conn)
+    conn.execute(GEOCODE_CACHE_DDL)
+    conn.execute(RATE_LIMIT_DDL)
+    conn.execute(EMAIL_QUEUE_DDL)
     _seed_default_variant(conn)
     conn.commit()
 
@@ -234,16 +270,41 @@ def ensure_signup_columns(conn) -> None:
             conn.execute(f"ALTER TABLE signups ADD COLUMN {column} {definition}")
 
 
+def _select_geocoder(conn, geocoder=None):
+    """Pick the geocoder for a signup.
+
+    - Explicit ``geocoder`` argument always wins (tests inject fakes).
+    - ``GEOCODER_MODE=live`` -> real Census -> Nominatim chain behind the
+      DB-backed cache (production).
+    - Anything else (default) -> offline MockGeocoder, so tests/dev never
+      touch the network unless they explicitly opt in.
+    """
+    if geocoder is not None:
+        return geocoder
+    if os.environ.get("GEOCODER_MODE", "mock").strip().lower() == "live":
+        return CachedGeocoder(conn)
+    return get_default_geocoder("mock")
+
+
 def create_signup(
     conn,
     data: SignupInput,
     ip_address: str = "",
     user_agent: str = "",
     geocode: bool = True,
+    geocoder=None,
+    notify: bool = True,
+    notify_internal_to: str = "",
 ) -> int:
     validate_signup(data)
     now = utc_now_iso()
-    result = MockGeocoder().geocode(data.full_address) if geocode else None
+    result = None
+    if geocode:
+        try:
+            result = _select_geocoder(conn, geocoder).geocode(data.full_address)
+        except Exception:
+            # Signup capture must never crash because geocoding failed.
+            result = None
 
     with conn:
         cursor = conn.execute(
@@ -251,7 +312,7 @@ def create_signup(
             INSERT INTO signups (
                 first_name, last_name, email, phone, address_line1, address_line2,
                 city, state, postal_code, full_address, latitude, longitude,
-                geocode_status, geocode_provider, geocode_display_name,
+                        geocode_status, geocode_provider, geocode_display_name,
                 campaign, source, variant_slug, shopify_shop_domain,
                 shopify_customer_id, shopify_page_url, notes, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -267,9 +328,9 @@ def create_signup(
                 data.state.strip().upper(),
                 data.postal_code.strip(),
                 data.full_address,
-                result.latitude if result else None,
-                result.longitude if result else None,
-                "success" if result else "pending",
+                result.latitude if result and result.resolved else None,
+                result.longitude if result and result.resolved else None,
+                _geocode_status(result, geocode),
                 result.provider if result else "",
                 result.display_name if result else "",
                 data.campaign.strip(),
@@ -311,7 +372,78 @@ def create_signup(
                 now,
             ),
         )
+        if notify:
+            # Retry safety: if a PRIOR request queued notifications and
+            # then rolled back its signup insert (leaving orphaned queue
+            # rows), clean them before re-queuing so the fresh signup
+            # doesn't end up with duplicates under a new id.
+            conn.execute(
+                "DELETE FROM email_queue WHERE idempotency_key IN (?, ?)",
+                (
+                    notification_idempotency_key("customer_confirmation", signup_id),
+                    notification_idempotency_key("internal_alert", signup_id),
+                ),
+            )
+            # Queue both notifications in the SAME transaction as the
+            # signup: any failure here rolls back the whole signup, so a
+            # partial visible state is impossible.
+            signup_row = {
+                "id": signup_id,
+                "first_name": data.first_name.strip(),
+                "last_name": data.last_name.strip(),
+                "email": data.email.strip().lower(),
+                "full_address": data.full_address,
+                "campaign": data.campaign.strip(),
+                "source": data.source.strip(),
+                "created_at": now,
+            }
+            enqueue_notification(conn, signup_row, "customer_confirmation")
+            enqueue_notification(
+                conn, signup_row, "internal_alert", notify_internal_to
+            )
     return signup_id
+
+
+def _geocode_status(result, geocode: bool) -> str:
+    """success on resolved, unresolved on provider failure, pending if skipped.
+
+    Kept as a module function (not nested) so tests and backfill share it.
+    """
+    if result is None or not result.resolved:
+        return "unresolved" if geocode else "pending"
+    return "success"
+
+
+def list_geocode_pending(conn) -> list:
+    """Signups still needing geocoding (never attempted or failed)."""
+    return list(
+        conn.execute(
+            "SELECT id, full_address FROM signups "
+            "WHERE geocode_status IN ('pending', 'unresolved') ORDER BY id"
+        )
+    )
+
+
+def update_signup_geocode(conn, signup_id: int, result) -> None:
+    """Persist a geocode result onto an existing signup row."""
+    now = utc_now_iso()
+    conn.execute(
+        """
+        UPDATE signups SET latitude = ?, longitude = ?, geocode_status = ?,
+            geocode_provider = ?, geocode_display_name = ?, updated_at = ?
+        WHERE id = ?
+        """,
+        (
+            result.latitude if result.resolved else None,
+            result.longitude if result.resolved else None,
+            "success" if result.resolved else "unresolved",
+            result.provider,
+            result.display_name,
+            now,
+            signup_id,
+        ),
+    )
+    conn.commit()
 
 
 def list_signups(conn) -> list:
@@ -419,19 +551,41 @@ def get_export_rows(conn) -> list:
     )
 
 
+def jira_idempotency_key(signup_id: int) -> str:
+    """Stable per-signup idempotency key (retries of the same lead dedupe)."""
+    return f"signup-{signup_id}"
+
+
 def queue_jira_ticket(conn, signup_id: int, error_message: str = "") -> int:
     """Queue a signup for later JIRA ticket creation.
 
     Called when JIRA config is missing or a creation attempt fails.
-    Returns the queue row id.
+    Idempotent per signup: re-enqueueing updates the existing pending row
+    rather than inserting a duplicate. Returns the queue row id.
     """
     now = utc_now_iso()
+    key = jira_idempotency_key(signup_id)
+    existing = conn.execute(
+        "SELECT id FROM jira_queue WHERE signup_id = ? AND status = 'pending' "
+        "ORDER BY id DESC LIMIT 1",
+        (signup_id,),
+    ).fetchone()
+    if existing is not None:
+        conn.execute(
+            "UPDATE jira_queue SET attempted_at = ?, error_message = ?, "
+            "idempotency_key = ? WHERE id = ?",
+            (now, error_message, key, existing["id"]),
+        )
+        conn.commit()
+        return int(existing["id"])
     cursor = conn.execute(
         """
-        INSERT INTO jira_queue (signup_id, ticket_key, status, attempted_at, error_message, created_at)
-        VALUES (?, '', 'pending', ?, ?, ?)
+        INSERT INTO jira_queue
+        (signup_id, ticket_key, status, attempted_at, error_message,
+         attempts, next_attempt_at, idempotency_key, created_at)
+        VALUES (?, '', 'pending', ?, ?, 0, NULL, ?, ?)
         """,
-        (signup_id, now, error_message, now),
+        (signup_id, now, error_message, key, now),
     )
     conn.commit()
     return int(cursor.lastrowid)

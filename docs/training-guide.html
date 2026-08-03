@@ -352,7 +352,7 @@
         </div>
         <div class="glance-item">
           <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V4"/><path d="M8.5 13l2.5 2.5 4.5-5"/></svg></span>
-          <div><strong>348 tests pass</strong><p>281 unit/integration + 55 HTTP E2E + 12 real-browser Playwright E2E tests cover signup, consent, signatures, exports, JIRA, security, and the full user journey.</p></div>
+          <div><strong>429 tests pass</strong><p>360 unit/integration + 57 HTTP E2E + 12 real-browser Playwright E2E tests cover signup, consent, signatures, exports, JIRA, geocoding, rate limiting, notifications, backups, security, and the full user journey.</p></div>
         </div>
         <div class="glance-item">
           <span class="gico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12l2 2 4-4"/><path d="M9 19h6"/></svg></span>
@@ -668,17 +668,57 @@ JIRA_ISSUE_TYPE=Task  # optional, defaults to Task</pre>
         <p class="diagram-caption">JIRA flow: if configured, a ticket is created; otherwise the signup is queued for later replay.</p>
       </div>
 
-      <h3>If JIRA is not configured</h3>
-      <p>Signups are stored in a local <code>jira_queue</code> table with status <code>pending</code>. You can process them later by:</p>
-      <ol>
-        <li>Setting the JIRA env vars.</li>
-        <li>Running a future processing script (not yet built - add if needed).</li>
-      </ol>
+      <h3>If JIRA is not configured (or a delivery fails)</h3>
+      <p>Signups are stored in a local <code>jira_queue</code> table with status <code>pending</code>, and the <strong>replay worker</strong> retries them automatically:</p>
+      <ul>
+        <li><strong>On-read sweep</strong> &mdash; every signup and every admin dashboard visit drains any due queue items, so the queue makes progress even with no worker running.</li>
+        <li><strong>Exponential backoff</strong> &mdash; failed deliveries retry after 30s, 1m, 2m&hellip; up to a 1-hour cap, with jitter.</li>
+        <li><strong>Dead-letter</strong> &mdash; after 5 failed attempts an item is marked <code>dead</code> and left alone (the error is kept for review).</li>
+        <li><strong>Idempotency</strong> &mdash; an ambiguous timeout after JIRA actually created the ticket will never create a duplicate.</li>
+      </ul>
+      <p>You can also run the worker manually or as a daemon:</p>
+      <div class="cmd">
+        <div class="cmd-head"><span class="cmd-label">Terminal</span></div>
+        <pre>python scripts/replay_jira_queue.py          # one sweep
+python -m lead_ingest.jira_replay --interval 300   # daemon, every 5 min</pre>
+      </div>
+      <p>The admin dashboard shows live JIRA queue metrics (pending / created / dead-lettered).</p>
 
       <div class="card green">
         <h3>Privacy note</h3>
         <p>JIRA ticket descriptions include the lead name, email, address, and signature metadata. Make sure your JIRA project permissions are appropriate for PII.</p>
       </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
+    <section id="notifications">
+      <h2><span class="num">5b.</span>Email notifications</h2>
+      <p>When SMTP is configured, every completed signup sends <strong>two</strong> emails from inside the signup transaction: a customer confirmation and an internal alert to the team inbox. Both are queued in the <code>email_queue</code> table first &mdash; the signup never fails or blocks because of an email problem.</p>
+      <div class="cmd">
+        <div class="cmd-head"><span class="cmd-label">Environment variables</span></div>
+        <pre>SMTP_USER=leads@bentondrones.com
+SMTP_PASSWORD=&lt;google-workspace-app-password&gt;
+SMTP_HOST=smtp.gmail.com      # optional, default
+SMTP_PORT=587                 # optional, default
+NOTIFY_FROM=leads@bentondrones.com       # optional
+NOTIFY_INTERNAL_TO=anderson@bentondrones.com  # optional</pre>
+      </div>
+      <p>The queue drains on-read (signup path + admin dashboard visit) with exponential backoff; a message dead-letters after 5 failed attempts. Without <code>SMTP_USER</code>/<code>SMTP_PASSWORD</code> the system degrades gracefully &mdash; signups work, emails stay queued. The admin dashboard shows pending / sent / dead-lettered counts.</p>
+    </section>
+
+    <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
+
+    <section id="backups">
+      <h2><span class="num">5c.</span>Backups &amp; monitoring</h2>
+      <p><code>/healthz</code> is DB-aware: it runs a bare <code>SELECT 1</code> against the database and returns 200 (or 503 if unreachable) &mdash; safe for external uptime monitors, and it never runs DDL.</p>
+      <p>To verify a database or backup <strong>without writing anything</strong>, run:</p>
+      <div class="cmd">
+        <div class="cmd-head"><span class="cmd-label">Terminal</span></div>
+        <pre>python -m scripts.verify_backup            # uses DATABASE_URL or the local SQLite file
+python -m scripts.verify_backup --db path/to/backup.sqlite3</pre>
+      </div>
+      <p>It opens the database strictly read-only (<code>mode=ro</code> for SQLite, a read-only session for Postgres) and prints row counts for every table. The full restore procedure, Neon point-in-time recovery, and alert routing live in <code>docs/backup-recovery-playbook.md</code>.</p>
     </section>
 
     <div class="divider" aria-hidden="true"><span class="dline"></span><span class="ddot"></span><span class="dline"></span></div>
@@ -708,7 +748,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
           <button class="copy-btn" data-copy="make test-all"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>Copy</button>
         </div>
         <pre>make test-all</pre>
-        <p style="margin-top:12px;font-size:0.95rem;color:var(--md-sys-color-on-surface-variant)">Run <code>make test</code> for the 281 unit/integration tests, <code>make test-e2e</code> for the 55 HTTP end-to-end tests, and <code>make test-e2e-browser</code> for the 12 real-browser Playwright tests (348 total). Browser tests need Playwright Chromium installed via <code>make install</code>.</p>
+        <p style="margin-top:12px;font-size:0.95rem;color:var(--md-sys-color-on-surface-variant)">Run <code>make test</code> for the 360 unit/integration tests, <code>make test-e2e</code> for the 57 HTTP end-to-end tests, and <code>make test-e2e-browser</code> for the 12 real-browser Playwright tests (429 total). Browser tests need Playwright Chromium installed via <code>make install</code>.</p>
       </div>
 
       <h3>Install optional dependencies</h3>
@@ -759,7 +799,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
           <polygon points="204,92 216,92 210,102" fill="#809948"/>
           <rect x="95" y="102" width="230" height="56" rx="10" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
           <text x="210" y="128" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Tests pass</text>
-          <text x="210" y="148" text-anchor="middle" font-size="12" fill="#44464f">make test-all (336 tests)</text>
+          <text x="210" y="148" text-anchor="middle" font-size="12" fill="#44464f">make test-all (417 tests)</text>
           <line x1="210" y1="158" x2="210" y2="184" stroke="#809948" stroke-width="2"/>
           <polygon points="204,182 216,182 210,192" fill="#809948"/>
           <rect x="95" y="192" width="230" height="56" rx="10" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
@@ -852,8 +892,31 @@ ADMIN_PASSWORD=yourpass make run</pre>
           <h4>jira_queue</h4>
           <ul>
             <li><span class="dm-fk">signup_id</span> FK</li>
-            <li>ticket_key, status</li>
+            <li>ticket_key, status (pending/dead)</li>
+            <li>attempts, next_attempt_at, idempotency_key</li>
             <li>attempted_at, error_message</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>email_queue</h4>
+          <ul>
+            <li>recipient, subject, body</li>
+            <li>status (pending/sent/dead)</li>
+            <li>attempts, next_attempt_at, idempotency_key</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>geocode_cache</h4>
+          <ul>
+            <li>normalized address (key)</li>
+            <li>lat, lng, provider, display_name</li>
+          </ul>
+        </div>
+        <div class="dm-table">
+          <h4>rate_limit_buckets</h4>
+          <ul>
+            <li>bucket_key + route_class (key)</li>
+            <li>tokens, last_refill</li>
           </ul>
         </div>
         <div class="dm-table">
@@ -921,7 +984,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
 
       <details class="faq">
         <summary><span class="faq-q">Can I run this without internet?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
-        <div class="faq-a"><p>Yes, mostly. The app, database, admin dashboard, map tiles (vendored locally), and all tests run entirely offline. The only features that need the network are JIRA ticket creation (calls the Atlassian REST API) and the optional real geocoder (if you swap in one that calls an external API). The default <code>MockGeocoder</code> works offline.</p></div>
+        <div class="faq-a"><p>Yes, mostly. The app, database, admin dashboard, map tiles (vendored locally), and all tests run entirely offline. The features that need the network are JIRA ticket creation (calls the Atlassian REST API) and the live geocoder chain &mdash; and only when <code>GEOCODER_MODE=live</code> is set. The default <code>mock</code> geocoder mode works fully offline, which is how the test suite runs.</p></div>
       </details>
 
       <details class="faq">
@@ -930,8 +993,8 @@ ADMIN_PASSWORD=yourpass make run</pre>
       </details>
 
       <details class="faq">
-        <summary><span class="faq-q">Can I use a real geocoder instead of the mock?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
-        <div class="faq-a"><p>Yes. The geocoder is swappable. Replace <code>MockGeocoder</code> in <code>lead_ingest/geocoding.py</code> with a class that calls a real geocoding API (such as Nominatim, Google, or Mapbox) and returns the same <code>(latitude, longitude, display_name, provider)</code> result. The rest of the system picks it up automatically.</p></div>
+        <summary><span class="faq-q">How does the real geocoder work?</span><svg class="faq-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="faq-a"><p>It's already built. <code>lead_ingest/geocoding.py</code> chains the US Census Geocoder (primary, free, keyless) with a Nominatim fallback, and caches every result in the <code>geocode_cache</code> table so the same address is never looked up twice. Set <code>GEOCODER_MODE=live</code> to enable it (the default <code>mock</code> mode keeps local runs and tests offline). To backfill existing signups, run <code>python scripts/backfill_geocode.py --live</code>. If a provider fails or can't match an address, the signup still succeeds &mdash; the lead is marked <code>unresolved</code> and can be retried later.</p></div>
       </details>
 
       <details class="faq">
@@ -967,7 +1030,7 @@ ADMIN_PASSWORD=yourpass make run</pre>
       <p>A quick checklist to run through before handing the system to Anderson (the owner). Each item keeps the system safe and runnable on a fresh machine. Anderson's starting point is the <a href="friend-guide.html">plain-language setup guide</a> — no coding assumed.</p>
       <ul class="checklist">
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Verify no secrets are committed.</b> Check <code>.gitignore</code> excludes <code>.env</code>, <code>data/</code>, and logs. Never hard-code passwords or API tokens.</span></li>
-        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Run the full test suite.</b> <code>make test-all</code> covers 336 tests (281 unit/integration + 55 HTTP E2E); add <code>make test-e2e-browser</code> for the 12 real-browser Playwright tests (348 total). All should print <code>OK</code>.</span></li>
+        <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Run the full test suite.</b> <code>make test-all</code> covers 417 tests (360 unit/integration + 57 HTTP E2E); add <code>make test-e2e-browser</code> for the 12 real-browser Playwright tests (429 total). All should print <code>OK</code>.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Confirm the waiver is a placeholder.</b> Make sure Anderson knows the waiver text needs legal review before real customer use.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Test the clone-and-run path.</b> <code>git clone</code>, <code>make init-db</code>, <code>ADMIN_PASSWORD=... make run</code> should work from a clean checkout.</span></li>
         <li><svg class="cbox" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg><span><b>Smoke-test the flows.</b> Open <code>/signup</code>, submit a test lead, log in at <code>/admin-login</code>, view the lead, and try an export.</span></li>

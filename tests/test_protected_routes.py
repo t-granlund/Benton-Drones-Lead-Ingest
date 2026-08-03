@@ -4,8 +4,10 @@ import re
 import threading
 import unittest
 from http.server import ThreadingHTTPServer
+from unittest.mock import patch
 from urllib.parse import urlencode
 
+from lead_ingest.request_security import RateLimiter
 from lead_ingest.server import Handler
 
 
@@ -18,6 +20,13 @@ class ProtectedRouteTests(unittest.TestCase):
         os.environ["ADMIN_PASSWORD"] = "test-password"
         os.environ["ADMIN_SESSION_SECRET"] = "test-secret"
         os.environ["QUIET_HTTP_LOGS"] = "1"
+        # High-cap in-memory limiter: these tests must never throttle, and
+        # must not share the module-level persistent (DB-backed) limiter.
+        cls._patcher_rl = patch(
+            "lead_ingest.server.RATE_LIMITER",
+            RateLimiter(max_requests=100_000, window_seconds=60),
+        )
+        cls._patcher_rl.start()
         cls.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
         cls.thread.start()
@@ -28,6 +37,7 @@ class ProtectedRouteTests(unittest.TestCase):
         cls.server.shutdown()
         cls.server.server_close()
         cls.thread.join(timeout=2)
+        cls._patcher_rl.stop()
         cls.restore_env("ADMIN_PASSWORD", cls.old_password)
         cls.restore_env("ADMIN_SESSION_SECRET", cls.old_secret)
         cls.restore_env("QUIET_HTTP_LOGS", cls.old_quiet_logs)

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRD & UAT Plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --olive: #809948;
+      --olive-dark: #6f853d;
+      --olive-deep: #5a6f30;
+      --md-sys-color-primary: #809948;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #f0f7f4;
+      --md-sys-color-secondary: #6184d8;
+      --md-sys-color-tertiary: #0000ff;
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-container-low: #fbfbf8;
+      --md-sys-color-surface-container: #f5f5f0;
+      --md-sys-color-background: #f7f7f3;
+      --md-sys-color-on-surface: #1b1b1b;
+      --md-sys-color-on-surface-variant: #44464f;
+      --md-sys-color-outline: #d7d3c5;
+      --md-sys-color-outline-variant: #ede8d8;
+      --md-sys-color-error: #b3261e;
+      --md-sys-color-error-container: #f9dedc;
+      --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
+      --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
+      --md-elevation-1: var(--el-1);
+      --md-elevation-2: var(--el-2);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin:0; font-family:'Jost', sans-serif; font-weight:500; letter-spacing:0.02rem;
+      color:#1b1b1b; background:var(--md-sys-color-background); line-height:1.65;
+      font-size:1.05rem; -webkit-font-smoothing: antialiased;
+    }
+    /* Hero — logo, eyebrow, title, subtitle */
+    .hero {
+      background:linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
+      color:#fff; padding:64px 24px 72px; text-align:center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .hero-inner { max-width:820px; margin:0 auto; }
+    .hero img {
+      height:60px; width:auto; margin-bottom:20px;
+      filter:drop-shadow(0 2px 6px rgba(0,0,0,.22));
+      transition:transform 0.2s ease, opacity 0.2s ease;
+    }
+    .hero img:hover { transform:scale(1.03); opacity:0.92; }
+    .hero .eyebrow {
+      display:block; margin-bottom:14px;
+      font-size:0.75rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.14em; opacity:0.82;
+    }
+    .hero h1 {
+      margin:0 0 14px; font-size:2.4rem; font-weight:700;
+      letter-spacing:0.01rem; line-height:1.15;
+    }
+    .hero .subtitle {
+      max-width:740px; margin:0 auto; font-size:1.1rem;
+      font-weight:500; opacity:0.92; line-height:1.55;
+    }
+    main { max-width:1080px; margin:0 auto; padding:48px 24px 80px; }
+    h2 {
+      margin-top:48px; padding-bottom:8px; color:var(--md-sys-color-primary);
+      font-size:1.7rem; font-weight:700; letter-spacing:0.01rem; line-height:1.2;
+      border-bottom:1px solid var(--md-sys-color-outline);
+    }
+    h3 { margin-bottom:8px; color:var(--md-sys-color-primary); font-size:1.3rem; font-weight:600; line-height:1.3; }
+    a { color:var(--md-sys-color-secondary); text-decoration:none; transition:opacity 0.2s ease; }
+    a:hover { text-decoration:underline; opacity:0.88; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
+    .card {
+      background:var(--md-sys-color-surface); border:1px solid var(--md-sys-color-outline);
+      border-top:4px solid var(--md-sys-color-primary);
+      border-radius:16px; padding:28px; box-shadow:var(--el-1);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .card:hover { transform:translateY(-2px); box-shadow:var(--el-2); }
+    .button {
+      display:inline-block; margin-top:16px; padding:16px 28px;
+      border:none; border-radius:10px;
+      background:linear-gradient(180deg, #8ba855 0%, var(--olive) 100%);
+      color:var(--md-sys-color-on-primary); text-decoration:none;
+      font-weight:600; text-transform:uppercase; font-size:0.82rem; letter-spacing:0.08rem;
+      box-shadow: var(--el-1); transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .button:hover { transform:translateY(-1px); box-shadow:var(--el-2); text-decoration:none; }
+    .button:active { transform:translateY(0); box-shadow:var(--el-1); }
+    .button.secondary {
+      background:transparent; color:var(--md-sys-color-secondary);
+      border:1.5px solid var(--md-sys-color-secondary); box-shadow:none;
+    }
+    .button.secondary:hover { background:#e7ecff; border-color:var(--md-sys-color-secondary); }
+    .button:focus-visible { outline:2px solid var(--md-sys-color-primary); outline-offset:2px; }
+    .pill {
+      display:inline-block; padding:6px 14px; border-radius:999px;
+      font-weight:700; font-size:0.78rem; letter-spacing:0.08rem;
+      text-transform:uppercase; border:1.5px solid;
+    }
+    .done { color:#3d4d1f; background:var(--md-sys-color-primary-container); border-color:var(--md-sys-color-primary); }
+    .next { color:#8a4a00; background:#fffce7; border-color:#e8893a; }
+    .muted { color:var(--md-sys-color-on-surface-variant); }
+    table {
+      width:100%; border-collapse:collapse; background:var(--md-sys-color-surface);
+      border:1px solid var(--md-sys-color-outline); border-radius:12px; overflow:hidden;
+      box-shadow:var(--el-1);
+    }
+    th, td { padding:16px 18px; border-bottom:1px solid var(--md-sys-color-outline-variant); text-align:left; vertical-align:top; }
+    th { background:var(--md-sys-color-surface-container); color:var(--olive-deep); font-weight:700; font-size:0.78rem; letter-spacing:0.08rem; text-transform:uppercase; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:var(--md-sys-color-surface-container-low); }
+    code, pre { font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace; font-size:0.9rem; letter-spacing:0; }
+    code { background:var(--md-sys-color-surface-container-low); border:1px solid var(--md-sys-color-outline); border-radius:6px; padding:2px 6px; }
+    pre { background:#1b1b1b; color:#e5e7eb; border-radius:10px; padding:16px; overflow:auto; }
+    ol, ul { padding-left:20px; }
+    li { margin-bottom:10px; }
+    @media (max-width:600px) {
+      .hero { padding:48px 16px 56px; }
+      .hero h1 { font-size:1.8rem; }
+      .hero .subtitle { font-size:1rem; }
+      main { padding:32px 16px 64px; }
+      h2 { font-size:1.4rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } .card:hover { transform:none; } }
+  </style>
+</head>
+<body>
+<header class="hero"><div class="hero-inner">
+  <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+  <span class="eyebrow">Benton Drones</span>
+  <h1>PRD & UAT Plan</h1>
+  <p class="subtitle">Production readiness for the Benton Drones lead ingest app: what’s tested, what’s missing, and the exact path to launch.</p>
+</div></header>
+<main>
+<h2>Executive Summary</h2>
+<div class="card">
+  <p><strong>Lead-Ingest is a complete, well-tested (429 passing tests), self-hosted Python-stdlib app, live on Render &mdash; and the autonomous build phase is finished.</strong> The geocoder is real (Census + Nominatim + cache, live-verified), rate limiting is persistent in the DB, the JIRA queue replays itself, email notification code is queued and ready, and backup tooling + a recovery playbook exist. The remaining blockers are human: the branded domain <code>leads.bentondrones.com</code>, the Workspace SMTP app password, and Neon/monitor console values.</p>
+  <p><strong>All 6 agent-buildable gaps are built.</strong> The critical path to launch is human account access, not code.</p>
+  <p><span class="pill done">429 tests passing</span> <span class="pill done">5 gaps closed by agents</span> <span class="pill next">2 gaps await credentials</span> <span class="pill next">1 human session required</span></p>
+</div>
+
+<h2>Current Test Posture</h2>
+<table>
+  <tr><th>Layer</th><th>Tests</th><th>Command</th><th>Notes</th></tr>
+  <tr><td>Unit / Integration</td><td><strong>341</strong></td><td><code>make test</code></td><td>Validation, DB persistence, consent &amp; signature audit, exports, clustering, auth, CSRF, persistent rate limiting, security headers, geocoding providers + cache, JIRA replay, email queue, backup verification, production hardening. UAT (19) rides along here: 341 + 19 = <strong>360</strong> gated.</td></tr>
+  <tr><td>UAT (scenario classes)</td><td><strong>19</strong> (8 scenarios)</td><td><code>make test</code></td><td>End-to-end business flows through the real server; all 8 scenarios pass.</td></tr>
+  <tr><td>HTTP End-to-End</td><td><strong>57</strong></td><td><code>make test-e2e</code></td><td>Real HTTP against a live in-process server: public pages, signup flow, admin auth, dashboard, exports, security, CLI.</td></tr>
+  <tr><td>Browser End-to-End (Playwright)</td><td><strong>12</strong></td><td><code>make test-e2e-browser</code></td><td>Real Chromium: public pages, full signup flow, admin journey, exports.</td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>429</strong></td><td><code>make test-all</code></td><td>CI gates on minimum counts: 360 unit/integration + 57 HTTP E2E + 12 browser E2E. A deleted test can never silently pass.</td></tr>
+</table>
+
+<h2>Production Gaps &amp; Requirements</h2>
+<table>
+  <tr><th>ID</th><th>Gap</th><th>Requirement</th><th>Priority</th><th>Effort</th><th>Autonomy</th></tr>
+  <tr><td><strong>G1</strong></td><td><s>Mock geocoder returns fake coordinates</s> &mdash; CLOSED. Census primary + Nominatim fallback, DB-cached, live-verified.</td><td>Shipped behind the stable <code>GeocodeResult</code> interface; <code>GEOCODER_MODE=live</code> enables it.</td><td><span class="pill next">P0</span></td><td>M</td><td><span class="pill done">DONE &mdash; judge PASS</span></td></tr>
+  <tr><td><strong>G2</strong></td><td>Branded domain <code>leads.bentondrones.com</code> not live.</td><td>Cloudflare DNS cutover + Render custom domain + TLS, preserving Google Workspace email.</td><td><span class="pill next">P0</span></td><td>S</td><td><span class="pill next">Human-gated</span></td></tr>
+  <tr><td><strong>G3</strong></td><td>No email/SMS notifications &mdash; customers get silence after signup.</td><td>stdlib <code>smtplib</code> + DB-backed send queue with backoff/dead-letter &mdash; <strong>code shipped</strong>; SMS deferred.</td><td><span class="pill next">P0</span></td><td>M</td><td><span class="pill next">Code DONE / live-send needs SMTP app password</span></td></tr>
+  <tr><td><strong>G4</strong></td><td>No documented backups or uptime monitoring.</td><td>DB-aware <code>/healthz</code>, read-only <code>verify_backup.py</code>, recovery playbook &mdash; <strong>code+docs shipped</strong>.</td><td><span class="pill next">P1</span></td><td>S</td><td><span class="pill next">Code DONE / evidence needs Neon + monitor</span></td></tr>
+  <tr><td><strong>G5</strong></td><td><s>Rate limiting is in-memory only</s> &mdash; CLOSED. Token-bucket-in-DB, atomic CAS, shared across processes and restarts.</td><td>Shipped; per-route limits env-overridable; 429 sends <code>Retry-After</code>.</td><td><span class="pill next">P1</span></td><td>S</td><td><span class="pill done">DONE &mdash; judge PASS</span></td></tr>
+  <tr><td><strong>G6</strong></td><td><s><code>jira_queue</code> failures sit forever</s> &mdash; CLOSED. On-read sweep + daemon, backoff, dead-letter, idempotency.</td><td>Shipped; admin dashboard shows pending/created/dead metrics.</td><td><span class="pill next">P1</span></td><td>S</td><td><span class="pill done">DONE &mdash; judge PASS</span></td></tr>
+  <tr><td><strong>G7</strong></td><td>Shopify App Proxy not validated for production.</td><td>Prototype + verify real Shopify request signing before enabling <code>/apps/...</code> path.</td><td><span class="pill next">P2</span></td><td>S</td><td><span class="pill next">Code-autonomous + human credential</span></td></tr>
+  <tr><td><strong>G8</strong></td><td>Map UI beyond the admin dashboard preview.</td><td>Internal map for leads, clusters, and service zones (post-launch polish).</td><td><span class="pill next">P2</span></td><td>L</td><td><span class="pill done">Fully autonomous</span></td></tr>
+</table>
+
+<h2>Recommended Phases</h2>
+<div class="grid">
+  <div class="card"><span class="pill done">DONE</span><h3>Phase 0 &mdash; Stop Lying </h3><p><strong>G1, G6, G5.</strong> Real geocoding, JIRA queue replay, persistent rate limiting &mdash; all built, judged PASS, and verified 3&times; green.</p></div>
+  <div class="card"><span class="pill done">Code DONE</span><h3>Phase 1 &mdash; Close the Loop </h3><p><strong>G3, G4.</strong> Notification and backup/monitoring code shipped; one Google Workspace SMTP credential + Neon/monitor console values activate them.</p></div>
+  <div class="card"><span class="pill next">Human session</span><h3>Phase 2 &mdash; Human Gate Sprint</h3><p><strong>G2 + credential drops.</strong> One 60&ndash;90 minute human session: Namecheap/Cloudflare/Google Workspace/Shopify logins, DNS cutover, custom domain, drop the SMTP credential.</p></div>
+  <div class="card"><span class="pill done">After launch</span><h3>Phase 3 &mdash; Post-Launch Polish</h3><p><strong>G7, G8.</strong> Shopify App Proxy validation and the full map UI, once real leads are flowing.</p></div>
+</div>
+<h2>Build Order</h2>
+<pre>G1  &rarr; G6  &rarr; G5  &rarr; G3(code)  &rarr; G4(code)  &rarr; [human session] &rarr; G2 &rarr; launch &rarr; G7 &rarr; G8</pre>
+<p class="muted">Wiggum loop iterations 11&ndash;15 in <code>docs/wiggum-loop-report.md</code> document each build with judge verdicts and evidence IDs.</p>
+
+<h2>Architecture Decisions</h2>
+<div class="grid">
+  <div class="card"><h3>ADR-1 &mdash; Geocoder</h3><p>US Census Geocoder primary, Nominatim fallback, results cached in DB, all behind the existing <code>GeocodeResult</code> interface so callers don&rsquo;t change. Free, no API keys, US-address-optimized.</p></div>
+  <div class="card"><h3>ADR-2 &mdash; Notifications</h3><p>Stdlib <code>smtplib</code> + Google Workspace SMTP app password; sends queued in the DB so failures retry. SMS deferred &mdash; email covers launch.</p></div>
+  <div class="card"><h3>ADR-3 &mdash; Rate Limiting</h3><p>Token-bucket-in-DB (works on SQLite and Postgres), shared across processes and restarts. No Redis, no new infrastructure.</p></div>
+  <div class="card"><h3>ADR-4 &mdash; JIRA Replay</h3><p>On-read sweep (admin dashboard visit drains the queue) + daemon thread, exponential backoff, dead-letter after max attempts, idempotent on <code>lead_id</code> to avoid duplicate tickets.</p></div>
+</div>
+
+<h2>UAT Scenarios</h2>
+<h3>Current suite &mdash; 8 scenarios, 19 tests, all passing</h3>
+<table>
+  <tr><th>Scenario</th><th>Covers</th><th>Status</th></tr>
+  <tr><td><code>TestCompleteLeadCaptureFlow</code></td><td>Signup &rarr; validation &rarr; DB &rarr; consent/signature audit trail</td><td><span class="pill done"> Pass</span></td></tr>
+  <tr><td><code>TestAdminReviewFlow</code></td><td>Login &rarr; dashboard &rarr; lead detail &rarr; print</td><td><span class="pill done"> Pass</span></td></tr>
+  <tr><td><code>TestExportFlow</code></td><td>CSV / GeoJSON / KML exports contain the lead</td><td><span class="pill done"> Pass</span></td></tr>
+  <tr><td><code>TestJiraFallbackFlow</code></td><td>JIRA down &rarr; lead still saved, ticket queued</td><td><span class="pill done"> Pass</span></td></tr>
+  <tr><td><code>TestJiraSuccessFlow</code></td><td>JIRA up &rarr; ticket created and linked</td><td><span class="pill done"> Pass</span></td></tr>
+  <tr><td><code>TestVariantTrackingFlow</code></td><td>Signup slugs, source/campaign attribution</td><td><span class="pill done"> Pass</span></td></tr>
+  <tr><td><code>TestSecurityAbuseFlow</code></td><td>Honeypot, CSRF, rate limit, body-size abuse rejection</td><td><span class="pill done"> Pass</span></td></tr>
+  <tr><td><code>TestPdfFallbackFlow</code></td><td>PDF render + HTML fallback when fpdf2 absent</td><td><span class="pill done"> Pass</span></td></tr>
+</table>
+<h3>Proposed new scenarios (post-gap-closure)</h3>
+<table>
+  <tr><th>ID</th><th>Scenario</th><th>Validates</th><th>Depends on</th></tr>
+  <tr><td><strong>U9</strong></td><td>Real geocoding</td><td>Known address returns plausible lat/lng; cache hit on repeat; fallback provider engages</td><td>G1</td></tr>
+  <tr><td><strong>U10</strong></td><td>Notification delivery</td><td>Signup triggers queued email; retry on SMTP failure</td><td>G3</td></tr>
+  <tr><td><strong>U11</strong></td><td>JIRA queue replay</td><td>Queued failure retries with backoff; dead-letters after max attempts; no duplicates</td><td>G6</td></tr>
+  <tr><td><strong>U12</strong></td><td>Backup &amp; restore</td><td>Documented restore procedure actually restores leads</td><td>G4</td></tr>
+  <tr><td><strong>U13</strong></td><td>Shared rate limiting</td><td>429s persist across process restarts</td><td>G5</td></tr>
+  <tr><td><strong>U14</strong></td><td>Custom domain (live)</td><td><code>leads.bentondrones.com</code> serves HTTPS signup end-to-end</td><td>G2</td></tr>
+  <tr><td><strong>U15</strong></td><td>Map UI</td><td>Real geocoded pins render on the internal map</td><td>G1 + G8</td></tr>
+</table>
+
+<h2>Risks</h2>
+<table>
+  <tr><th>ID</th><th>Risk</th><th>Likelihood</th><th>Impact</th></tr>
+  <tr><td><strong>R1</strong></td><td>Human gate session slips &mdash; domain and credentials stay blocked.</td><td><span class="pill next">High</span></td><td><span class="pill next">High</span></td></tr>
+  <tr><td><strong>R2</strong></td><td>DNS cutover breaks Google Workspace email if MX/SPF/DKIM aren&rsquo;t preserved exactly.</td><td><span class="pill next">Medium</span></td><td><span class="pill next">High</span></td></tr>
+  <tr><td><strong>R3</strong></td><td>Real geocoder fails on rural / PO-box addresses common in the service area.</td><td><span class="pill next">Medium</span></td><td><span class="pill done">Medium</span></td></tr>
+  <tr><td><strong>R4</strong></td><td>PII exposure via third parties (email provider, JIRA ticket contents).</td><td><span class="pill next">Medium</span></td><td><span class="pill next">High</span></td></tr>
+  <tr><td><strong>R5</strong></td><td>SQLite-on-Render data loss if <code>DATABASE_URL</code>/Neon isn&rsquo;t configured in production.</td><td><span class="pill next">Medium</span></td><td><span class="pill next">High</span></td></tr>
+  <tr><td><strong>R6</strong></td><td>Replay worker creates duplicate JIRA tickets without idempotency.</td><td><span class="pill next">Medium</span></td><td><span class="pill done">Medium</span></td></tr>
+  <tr><td><strong>R7</strong></td><td>SMTP app password stored insecurely or revoked, silently killing notifications.</td><td><span class="pill done">Low</span></td><td><span class="pill done">Medium</span></td></tr>
+  <tr><td><strong>R8</strong></td><td>Map UI scope creep delays post-launch polish.</td><td><span class="pill next">Medium</span></td><td><span class="pill done">Low</span></td></tr>
+</table>
+
+<h2>Open Questions for Human</h2>
+<div class="card">
+  <ol>
+    <li>Datastore decision: keep SQLite or commit to Neon Postgres for launch?</li>
+    <li>When can we schedule the 60&ndash;90 minute human gate session (Namecheap / Cloudflare / Google Workspace / Shopify)?</li>
+    <li>Notification sender identity: which <code>@bentondrones.com</code> address sends customer confirmations?</li>
+    <li>SMS: in or out for launch? (Recommendation: out; email only.)</li>
+    <li>Waiver legal review &mdash; confirm policy URLs are real and decide whether to bump <code>WAIVER_VERSION</code>.</li>
+    <li>Domain cutover timing: before or after first real marketing push?</li>
+    <li>Neon / Render tier: free tier acceptable for launch, or paid from day one?</li>
+    <li>Map UI priority: is G8 a launch blocker for Anderson&rsquo;s planning workflow, or true post-launch polish?</li>
+  </ol>
+</div>
+
+<h2>Next Actions</h2>
+<div class="card">
+  <ol>
+    <li>Build <strong>G1</strong> (real geocoder), <strong>G6</strong> (JIRA replay), <strong>G5</strong> (DB rate limiting) autonomously &mdash; Phase 0.</li>
+    <li>Write code for <strong>G3</strong> (notifications) and <strong>G4</strong> (backups/monitoring) so they&rsquo;re credential-ready.</li>
+    <li>Schedule the human gate session; capture the SMTP credential; execute the <strong>G2</strong> DNS cutover.</li>
+    <li>Launch on <code>leads.bentondrones.com</code>, then tackle <strong>G7</strong>/<strong>G8</strong> as post-launch polish.</li>
+  </ol>
+</div>
+
+<p><a class="button" href="/roadmap">Roadmap</a> <a class="button secondary" href="/current-state">Current State</a></p>
+</main>
+</body>
+</html>
