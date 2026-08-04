@@ -34,7 +34,7 @@ jobs:
       - name: Run unit/integration tests (tests/) with count gate
         run: |
           make test 2>&1 | tee /tmp/unit.out
-          python -c "import re,sys; t=open('/tmp/unit.out').read(); m=re.findall(r'Ran (\d+) tests', t); n=int(m[-1]) if m else 0; print(f'Unit/integration tests: {n}'); sys.exit(1 if n < 364 else 0)"
+          python -c "import re,sys; t=open('/tmp/unit.out').read(); m=re.findall(r'Ran (\d+) tests', t); n=int(m[-1]) if m else 0; print(f'Unit/integration tests: {n}'); sys.exit(1 if n < 367 else 0)"
 
       - name: Run isolated E2E suite (tests/e2e/) with count gate
         run: |
@@ -56,6 +56,6 @@ jobs:
           U=$(grep -oE 'Ran [0-9]+ tests' /tmp/unit.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; U=${U:-N/A}
           E=$(grep -oE 'Ran [0-9]+ tests' /tmp/e2e.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; E=${E:-N/A}
           B=$(grep -oE 'Ran [0-9]+ tests' /tmp/browser.out 2>/dev/null | grep -oE '[0-9]+' | tail -1) ; B=${B:-N/A}
-          echo "| Unit/Integration (tests/) | $U | 364 | $([ "$U" != "N/A" ] && [ "$U" -ge 364 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit/Integration (tests/) | $U | 367 | $([ "$U" != "N/A" ] && [ "$U" -ge 367 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY
           echo "| E2E (tests/e2e/) | $E | 57 | $([ "$E" != "N/A" ] && [ "$E" -ge 57 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY
           echo "| Browser E2E (tests/e2e/) | $B | 12 | $([ "$B" != "N/A" ] && [ "$B" -ge 12 ] && echo PASS || echo FAIL) |" >> $GITHUB_STEP_SUMMARY

@@ -216,5 +216,54 @@ class PgDdlTranslationTests(unittest.TestCase):
         self.assertTrue(conn.commit.called)
 
 
+class PgCompatInsertTests(unittest.TestCase):
+    """Regression: Postgres INSERTs must use RETURNING * not RETURNING id.
+
+    The live GEOCODER_MODE=live signup 502'd on Neon because the compat
+    layer appended RETURNING id to the geocode_cache INSERT -- that table
+    keys on normalized_address and has no id column, so Postgres errored
+    and poisoned the transaction mid-signup. Same latent bug existed for
+    rate_limit_buckets first-bucket inserts.
+    """
+
+    def _capture_sql(self, insert_sql):
+        from lead_ingest.db_compat import _PgConnection
+
+        raw = MagicMock()
+        cursor = MagicMock()
+        raw.cursor.return_value = cursor
+        cursor.fetchone.return_value = None
+        conn = _PgConnection.__new__(_PgConnection)
+        conn._conn = raw
+        conn._cursor_factory = None
+        conn.execute(insert_sql, ("x",))
+        return cursor.execute.call_args[0][0]
+
+    def test_insert_appends_returning_star_not_id(self):
+        sql = self._capture_sql(
+            "INSERT INTO geocode_cache (normalized_address, latitude) VALUES (?, 1.0)"
+        )
+        self.assertIn("RETURNING *", sql)
+        self.assertNotIn("RETURNING id", sql)
+
+    def test_existing_returning_clause_is_respected(self):
+        sql = self._capture_sql("INSERT INTO signups (email) VALUES (?) RETURNING id")
+        self.assertNotIn("RETURNING *", sql)
+        self.assertEqual(sql.upper().count("RETURNING"), 1)
+
+    def test_lastrowid_none_for_id_less_rows(self):
+        from lead_ingest.db_compat import _PgConnection
+
+        raw = MagicMock()
+        cursor = MagicMock()
+        cursor.fetchone.return_value = {"normalized_address": "x"}  # no 'id' key
+        raw.cursor.return_value = cursor
+        conn = _PgConnection.__new__(_PgConnection)
+        conn._conn = raw
+        conn._cursor_factory = None
+        result = conn.execute("INSERT INTO geocode_cache (normalized_address) VALUES (?)", ("x",))
+        self.assertIsNone(result.lastrowid)
+
+
 if __name__ == "__main__":
     unittest.main()

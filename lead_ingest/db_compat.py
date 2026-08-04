@@ -76,7 +76,12 @@ class _PgConnection:
         stripped = sql.strip()
         is_insert = stripped.upper().startswith("INSERT")
         if is_insert and "RETURNING" not in sql.upper():
-            sql = sql.rstrip().rstrip(";") + " RETURNING id"
+            # RETURNING * (not RETURNING id): some tables have no `id`
+            # column (geocode_cache, rate_limit_buckets key on text),
+            # and a missing-column error poisons the whole Postgres
+            # transaction. The lastrowid check below already tolerates
+            # rows without an "id" key.
+            sql = sql.rstrip().rstrip(";") + " RETURNING *"
 
         cursor = self._conn.cursor(cursor_factory=self._cursor_factory)
         cursor.execute(sql, params)
