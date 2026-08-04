@@ -130,21 +130,28 @@ CREATE TABLE IF NOT EXISTS jira_tickets (
 """
 
 
-def _pg_schema() -> str:
-    """Derive PostgreSQL DDL from the SQLite SCHEMA.
+def _pg_statements(sqlite_ddl: str) -> list[str]:
+    """Convert SQLite DDL text into a list of PostgreSQL statements.
 
-    Replaces AUTOINCREMENT with SERIAL and strips PRAGMA directives so the
-    same schema definition serves both backends (DRY).
+    Replaces AUTOINCREMENT with SERIAL, strips PRAGMA directives, and
+    splits multi-statement strings so the same DDL constants serve both
+    backends (DRY). Applies to SCHEMA and every satellite ``*_DDL``
+    constant alike.
     """
-    schema = SCHEMA.replace(
+    converted = sqlite_ddl.replace(
         "INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY"
     )
-    lines = [
-        line
-        for line in schema.splitlines()
-        if not line.strip().upper().startswith("PRAGMA")
-    ]
-    return "\n".join(lines)
+    statements = []
+    for stmt in converted.split(";"):
+        lines = [
+            line
+            for line in stmt.splitlines()
+            if not line.strip().upper().startswith("PRAGMA")
+        ]
+        statement = "\n".join(lines).strip()
+        if statement:
+            statements.append(statement)
+    return statements
 
 
 _DEFAULT_VARIANT_VALUES = (
@@ -223,12 +230,17 @@ def connect(path: Path | str = DEFAULT_DB_PATH):
 
 
 def init_db(conn) -> None:
-    conn.executescript(_pg_schema() if IS_POSTGRES else SCHEMA)
+    if IS_POSTGRES:
+        for ddl in (SCHEMA, GEOCODE_CACHE_DDL, RATE_LIMIT_DDL, EMAIL_QUEUE_DDL):
+            for statement in _pg_statements(ddl):
+                conn.execute(statement)
+    else:
+        conn.executescript(SCHEMA)
+        conn.execute(GEOCODE_CACHE_DDL)
+        conn.execute(RATE_LIMIT_DDL)
+        conn.execute(EMAIL_QUEUE_DDL)
     ensure_signup_columns(conn)
     ensure_jira_queue_columns(conn)
-    conn.execute(GEOCODE_CACHE_DDL)
-    conn.execute(RATE_LIMIT_DDL)
-    conn.execute(EMAIL_QUEUE_DDL)
     _seed_default_variant(conn)
     conn.commit()
 

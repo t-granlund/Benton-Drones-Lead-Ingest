@@ -168,5 +168,53 @@ class PlaybookTests(unittest.TestCase):
         self.assertGreaterEqual(text.count("<<HUMAN:"), 5)
 
 
+class PgDdlTranslationTests(unittest.TestCase):
+    """Regression tests for the Render/Neon deploy failure (AUTOINCREMENT).
+
+    init_db crashed startup on Postgres because the satellite DDL constants
+    kept SQLite's AUTOINCREMENT. _pg_statements must convert every DDL
+    constant, and the Postgres branch of init_db must execute all of them.
+    """
+
+    ALL_DDL = (db.SCHEMA, db.GEOCODE_CACHE_DDL, db.RATE_LIMIT_DDL, db.EMAIL_QUEUE_DDL)
+
+    def test_pg_statements_strip_autoincrement_and_pragma(self):
+        for ddl in self.ALL_DDL:
+            statements = db._pg_statements(ddl)
+            self.assertTrue(statements, "expected at least one statement")
+            for statement in statements:
+                self.assertNotIn("AUTOINCREMENT", statement)
+                self.assertNotIn("PRAGMA", statement.upper())
+
+    def test_pg_statements_use_serial_for_autoincrement_ids(self):
+        schema_sql = "\n".join(db._pg_statements(db.SCHEMA))
+        self.assertIn("SERIAL PRIMARY KEY", schema_sql)
+        email_sql = "\n".join(db._pg_statements(db.EMAIL_QUEUE_DDL))
+        self.assertIn("SERIAL PRIMARY KEY", email_sql)
+
+    def test_pg_statements_split_multi_statement_scripts(self):
+        count = sum(len(db._pg_statements(db.SCHEMA)) for _ in (1,))
+        self.assertGreater(count, 1)
+        for statement in db._pg_statements(db.SCHEMA):
+            self.assertTrue(statement.strip().upper().startswith(("CREATE", "INSERT")), statement[:40])
+
+    def test_init_db_postgres_branch_executes_all_converted_ddl(self):
+        conn = MagicMock()
+        with patch.object(db, "IS_POSTGRES", True), \
+             patch.object(db, "ensure_signup_columns"), \
+             patch.object(db, "ensure_jira_queue_columns"), \
+             patch.object(db, "_seed_default_variant"):
+            db.init_db(conn)
+        executed = [call.args[0] for call in conn.execute.call_args_list]
+        self.assertFalse(conn.executescript.called, "Postgres path must not use executescript")
+        self.assertFalse(any("AUTOINCREMENT" in sql for sql in executed))
+        for table in ("signups", "geocode_cache", "rate_limit_buckets", "email_queue"):
+            self.assertTrue(
+                any(f"CREATE TABLE IF NOT EXISTS {table}" in sql for sql in executed),
+                f"Postgres init_db never created {table}",
+            )
+        self.assertTrue(conn.commit.called)
+
+
 if __name__ == "__main__":
     unittest.main()
