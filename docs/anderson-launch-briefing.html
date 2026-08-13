@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anderson Launch Briefing — Benton Drones Lead System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --olive:#809948; --olive-dark:#6f853d; --olive-deep:#5a6f30;
+      --bg:#f7f7f3; --surface:#ffffff; --outline:#d7d3c5;
+      --on-surface:#1b1b1b; --muted:#66685c; --error:#b3261e; --error-bg:#f9dedc;
+      --amber:#8a4a00; --amber-bg:#fffce7; --ok-deep:#3d4d1f; --ok-bg:#f0f7f4;
+      --el-1:0 1px 2px rgba(0,0,0,.04),0 1px 4px rgba(0,0,0,.06);
+      --el-2:0 2px 4px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.07);
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:'Jost',sans-serif; letter-spacing:.02rem; color:var(--on-surface);
+           background:var(--bg); line-height:1.65; font-size:1.03rem; -webkit-font-smoothing:antialiased; }
+    .hero { background:linear-gradient(135deg,var(--olive) 0%,var(--olive-dark) 100%); color:#fff;
+            padding:56px 24px 64px; text-align:center; }
+    .hero img { height:56px; width:auto; margin-bottom:18px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.22)); }
+    .hero .eyebrow { display:block; margin-bottom:12px; font-size:.75rem; font-weight:700;
+                     text-transform:uppercase; letter-spacing:.14em; opacity:.85; }
+    .hero h1 { margin:0 0 12px; font-size:2.2rem; letter-spacing:.01rem; line-height:1.15; }
+    .hero .subtitle { max-width:720px; margin:0 auto; font-size:1.05rem; opacity:.92; }
+    main { max-width:1060px; margin:0 auto; padding:40px 24px 80px; }
+    h2 { margin-top:52px; padding-bottom:8px; color:var(--olive); font-size:1.65rem; line-height:1.2;
+         border-bottom:2px solid var(--outline); }
+    h3 { margin-bottom:6px; color:var(--olive-deep); font-size:1.15rem; }
+    a { color:#6184d8; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+    .card { background:var(--surface); border:1px solid var(--outline); border-top:4px solid var(--olive);
+            border-radius:14px; padding:24px; box-shadow:var(--el-1); }
+    .card h3 { margin-top:0; }
+    .pill { display:inline-block; padding:5px 13px; border-radius:999px; font-weight:700; font-size:.74rem;
+            letter-spacing:.07em; text-transform:uppercase; border:1.5px solid; }
+    .ok { color:var(--ok-deep); background:var(--ok-bg); border-color:var(--olive); }
+    .next { color:var(--amber); background:var(--amber-bg); border-color:#e8893a; }
+    .blocked { color:var(--error); background:var(--error-bg); border-color:var(--error); }
+    table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--outline);
+            border-radius:12px; overflow:hidden; box-shadow:var(--el-1); margin:16px 0; }
+    th, td { padding:13px 16px; border-bottom:1px solid #ede8d8; text-align:left; vertical-align:top; }
+    th { background:#f5f5f0; color:var(--olive-deep); font-weight:700; font-size:.74rem;
+         letter-spacing:.08em; text-transform:uppercase; }
+    tr:last-child td { border-bottom:none; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace; font-size:.88rem;
+           background:#f5f5f0; border:1px solid var(--outline); border-radius:6px; padding:2px 6px; }
+    pre { background:#1b1b1b; color:#e5e7eb; border-radius:10px; padding:16px; overflow:auto;
+          font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace; font-size:.88rem; line-height:1.55; }
+    li { margin-bottom:8px; }
+    .muted { color:var(--muted); }
+    .nav { position:sticky; top:0; background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+           border-bottom:1px solid var(--outline); padding:10px 20px; z-index:10; text-align:center; }
+    .nav a { display:inline-block; margin:0 10px; font-size:.85rem; font-weight:600; color:var(--olive-deep); }
+    .warnbox { background:var(--error-bg); border:1.5px solid var(--error); border-radius:10px; padding:16px 20px; margin:16px 0; }
+    .infobox { background:var(--amber-bg); border:1.5px solid #e8893a; border-radius:10px; padding:16px 20px; margin:16px 0; }
+    .okbox { background:var(--ok-bg); border:1.5px solid var(--olive); border-radius:10px; padding:16px 20px; margin:16px 0; }
+    .btn { display:inline-block; margin-top:12px; padding:12px 22px; border:none; border-radius:10px;
+           background:linear-gradient(180deg,#8ba855 0%,var(--olive) 100%); color:#fff; text-decoration:none;
+           font-weight:600; text-transform:uppercase; font-size:.8rem; letter-spacing:.08rem; box-shadow:var(--el-1); }
+    .btn:hover { text-decoration:none; }
+    .btn.ghost { background:transparent; color:#6184d8; border:1.5px solid #6184d8; box-shadow:none; }
+    .stepnum { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px;
+               border-radius:50%; background:var(--olive); color:#fff; font-weight:700; font-size:.9rem; margin-right:8px; }
+    @media (max-width:600px) { .hero h1 { font-size:1.6rem; } main { padding:28px 16px 64px; } }
+  </style>
+</head>
+<body>
+<header class="hero">
+  <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
+  <span class="eyebrow">Benton Drones &middot; Launch Briefing</span>
+  <h1>Lead Capture System &mdash; Full Level Set</h1>
+  <p class="subtitle">What's live, what isn't, what every URL is, what needs redirects and exactly how to do them,
+    what's left to launch, how everything is tested, and what it costs. Verified live on August 10, 2026.</p>
+</header>
+<nav class="nav">
+  <a href="#live">1&nbsp;Live Now</a>
+  <a href="#urls">2&nbsp;URL Map</a>
+  <a href="#dormant">3&nbsp;Built, Waiting</a>
+  <a href="#redirects">4&nbsp;Redirects</a>
+  <a href="#remaining">5&nbsp;What's Left</a>
+  <a href="#e2e">6&nbsp;End-to-End</a>
+  <a href="#testing">7&nbsp;Testing</a>
+  <a href="#future">8&nbsp;Future</a>
+  <a href="#cost">9&nbsp;Cost</a>
+  <a href="#today">10&nbsp;Today's Plan</a>
+</nav>
+<main>
+
+<!-- ========= 1. WHAT'S LIVE ========= -->
+<h2 id="live">1 &middot; What Is Live Right Now</h2>
+<p>Everything in this section was verified working <strong>today</strong> (all URLs return OK, database connected, tests passing).</p>
+<div class="okbox">
+  <strong>Bottom line:</strong> the whole core system — public signup, legal consent capture, GPS geocoding,
+  spam protection, admin dashboard with live map pins, exports, and retry queues — is deployed, tested by
+  <strong>429 automated tests</strong>, and usable by real customers today.
+</div>
+<table>
+  <tr><th>Piece</th><th>Status</th><th>What it does</th></tr>
+  <tr><td><strong>Public signup form</strong></td><td><span class="pill ok">Live</span></td>
+      <td>Customer-facing form with legal waiver + typed e-signature, consent timestamps, and spam traps (honeypot + rate limiter).</td></tr>
+  <tr><td><strong>Consent / waiver capture</strong></td><td><span class="pill ok">Live</span></td>
+      <td>Every signup stores the exact waiver text version, timestamp, IP address, and browser info — a full legal audit trail. <span class="muted">Note: waiver text is still the placeholder pending legal review (see section 5).</span></td></tr>
+  <tr><td><strong>Real geocoding</strong></td><td><span class="pill ok">Live</span></td>
+      <td>Turns every address into GPS coordinates automatically — US Census first, worldwide OpenStreetMap backup — so pins land on the map at the customer's real address. Results cached; repeat lookups are instant and free.</td></tr>
+  <tr><td><strong>Admin dashboard</strong></td><td><span class="pill ok">Live</span></td>
+      <td>Password-protected. Every lead, on a map, with analytics (today / this week), source tracking, and one-click exports.</td></tr>
+  <tr><td><strong>Exports</strong></td><td><span class="pill ok">Live</span></td>
+      <td>CSV for spreadsheets, GeoJSON and KML for mapping tools (Google Earth Pro imports KML directly — replacing today's manual plotting).</td></tr>
+  <tr><td><strong>PDF consent forms</strong></td><td><span class="pill ok">Live</span></td>
+      <td>Every lead has a printable / downloadable waiver form — replacing PDFfiller.</td></tr>
+  <tr><td><strong>Spam protection</strong></td><td><span class="pill ok">Live</span></td>
+      <td>Invisible honeypot field + persistent rate limiting (5 signups per minute per IP; repeats across restarts). Attackers get a generic "slow down" message.</td></tr>
+  <tr><td><strong>Nothing-is-lost queues</strong></td><td><span class="pill ok">Live</span></td>
+      <td>If an outside service ever hiccups, work queues safely in the database and retries automatically with backoff. Signups can never be silently dropped.</td></tr>
+  <tr><td><strong>Health monitor endpoint</strong></td><td><span class="pill ok">Live</span></td>
+      <td><code>/healthz</code> actually checks the database and reports up/down — ready for an external uptime monitor.</td></tr>
+</table>
+<p><strong>Hosting today:</strong> the app runs on Render (application server) with a Neon cloud database. Both on free tiers — $0/month.
+Documentation site hosted free on GitHub Pages.</p>
+
+<!-- ========= 2. URL MAP ========= -->
+<h2 id="urls">2 &middot; The Complete URL Map</h2>
+<h3>The app (live now)</h3>
+<table>
+  <tr><th>What</th><th>URL</th><th>Who uses it</th></tr>
+  <tr><td>Celebration landing page</td><td><a href="https://benton-drones-lead-ingest.onrender.com/landing-page.html">benton-drones-lead-ingest.onrender.com/landing-page.html</a></td><td>Public</td></tr>
+  <tr><td>Signup form</td><td><a href="https://benton-drones-lead-ingest.onrender.com/signup">…/signup</a></td><td>Public (customers)</td></tr>
+  <tr><td>Admin login</td><td><a href="https://benton-drones-lead-ingest.onrender.com/admin-login">…/admin-login</a></td><td>Anderson</td></tr>
+  <tr><td>Admin dashboard</td><td><a href="https://benton-drones-lead-ingest.onrender.com/admin">…/admin</a></td><td>Anderson (after login)</td></tr>
+  <tr><td>Health check</td><td><a href="https://benton-drones-lead-ingest.onrender.com/healthz">…/healthz</a></td><td>Machines/monitors</td></tr>
+  <tr><td>System overview</td><td><a href="https://benton-drones-lead-ingest.onrender.com/overview">…/overview</a></td><td>Reading material</td></tr>
+  <tr><td>Build history</td><td><a href="https://benton-drones-lead-ingest.onrender.com/changelog">…/changelog</a></td><td>Reading material</td></tr>
+  <tr><td>Roadmap &amp; gap board</td><td><a href="https://benton-drones-lead-ingest.onrender.com/roadmap">…/roadmap</a></td><td>Reading material</td></tr>
+  <tr><td>PRD &amp; test plan</td><td><a href="https://benton-drones-lead-ingest.onrender.com/prd">…/prd</a></td><td>Reading material</td></tr>
+  <tr><td>Completion guide</td><td><a href="https://benton-drones-lead-ingest.onrender.com/completion-guide">…/completion-guide</a></td><td>Reading material</td></tr>
+</table>
+<h3>Documentation site (live now)</h3>
+<table>
+  <tr><th>What</th><th>URL</th></tr>
+  <tr><td>Docs front door</td><td><a href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/">t-granlund.github.io/Benton-Drones-Lead-Ingest</a></td></tr>
+  <tr><td><strong>Anderson's Guide</strong> (start here)</td><td><a href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/friend-guide.html">…/docs/friend-guide.html</a></td></tr>
+  <tr><td>Training Guide (deep dive)</td><td><a href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/training-guide.html">…/docs/training-guide.html</a></td></tr>
+  <tr><td>Before &amp; After (old workflow vs new)</td><td><a href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/architecture-before-after.html">…/docs/architecture-before-after.html</a></td></tr>
+  <tr><td>Architecture diagram</td><td><a href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/architecture-diagram.html">…/docs/architecture-diagram.html</a></td></tr>
+  <tr><td>Source code &amp; repo</td><td><a href="https://github.com/t-granlund/Benton-Drones-Lead-Ingest">github.com/t-granlund/Benton-Drones-Lead-Ingest</a></td></tr>
+</table>
+<h3>The future branded URL (does not exist yet)</h3>
+<p><code>leads.bentondrones.com</code> — the customer-facing address once section 4 (redirects) is done.
+Today <code>bentondrones.com</code> points at the Shopify store; nothing about that changes.</p>
+
+<!-- ========= 3. BUILT, WAITING ========= -->
+<h2 id="dormant">3 &middot; Built But Not Switched On Yet</h2>
+<p>Two features are <strong>fully coded, tested, and judged passed</strong> — they're just waiting for account credentials that only a human can create. No further programming is needed for either.</p>
+<table>
+  <tr><th>Feature</th><th>Status</th><th>What it needs (one credential each)</th></tr>
+  <tr><td><strong>Email notifications</strong> — customer gets a confirmation email; Anderson gets an internal alert, both automatically on every signup</td>
+      <td><span class="pill next">Code done</span></td>
+      <td>A Google Workspace "app password" — 5 minutes in Anderson's Google account (steps in section 10)</td></tr>
+  <tr><td><strong>External uptime monitoring + backup verification</strong> — independent service pings the system every 5 min and alerts if it's ever down</td>
+      <td><span class="pill next">Code done</span></td>
+      <td>A free UptimeRobot account + a few values copied out of the Neon database console (~15 min)</td></tr>
+</table>
+<div class="infobox"><strong>Bonus:</strong> the UptimeRobot ping every 5 minutes also keeps the free-tier app awake —
+which permanently eliminates the ~50-second "cold start" the free hosting tier otherwise has on first visit of the day.</div>
+
+<!-- ========= 4. REDIRECTS ========= -->
+<h2 id="redirects">4 &middot; What Needs Redirects — and Exactly How</h2>
+<p>There is exactly <strong>one</strong> redirect to create: the custom subdomain <code>leads.bentondrones.com</code> pointing at the live app.
+This is what turns the long <code>onrender.com</code> address into a Benton Drones branded address.</p>
+<div class="warnbox"><strong>The one rule that protects email:</strong> when creating DNS records, <strong>do not touch, edit, or delete any existing
+MX, SPF (TXT), DKIM, or DMARC records</strong>. Those keep @bentondrones.com email working. We are only <em>adding</em> one new CNAME record — nothing else changes.</div>
+
+<h3><span class="stepnum">1</span> In the Render dashboard (~10 min)</h3>
+<ol>
+  <li>Log into <a href="https://dashboard.render.com">dashboard.render.com</a> → open the <code>benton-drones-lead-ingest</code> service.</li>
+  <li>Left sidebar → <strong>Settings</strong> → <strong>Custom Domains</strong> → <strong>Add Custom Domain</strong>.</li>
+  <li>Enter exactly: <code>leads.bentondrones.com</code> and save.</li>
+  <li>Render will show you a target address like <code>benton-drones-lead-ingest.onrender.com</code> and begin waiting for DNS. Copy that target — you need it in step 2.</li>
+</ol>
+
+<h3><span class="stepnum">2</span> At the DNS provider (~10 min)</h3>
+<p><strong>First, find out who controls DNS:</strong> log into <strong>Namecheap</strong> → Domain List → <code>bentondrones.com</code> → check the <code>nameservers</code>. They'll either say "Namecheap BasicDNS / default" or "Cloudflare nameservers". Wherever the nameservers point is where you add the record.</p>
+<ol>
+  <li>Open the DNS management page (Namecheap: Domain List → Manage → Advanced DNS).</li>
+  <li><strong>Add one new record:</strong>
+    <pre>Type:   CNAME
+Host:   leads
+Value:  benton-drones-lead-ingest.onrender.com
+TTL:    Automatic (or 5 minutes)</pre></li>
+  <li>Save. Do not edit or remove any other record. (If a screen asks about "URL Redirect Record" types — that's the wrong tool; use CNAME.)</li>
+</ol>
+
+<h3><span class="stepnum">3</span> Back in Render: verify + certificate</h3>
+<ol>
+  <li>Back on the Custom Domains page in Render, click <strong>Verify</strong>. DNS takes anywhere from 2 minutes to 1 hour to be visible.</li>
+  <li>Once verified, Render issues a free HTTPS certificate automatically. Green lock = done.</li>
+  <li>Smoke test: open <code>https://leads.bentondrones.com/healthz</code> — it must say <code>"status": "ok"</code>. Then submit one test signup at <code>https://leads.bentondrones.com/signup</code> and see it in the admin dashboard.</li>
+</ol>
+<div class="okbox"><strong>After the cutover:</strong> <code>bentondrones.com</code> (the Shopify store) is untouched,
+<code>leads.bentondrones.com</code> serves this system, and shop pages simply link the "Get a Quote / Sign Up" button to
+<code>https://leads.bentondrones.com/signup</code>. No redirects <em>on the old site</em> are needed at all — just new links/buttons pointing to the new address.</div>
+
+<!-- ========= 5. WHAT'S REMAINING ========= -->
+<h2 id="remaining">5 &middot; What's Remaining to Reach "Fully Launched"</h2>
+<p>Every engineering gap is closed. What remains is <strong>one human session</strong> — roughly 90 minutes — of account access:</p>
+<table>
+  <tr><th>#</th><th>Task</th><th>Where</th><th>Time</th><th>What it unlocks</th></tr>
+  <tr><td>1</td><td>Create the Google Workspace <strong>SMTP app password</strong> named "Render Lead Ingest SMTP", copy the 16-character password</td><td>myaccount.google.com → Security → App passwords</td><td>5–20 min</td><td><strong>Email notifications go live</strong></td></tr>
+  <tr><td>2</td><td>Set 4 values on Render: <code>SMTP_USER</code>, <code>SMTP_PASSWORD</code>, <code>NOTIFY_FROM</code>, <code>NOTIFY_INTERNAL_TO</code></td><td>Render dashboard → Environment</td><td>5 min</td><td>Emails actually send</td></tr>
+  <tr><td>3</td><td><strong>Custom domain + CNAME</strong> (section 4)</td><td>Render + Namecheap/Cloudflare</td><td>~20 min</td><td><strong>leads.bentondrones.com live</strong></td></tr>
+  <tr><td>4</td><td>Create free <strong>UptimeRobot</strong> monitor pointed at <code>/healthz</code></td><td>uptimerobot.com</td><td>10 min</td><td>Downtime alerts + kills cold starts</td></tr>
+  <tr><td>5</td><td>Copy a few values from the <strong>Neon console</strong> into the backup playbook (retention window, project/region names)</td><td>console.neon.tech</td><td>10 min</td><td>Backup evidence complete</td></tr>
+  <tr><td>6</td><td>Screenshot current Namecheap DNS records <em>before</em> any DNS change (rollback safety)</td><td>Namecheap</td><td>10 min</td><td>Safe cutover with undo</td></tr>
+  <tr><td>7</td><td><strong>Legal review of the waiver text</strong> (currently a placeholder; text version + policy URLs need sign-off)</td><td>—</td><td>Varies</td><td>Legal go/no-go</td></tr>
+  <tr><td>8</td><td>Add the signup CTA link (<code>https://leads.bentondrones.com/signup</code>) to the Shopify site</td><td>Shopify Admin</td><td>20 min</td><td>Customers can find it</td></tr>
+</table>
+<p class="muted">Items 1–6 can all happen in the same sitting — today, if accounts are handy. Nothing else in the system is blocked.</p>
+
+<!-- ========= 6. END TO END ========= -->
+<h2 id="e2e">6 &middot; The End-to-End Picture of What Is Built</h2>
+<p>What happens, in order, for every real customer:</p>
+<ol>
+  <li><strong>Customer</strong> clicks the Sign Up button (on the landing page today; on the Shopify site after section 4) and fills out <code>/signup</code>: name, contact, address, service details, waiver, typed e-signature.</li>
+  <li><strong>Security layer</strong> (in microseconds): honeypot rejects bots silently; rate limiter enforces 5 signups/min/IP; CSRF tokens block forged submissions; over-size bodies rejected.</li>
+  <li><strong>Validation:</strong> required fields, email/phone formats. Junk never reaches the database.</li>
+  <li><strong>One atomic database write</strong> stores: the lead, the exact waiver text + version, consent timestamps, IP, browser, and the signature.</li>
+  <li><strong>Geocoding:</strong> the address becomes GPS coordinates (Census → global fallback, results cached so repeats are free). If geocoding ever fails, the signup still succeeds — the lead is marked for later re-try. Pins can never block a lead.</li>
+  <li><strong>Same transaction queues</strong> the customer confirmation email + Anderson's internal alert, and a JIRA ticket request. Each queue retries automatically with backoff and dead-letters (loudly, in admin) after 5 failures instead of vanishing.</li>
+  <li><strong>Customer sees</strong> a branded confirmation page. <strong>Anderson sees</strong> the lead instantly on the admin dashboard map, plus email + JIRA (once credentialed).</li>
+  <li><strong>Planning:</strong> Anderson opens the dashboard, filters leads, and downloads CSV (spreadsheets) or KML (opens straight in Google Earth) — replacing the manual Sheets + Google Earth plotting entirely.</li>
+  <li><strong>Care &amp; feeding:</strong> <code>/healthz</code> proves app+database are alive; the backup-verify script can certify any database copy read-only; the recovery playbook documents restore step-by-step.</li>
+</ol>
+
+<!-- ========= 7. TESTING ========= -->
+<h2 id="testing">7 &middot; Automated Testing Validation</h2>
+<table>
+  <tr><th>Suite</th><th>Count</th><th>What it proves</th></tr>
+  <tr><td><strong>Unit / integration</strong></td><td>360</td><td>Validation, consent storage, auth, exports, rate limiter (incl. restart persistence), geocoder chain + cache, email queue backoff/dead-letter, JIRA replay + idempotency, backup verification, security headers, CSRF, database compat (SQLite + Postgres)</td></tr>
+  <tr><td><strong>HTTP end-to-end</strong></td><td>57</td><td>Full request/response behavior of every route, including the complete signup→admin→export journey</td></tr>
+  <tr><td><strong>Real browser (Playwright/Chromium)</strong></td><td>12</td><td>A real browser clicks through public pages, signup flow, admin login, dashboard, lead detail, print/PDF, export links</td></tr>
+  <tr><td><strong>Total</td><td><strong>429 — all green</strong></td><td>Run 3× consecutively before every release; CI fails if a test is ever deleted (count gates)</td></tr>
+</table>
+<ul>
+  <li><strong>Live verification:</strong> after the last two production fixes, real signups were submitted against the live site from outside and confirmed working (200 "Signup complete") on the production database.</li>
+  <li><strong>Judgment records:</strong> independent "judge" reviews with evidence IDs are recorded for each delivered feature — visible at <code>/judges</code> and <code>/roadmap</code>.</li>
+  <li><strong>Live regression lesson learned:</strong> two Postgres-dialect bugs found during deployment were fixed <em>with regression tests</em> so that class of bug is permanently dead — the app now self-reports <code>"tests_passed": true</code> at <code>/healthz</code>.</li>
+</ul>
+
+<!-- ========= 8. FUTURE ========= -->
+<h2 id="future">8 &middot; The Future: Hosting It Fully + Making It Better</h2>
+<h3>Hosting upgrades (the "fully hosted" path)</h3>
+<table>
+  <tr><th>Move</th><th>Why</th><th>Cost</th></tr>
+  <tr><td>Render Free → <strong>Starter</strong></td><td>No more 50s cold start, always-on, more memory. <em>(Or keep Free + UptimeRobot pings every 5 min — nearly the same result for $0.)</em></td><td>$7/mo</td></tr>
+  <tr><td>Neon Free → <strong>Launch</strong></td><td>10 GB storage, longer backup history, more headroom. Only needed at real volume.</td><td>$19/mo</td></tr>
+  <tr><td>Move DNS to <strong>Cloudflare</strong></td><td>Free CDN, DDoS protection, API-controllable DNS. Optional.</td><td>$0</td></tr>
+  <tr><td>UptimeRobot (free tier)</td><td>Downtime alerts to email/phone.</td><td>$0</td></tr>
+</table>
+<h3>Product improvements (post-launch, in priority order)</h3>
+<ol>
+  <li><strong>Uptime monitor + final credentials</strong> (the 90-minute session) — this finishes "fully launched".</li>
+  <li><strong>Shopify CTA integration</strong> — buttons on the store pointing to the signup; zero code, just links.</li>
+  <li><strong>G8 — Internal planning map UI:</strong> richer map with clustering, service-zone planning, route-density views. The single biggest operational upgrade. (Effort: large — this is real coding.)</li>
+  <li><strong>G7 — Shopify App Proxy:</strong> signup embedded <em>inside</em> the Shopify storefront with verified customer context. (Effort: small-medium.)</li>
+  <li><strong>Ops automations:</strong> geocode re-backfill, backup-verification cron, queue cleanup — small scripts on existing patterns.</li>
+  <li><strong>Nice-to-haves:</strong> SMS notifications, customer self-serve status page, Google Calendar scheduling, multi-user admin roles.</li>
+</ol>
+
+<!-- ========= 9. COST ========= -->
+<h2 id="cost">9 &middot; What It Costs — Money vs Code</h2>
+<table>
+  <tr><th>Scenario</th><th>Money / month</th><th>Coding effort</th><th>Best for</th></tr>
+  <tr><td><strong>Right now</strong> (Render Free + Neon Free + GitHub Pages + free geocoders)</td><td><strong>$0</strong></td><td>Done. 429 tests green.</td><td>Launch, real customers, low volume. Only catch: ~50s first-load after idle (fixable free via UptimeRobot pings).</td></tr>
+  <tr><td><strong>Polished startup</strong> (Render Starter + UptimeRobot + custom domain)</td><td><strong>~$7</strong></td><td>Only the redirect steps in section 4 — no code.</td><td>First real season; professional feel.</td></tr>
+  <tr><td><strong>Growth</strong> (+ Neon Launch database)</td><td><strong>~$26</strong></td><td>One env var to point at the bigger database; zero code changes.</td><td>Hundreds–thousands of leads, heavier querying.</td></tr>
+  <tr><td><strong>Map UI (G8) build</strong></td><td>$0 extra hosting</td><td>The one remaining <em>real</em> engineering project (days of coding, not months).</td><td>Route/zone planning at scale.</td></tr>
+  <tr><td><strong>Shopify App Proxy (G7)</strong></td><td>$0 extra hosting</td><td>Small-medium coding effort.</td><td>Fully native storefront experience.</td></tr>
+</table>
+<div class="okbox"><strong>The honest summary:</strong> money buys you polish (no cold starts, bigger database).
+With <strong>$0/month more</strong> the system already runs a real business. Everything on the critical path is
+<strong>credentials and DNS records, not code</strong> — the remaining code is optional product upgrades you choose when the leads justify them.</div>
+
+<!-- ========= 10. TODAY'S PLAN ========= -->
+<h2 id="today">10 &middot; Today's Working-Session Plan</h2>
+<p>Ordered checklist for right now while you have all the logins at hand. Each takes minutes; do them top-to-bottom:</p>
+<ol>
+  <li><strong>Demo the live system</strong> (5 min): open <a href="https://benton-drones-lead-ingest.onrender.com/signup">the signup form</a>, submit a Bentonville test address, log into <a href="https://benton-drones-lead-ingest.onrender.com/admin-login">admin</a>, watch the pin land on the map, download the KML and open it in Google Earth.</li>
+  <li><strong>Google app password</strong> (Anderson, ~10 min): his Google account → Security → 2-Step Verification → App passwords → create "Render Lead Ingest SMTP" → copy the 16-char password. <em>Type it yourself; never into an email.</em></li>
+  <li><strong>Render env vars</strong> (~5 min): Render dashboard → the service → Environment → add <code>SMTP_USER</code>, <code>SMTP_PASSWORD</code>, <code>NOTIFY_FROM</code>, <code>NOTIFY_INTERNAL_TO</code> → Save (one redeploy). Then submit one test signup with a real email and watch confirmation + internal alert arrive.</li>
+  <li><strong>Custom domain</strong> (~20 min): follow section 4 exactly. Screenshot existing DNS records <em>first</em>.</li>
+  <li><strong>UptimeRobot</strong> (~10 min): free account → HTTP(s) monitor → <code>https://benton-drones-lead-ingest.onrender.com/healthz</code> → 5-minute interval → alerts to Anderson's email.</li>
+  <li><strong>Neon values</strong> (~10 min): open console.neon.tech, note project name/region/retention window — record them into the recovery playbook.</li>
+  <li><strong>Waiver legal review</strong>: schedule it — it's the last real gate before fully public launch.</li>
+</ol>
+<p class="muted">Estimated total: about 90 minutes. When the smoke test on the branded domain passes end-to-end (signup → email → dashboard → export), the system is <strong>launched</strong>, and everything after that is optional improvement.</p>
+
+<p style="margin-top:40px;">
+  <a class="btn" href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/friend-guide.html">Anderson's Guide</a>
+  <a class="btn" href="https://benton-drones-lead-ingest.onrender.com/signup">Try the Signup Form</a>
+  <a class="btn ghost" href="https://benton-drones-lead-ingest.onrender.com/roadmap">Roadmap &amp; Gap Board</a>
+  <a class="btn ghost" href="https://benton-drones-lead-ingest.onrender.com/completion-guide">Completion Guide</a>
+</p>
+<hr style="margin:40px 0 16px; border:none; border-top:1px solid var(--outline);">
+<p class="muted" style="font-size:.85rem;">Benton Drones Lead Capture System &middot; Briefing generated August 10, 2026 &middot; All statuses verified live at generation time &middot; Companion to the Training Guide and Completion Guide.</p>
+</main>
+</body>
+</html>
