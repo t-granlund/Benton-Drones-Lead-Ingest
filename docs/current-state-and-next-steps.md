@@ -93,3 +93,11 @@ make test-e2e                                # 57 HTTP E2E
 - Backup recovery: `docs/backup-recovery-playbook.md`
 - Domain setup: `docs/domain-dns-cloudflare-preflight.md`
 - Shopify plan: `docs/shopify-integration-plan.md`
+
+## Architectural decision: Cloudflare Pages admin dashboard (ADR-001)
+
+On August 17, 2026, an architectural decision was proposed (ADR-001) to host the admin dashboard as static assets on Cloudflare Pages at `admin.bentondrones.com`, gated by Cloudflare Access, with the Render API at `leads.bentondrones.com` validating the Access JWT server-side. This replaces the shared password login with identity-based access (Google OAuth / one-time PIN), makes the admin surface non-indexable, and disables the `onrender.com` subdomain. See `research/cloudflare-pages-admin/ADR-001-cloudflare-pages-admin-dashboard.md` for the full ADR with STRIDE analysis and fitness functions.
+
+Goals, judges, and tracking CSVs have been updated to reflect this next phase. See `docs/adr-001-tracking-update.md` for a summary of all tracking changes.
+
+> Updated by planning-agent-083bcd on 2026-08-17.

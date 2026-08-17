@@ -8,10 +8,11 @@ The project replaces the current Google Forms + PDFfiller + Google Sheets + manu
 
 - **Shopify**: storefront, landing page, CTA, optional verified customer context later
 - **Owned backend**: lead PII, consent, geocoding, clustering, reports, exports, admin
-- **Cloudflare**: authoritative DNS and future DNS/API automation
+- **Cloudflare**: authoritative DNS, Pages (admin UI), Access (identity gate), and proxied Render origin
 - **Namecheap**: registrar and current-state rollback source
 - **Google Workspace**: Benton Drones email
-- **`leads.bentondrones.com`**: production backend hostname
+- **`leads.bentondrones.com`**: production API backend hostname
+- **`admin.bentondrones.com`**: production admin UI hostname (Cloudflare Pages)
 
 ## Goal files
 
@@ -19,16 +20,19 @@ The project replaces the current Google Forms + PDFfiller + Google Sheets + manu
 |---|---|
 | Local MVP | `lead-ingest-local-mvp.md` |
 | Domains/DNS/Cloudflare | `domain-dns-cloudflare-goal.md` |
+| Cloudflare nameserver cutover | `cloudflare-nameserver-cutover-goal.md` |
 | Namecheap preflight | `namecheap-preflight-goal.md` |
 | Google Workspace email auth | `google-workspace-email-auth-goal.md` |
 | Shopify landing page | `shopify-landing-page-goal.md` |
 | Future Shopify App Proxy | `shopify-app-proxy-future-goal.md` |
 | Backend deployment | `backend-deployment-goal.md` |
+| Cloudflare Pages admin dashboard | `cloudflare-pages-admin-goal.md` |
 | Design system capture | `design-system-capture-goal.md` |
 | Production hardening | `production-hardening-goal.md` |
 | Browser QA | `browser-qa-goal.md` |
 | Read-only preflight scripts | `readonly-preflight-scripts-goal.md` |
 | BDS/Dolt-style tracking | `bds-dolt-tracking-goal.md` |
+| Anderson E2E testing | `anderson-e2e-testing-goal.md` |
 
 ## Definition of done
 

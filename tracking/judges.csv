@@ -5,7 +5,7 @@ JUDGE-NC-001,REQ-NC-001,judges/namecheap-preflight-judge.md,not_ready,,unknown,,
 JUDGE-GW-001,REQ-GW-001,judges/google-workspace-email-auth-judge.md,not_ready,,unknown,,Needs Google Admin verification
 JUDGE-SHOP-001,REQ-SHOP-001,judges/shopify-landing-page-judge.md,not_ready,,unknown,,Needs Shopify page/domain confirmation
 JUDGE-SHOP-002,REQ-SHOP-002,judges/shopify-app-proxy-future-judge.md,ready,,unknown,,Future App Proxy requirement documented
-JUDGE-DEPLOY-001,REQ-DEPLOY-001,judges/backend-deployment-judge.md,blocked,,unknown,,Backend host not selected
+JUDGE-DEPLOY-001,REQ-DEPLOY-001,judges/backend-deployment-judge.md,blocked,,unknown,,"Backend live on onrender.com (healthz 200); custom domain leads.bentondrones.com + ADR-driven architecture pending"
 JUDGE-DESIGN-001,REQ-DESIGN-001,judges/design-system-capture-judge.md,ready,2026-07-14T18:30:00Z,PASS,EVID-BUILD-001,Benton design system applied to signup/admin pages and explainer guide
 JUDGE-HARDEN-001,REQ-HARDEN-001,judges/production-hardening-judge.md,ready,2026-07-17T20:30:00Z,PASS,EVID-PROD-001,"P0/P1 production hardening implemented: secrets, headers, healthz, WAL, XSS fix, body limit, path traversal, Caddy/nginx examples"
 JUDGE-QA-001,REQ-QA-001,judges/browser-qa-judge.md,passed,2026-07-27T22:39:41Z,PASS,EVID-QA-004,12 Playwright browser tests pass; HTTP E2E suite covers remaining routes
@@ -17,3 +17,6 @@ JUDGE-BACKUP-001,REQ-BACKUP-001,judges/backups-monitoring-judge.md,blocked,2026-
 JUDGE-RATELIMIT-001,REQ-RATELIMIT-001,judges/persistent-rate-limiting-judge.md,ready,2026-07-31T15:24:00Z,PASS,EVID-RATELIMIT-001,Persistent token-bucket-in-DB limiter; atomic cross-process CAS; per-route limits; 429+Retry-After; loud fallback; restart-persistent; 316 unit + 57 e2e green
 JUDGE-JIRA-002,REQ-JIRA-002,judges/jira-queue-replay-judge.md,ready,2026-07-31T15:34:00Z,PASS,EVID-JIRA-002,On-read sweep + daemon + backoff + dead-letter + idempotency; mocked JIRA HTTP; 329 unit + 57 e2e green
 JUDGE-MAPUI-001,REQ-MAPUI-001,judges/internal-map-ui-judge.md,not_ready,,unknown,,Post-launch; blocked on REQ-GEO-001 for real coordinates
+JUDGE-CFPAGES-001,REQ-CFPAGES-001,judges/cloudflare-pages-admin-judge.md,not_ready,,unknown,,Per ADR-001 Option B: admin UI on Pages + Access + JWT verification + noindex + password removal
+JUDGE-CUTOVER-001,REQ-CUTOVER-001,judges/cloudflare-nameserver-cutover-judge.md,not_ready,,unknown,,Nameserver cutover from Namecheap to Cloudflare pending preflight
+JUDGE-E2E-001,REQ-E2E-001,judges/anderson-e2e-testing-judge.md,not_ready,,unknown,,Anderson E2E against live stack pending human session

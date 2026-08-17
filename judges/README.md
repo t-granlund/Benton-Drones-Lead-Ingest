@@ -27,16 +27,19 @@ Each judge should record:
 |---|---|
 | Local MVP | `local-mvp-judge.md` |
 | Domains/DNS/Cloudflare | `domain-dns-cloudflare-judge.md` |
+| Cloudflare nameserver cutover | `cloudflare-nameserver-cutover-judge.md` |
 | Namecheap preflight | `namecheap-preflight-judge.md` |
 | Google Workspace email auth | `google-workspace-email-auth-judge.md` |
 | Shopify landing page | `shopify-landing-page-judge.md` |
 | Future Shopify App Proxy | `shopify-app-proxy-future-judge.md` |
 | Backend deployment | `backend-deployment-judge.md` |
+| Cloudflare Pages admin dashboard | `cloudflare-pages-admin-judge.md` |
 | Design system capture | `design-system-capture-judge.md` |
 | Production hardening | `production-hardening-judge.md` |
 | Browser QA | `browser-qa-judge.md` |
 | Read-only preflight scripts | `readonly-preflight-scripts-judge.md` |
 | BDS/Dolt-style tracking | `bds-dolt-tracking-judge.md` |
+| Anderson E2E testing | `anderson-e2e-testing-judge.md` |
 
 ## Evidence rule
 

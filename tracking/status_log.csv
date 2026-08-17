@@ -58,3 +58,12 @@ LOG-056,requirement,REQ-RATELIMIT-001,not_started,passed,benton-lead-orchestrato
 LOG-057,requirement,REQ-JIRA-002,not_started,passed,benton-lead-orchestrator-070085,2026-07-31T15:34:00Z,Wiggum loop iteration 3: JIRA queue replay worker (sweep+daemon+backoff+dead-letter+idempotency) built; judge JUDGE-JIRA-002 PASS,EVID-JIRA-002
 LOG-058,requirement,REQ-NOTIFY-001,not_started,in_progress,benton-lead-orchestrator-070085,2026-07-31T15:42:00Z,Wiggum loop iteration 4: email notification code complete (all autonomous judge criteria PASS); live-send BLOCKED on human Google Workspace SMTP app password,EVID-NOTIFY-001
 LOG-059,requirement,REQ-BACKUP-001,not_started,in_progress,benton-lead-orchestrator-070085,2026-07-31T15:52:00Z,Wiggum loop iteration 5: backups+monitoring code+docs complete; Neon console + external monitor evidence BLOCKED on human,EVID-BACKUP-001
+LOG-060,requirement,REQ-LOCAL-001,in_progress,passed,planning-agent-083bcd,2026-08-17T12:00:00Z,All local MVP tasks passed and JUDGE-LOCAL-001 PASS,EVID-TEST-005
+LOG-061,requirement,REQ-DEPLOY-001,blocked,in_progress,planning-agent-083bcd,2026-08-17T12:00:00Z,Backend live on Render onrender.com; custom domain + ADR-driven architecture pending,EVID-DEPLOY-002
+LOG-062,requirement,REQ-DESIGN-001,not_started,passed,planning-agent-083bcd,2026-08-17T12:00:00Z,Design system captured and applied; all design tasks passed; JUDGE-DESIGN-001 PASS,EVID-BUILD-001
+LOG-063,requirement,REQ-SCRIPT-001,in_progress,passed,planning-agent-083bcd,2026-08-17T12:00:00Z,Read-only preflight scripts passed; JUDGE-SCRIPT-001 PASS,EVID-SCRIPT-001
+LOG-064,requirement,REQ-CFPAGES-001,not_started,proposed,planning-agent-083bcd,2026-08-17T12:00:00Z,ADR-001 Option B adopted: static admin UI on Cloudflare Pages + Access + JWT verification,
+LOG-065,requirement,REQ-CUTOVER-001,not_started,not_started,planning-agent-083bcd,2026-08-17T12:00:00Z,Cloudflare nameserver cutover requirement created per ADR-001,
+LOG-066,requirement,REQ-E2E-001,not_started,not_started,planning-agent-083bcd,2026-08-17T12:00:00Z,Anderson E2E testing requirement created per ADR-001 and current-state review,
+LOG-067,judge,JUDGE-DEPLOY-001,blocked,blocked,planning-agent-083bcd,2026-08-17T12:00:00Z,JUDGE-DEPLOY-001 note updated to reflect backend live on onrender.com; custom domain pending,
+LOG-068,decision,DEC-ARCH-002,proposed,proposed,solutions-architect,2026-08-17T12:00:00Z,ADR-001 produced: Cloudflare Pages admin dashboard behind Cloudflare Access with Render API JWT verification,

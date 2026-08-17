@@ -6,3 +6,6 @@ SNAP-SHOP-001,Shopify,domain-settings,needed,,manual,,Required A/CNAME and SSL s
 SNAP-SHOP-002,Shopify,design-system,needed,,manual,,Logo colors fonts screenshots
 SNAP-CF-001,Cloudflare,dns-zone,needed,,code-puppy-da30e5,,Read-only inventory after zone import/token
 SNAP-DNS-001,Public DNS,host-resolution,captured,,code-puppy-da30e5,,bentondrones.com and www resolve; leads does not
+SNAP-CF-002,Cloudflare,pages-project,needed,,manual,,Cloudflare Pages project for admin UI at admin.bentondrones.com
+SNAP-CF-003,Cloudflare,access-config,needed,,manual,,Cloudflare Zero Trust + Access applications for admin and API hostnames
+SNAP-CF-004,Cloudflare,ssl-mode,needed,,manual,,Zone SSL/TLS mode set to Full strict

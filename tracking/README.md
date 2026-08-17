@@ -6,7 +6,9 @@ Dolt was installed as a repo-local portable tool under `.tools/` because the Win
 
 ## Source of truth
 
-For now, `tracking/*.csv` files are canonical because they are human-reviewable and portable. Dolt is the local query/audit mirror generated from those CSVs.
+The `tracking/*.csv` files are canonical because they are human-reviewable and portable. Dolt is the local query/audit mirror generated from those CSVs.
+
+> **Note (corrected 2026-08-17):** The PowerShell helper `scripts/dolt.ps1` is hardcoded to the Windows binary in `.tools/`, but homebrew `dolt` works fine on macOS. The ADR-001 tracking update was synced on macOS by running the `dolt table import -r --continue` commands directly (see below) and committed to Dolt (commit `eh6kjb07g62dqqnfcg20fu1qd64dskkj`). The CSVs remain the canonical source of truth; Dolt is the local query/audit mirror. On Windows, the documented `sync_tracking_to_dolt.ps1` / `check_dolt_tracking.ps1` flow still applies.
 
 Canonical workflow:
 
@@ -93,13 +95,13 @@ Dolt has been initialized and committed locally with:
 Committed Dolt tables (current counts):
 
 ```txt
-requirements: 13 rows
-tasks: 10 rows
-judges: 12 rows
-evidence: 8 rows
-decisions: 5 rows
-platform_snapshots: 7 rows
-status_log: 7 rows
+requirements: 16 rows (13 original + 3 ADR-001)
+tasks: 22 rows (10 original + 12 ADR-001)
+judges: 15 rows (12 original + 3 ADR-001)
+evidence: 36 rows (35 original + 1 ADR-001)
+decisions: 10 rows (9 original + 1 ADR-001)
+platform_snapshots: 10 rows (7 original + 3 ADR-001)
+status_log: 18 rows (9 original + 9 ADR-001)
 ```
 
 ## Rules

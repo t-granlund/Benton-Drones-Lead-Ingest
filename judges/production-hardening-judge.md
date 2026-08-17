@@ -1,5 +1,7 @@
 # Judge: Production Hardening
 
+> **Updated by:** planning-agent-083bcd on 2026-08-17
+
 ## Pass criteria
 
 PASS if:
@@ -17,6 +19,16 @@ PASS if:
 - Backup/recovery path is documented.
 - Secrets are environment-managed.
 
+## ADR-001 additional criteria (per `research/cloudflare-pages-admin/ADR-001-cloudflare-pages-admin-dashboard.md`)
+
+- Admin authentication uses Cloudflare Access (not shared password) after verification.
+- Render API validates the `Cf-Access-Jwt-Assertion` JWT server-side (PyJWT + JWKS, `iss`/`aud`/`exp`).
+- Admin surface is non-indexable (`X-Robots-Tag: noindex` + `robots.txt` Disallow).
+- CORS is scoped to `https://admin.bentondrones.com` (never `*`).
+- The `onrender.com` subdomain is disabled.
+- Legacy password login is removed after Access + JWT verification are confirmed.
+- Audit rows are written for mutating admin actions keyed to the JWT `sub`/email.
+
 ## Fail criteria
 
 FAIL if:
@@ -27,3 +39,6 @@ FAIL if:
 - Production trusts unsigned Shopify context.
 - HTTPS is missing.
 - Secrets are committed.
+- CORS allows wildcard origins.
+- The admin surface is indexable.
+- Public signup is broken by JWT middleware.
