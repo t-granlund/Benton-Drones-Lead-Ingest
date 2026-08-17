@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Benton Drones — Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/leaflet/leaflet.css">
+  <style>
+    :root {
+      --olive:#809948; --olive-dark:#6f853d; --olive-deep:#5a6f30;
+      --bg:#f7f7f3; --surface:#ffffff; --outline:#d7d3c5;
+      --on-surface:#1b1b1b; --muted:#66685c; --error:#b3261e; --error-bg:#f9dedc;
+      --el-1:0 1px 2px rgba(0,0,0,.04),0 1px 4px rgba(0,0,0,.06);
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:'Jost',sans-serif; color:var(--on-surface); background:var(--bg); line-height:1.5; }
+    header.top { background:linear-gradient(135deg,var(--olive) 0%,var(--olive-dark) 100%); color:#fff;
+                 padding:20px 28px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    header.top img { height:36px; filter:drop-shadow(0 1px 3px rgba(0,0,0,.25)); }
+    header.top h1 { margin:0; font-size:1.15rem; font-weight:600; letter-spacing:.02rem; }
+    header.top .who { font-size:.82rem; opacity:.9; }
+    main { max-width:1180px; margin:0 auto; padding:26px 20px 70px; }
+    h2 { color:var(--olive-deep); font-size:1.05rem; margin:26px 0 10px; }
+    .analytics { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; }
+    .metric { background:var(--surface); border:1px solid var(--outline); border-top:3px solid var(--olive);
+              border-radius:12px; padding:14px 16px; box-shadow:var(--el-1); }
+    .metric .value { font-size:1.6rem; font-weight:700; color:var(--olive-deep); }
+    .metric .label { font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+    .card { background:var(--surface); border:1px solid var(--outline); border-radius:14px;
+            padding:18px 20px; box-shadow:var(--el-1); margin-top:14px; }
+    #map { height:380px; border-radius:10px; border:1px solid var(--outline); }
+    table { width:100%; border-collapse:collapse; font-size:.92rem; }
+    th, td { padding:9px 11px; border-bottom:1px solid #ede8d8; text-align:left; }
+    th { color:var(--olive-deep); font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; }
+    tr[data-lead] { cursor:pointer; }
+    tr[data-lead]:hover { background:#f5f7ec; }
+    .btn { display:inline-block; padding:9px 16px; border-radius:9px; background:linear-gradient(180deg,#8ba855,var(--olive));
+           color:#fff; text-decoration:none; font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.06em;
+           border:none; cursor:pointer; }
+    .btn.ghost { background:transparent; color:#6184d8; border:1.5px solid #6184d8; }
+    .status-err { background:var(--error-bg); color:var(--error); border:1.5px solid var(--error);
+                  border-radius:10px; padding:14px 18px; margin-top:16px; }
+    .breakdown span { display:inline-block; margin:0 10px 4px 0; font-size:.86rem; color:var(--muted); }
+    .muted { color:var(--muted); }
+    .spin { color:var(--muted); font-size:.9rem; padding:10px 2px; }
+    #detail { display:none; }
+    #detail.open { display:block; }
+    .kv { font-size:.9rem; }
+    .kv b { color:var(--olive-deep); }
+  </style>
+</head>
+<body>
+<header class="top">
+  <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones">
+  <h1>Lead Ingest — Admin Dashboard</h1>
+  <span class="who" id="whoami">Cloudflare Access</span>
+</header>
+<main>
+  <div id="error" class="status-err" style="display:none"></div>
+  <div class="spin" id="loading">Loading dashboard… (first hit after idle may take ~50s on free tier backend)</div>
+
+  <div id="dash" style="display:none">
+    <div class="analytics" id="metrics"></div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Lead map</h2>
+      <div id="map"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Breakdowns</h2>
+      <h3 class="muted" style="font-size:.85rem;margin:6px 0 2px">By source</h3>
+      <div class="breakdown" id="by-source"><em>No data</em></div>
+      <h3 class="muted" style="font-size:.85rem;margin:10px 0 2px">By campaign</h3>
+      <div class="breakdown" id="by-campaign"><em>No data</em></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">Exports</h2>
+      <p>
+        <a class="btn ghost" id="exp-csv" href="#">CSV</a>
+        <a class="btn ghost" id="exp-geojson" href="#">GeoJSON</a>
+        <a class="btn ghost" id="exp-kml" href="#">KML (Google Earth)</a>
+      </p>
+      <p class="muted" style="font-size:.83rem">Exports open in a new tab and reuse your Cloudflare Access session.</p>
+    </div>
+
+    <div class="card" id="detail">
+      <h2 style="margin-top:0">Lead detail</h2>
+      <div class="kv" id="detail-body"></div>
+    </div>
+
+    <h2>Recent leads</h2>
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Address</th><th>Source</th><th>Status</th><th>Created</th></tr></thead>
+      <tbody id="leads-tbody"></tbody>
+    </table>
+
+    <div class="card">
+      <h2 style="margin-top:0">Admin access log</h2>
+      <table>
+        <thead><tr><th>Event</th><th>Actor</th><th>Path</th><th>When</th></tr></thead>
+        <tbody id="audit-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<script src="/static/leaflet/leaflet.js"></script>
+<script src="/config.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

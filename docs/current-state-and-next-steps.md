@@ -76,6 +76,19 @@ The plan:
 | Polished startup (Render Starter + monitor + domain) | ~$7 | redirect steps only |
 | Growth (+ Neon Launch DB) | ~$26 | one env var |
 
+## ADR-001 implementation status (2026-08-17)
+
+Ready-to-flip (code complete, env-gated, waiting on Cloudflare/Zones setup):
+
+- **Access JWT verification** — `lead_ingest/access_jwt.py`; Render envs `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, optional `CF_ACCESS_STRICT=1`
+- **JSON admin API + CORS** — `/admin/api/summary|leads|lead/<id>|audit` + OPTIONS preflight; Render env `CORS_ADMIN_ORIGIN=https://admin.bentondrones.com`
+- **Admin audit trail** — `admin_audit` table; password logins and Access JWT auths recorded
+- **Static Pages dashboard** — `pages-admin/` in repo root (deploy steps in `pages-admin/README.md`)
+- **noindex headers** — X-Robots-Tag on all admin/export/API routes (live after this deploy)
+- **Bug fix** — `is_admin_authenticated` now uses `verify_or_none` (missing JWT previously raised inside the request handler)
+
+Remaining human-gated: nameserver cutover (Anderson walkthrough ready), Cloudflare Pages + Zero Trust config, Render env vars, custom `leads` CNAME.
+
 ## How to run locally / test
 
 ```bash

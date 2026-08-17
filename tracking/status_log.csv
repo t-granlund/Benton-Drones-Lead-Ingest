@@ -69,3 +69,5 @@ LOG-067,judge,JUDGE-DEPLOY-001,blocked,blocked,planning-agent-083bcd,2026-08-17T
 LOG-068,decision,DEC-ARCH-002,proposed,proposed,solutions-architect,2026-08-17T12:00:00Z,ADR-001 produced: Cloudflare Pages admin dashboard behind Cloudflare Access with Render API JWT verification,
 LOG-069,requirement,REQ-E2E-001,not_started,passed,code-puppy-991867,2026-08-17T15:45:00Z,Anderson E2E validated by web-retriever against live stack; 6/7 endpoints PASS (robots.txt 404 noted - flagged for known behavior),EVID-E2E-001
 LOG-070,task,TASK-E2E-001,not_started,passed,code-puppy-991867,2026-08-17T15:45:00Z,Live stack validated by web-retriever: signup/admin-login/admin redirect/healthz/GitHub Pages/training guide all confirmed working,EVID-E2E-001
+LOG-071,task,TASK-CFPAGES-001,not_started,in_progress,code-puppy-991867,2026-08-17T17:10:00Z,Backend JSON admin API + CORS + admin_audit table delivered; pages-admin static dashboard built; 402 tests green,EVID-API-001
+LOG-072,task,TASK-JWT-001,not_started,in_progress,code-puppy-991867,2026-08-17T17:10:00Z,Access JWT verification module complete and wired; fixed verify_assertion raise-in-handler bug via verify_or_none,EVID-API-001

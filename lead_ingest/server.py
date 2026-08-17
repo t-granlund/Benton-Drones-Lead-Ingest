@@ -36,6 +36,7 @@ from lead_ingest.db import (
     mark_jira_ticket_created,
     queue_jira_ticket,
     recent_leads,
+    record_admin_event,
 )
 from lead_ingest.jira import (
     JiraApiError,
@@ -79,6 +80,7 @@ from lead_ingest.shopify_security import (
     verify_context_token,
     verify_hmac,
 )
+from lead_ingest import admin_api
 from lead_ingest.access_jwt import (
     AccessJwtError,
     assertion_header,
@@ -86,6 +88,7 @@ from lead_ingest.access_jwt import (
     is_enabled as access_is_enabled,
     is_strict as access_is_strict,
     verify_assertion,
+    verify_or_none,
 )
 from lead_ingest.validation import ValidationError
 
@@ -281,6 +284,11 @@ class Handler(BaseHTTPRequestHandler):
                 export_geojson(self.geocoded_leads()),
                 "application/geo+json",
             )
+        elif path.startswith("/admin/api/"):
+            if not self.require_admin_export():
+                return
+            if not admin_api.handle_get(self, path):
+                self.send_error(404)
         elif path == "/export/csv":
             if not self.require_admin_export():
                 return
@@ -295,6 +303,20 @@ class Handler(BaseHTTPRequestHandler):
             self.respond_text(export_kml(list_signups(self.conn())), "application/vnd.google-earth.kml+xml")
         else:
             self.send_error(404)
+
+    def do_OPTIONS(self) -> None:
+        """CORS preflight for the Pages admin dashboard (ADR-001).
+
+        Only admin API / export routes answer preflights, and only when the
+        Origin matches CORS_ADMIN_ORIGIN exactly.  Everything else 404s.
+        """
+        path = urlparse(self.path).path.rstrip("/") or "/"
+        if path.startswith("/admin/api/") or path in {
+            "/admin/leads.geojson", "/export/csv", "/export/geojson", "/export/kml",
+        }:
+            admin_api.preflight(self)
+            return
+        self.send_error(404)
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path.rstrip("/") or "/"
@@ -467,16 +489,34 @@ class Handler(BaseHTTPRequestHandler):
         """
         headers = {k: v for k, v in self.headers.items()}
         if access_is_enabled():
-            claims = verify_assertion(headers)
+            # verify_or_none: missing/invalid JWT returns None instead of
+            # raising inside the request handler (exception = dropped conn).
+            claims = verify_or_none(headers)
             if claims:
                 self.log_message("Access JWT authenticated: %s", claims.email)
+                self._audit_admin_event("access_jwt_auth", claims.email)
                 return True
             if access_is_strict():
                 self.log_message("Access JWT verification failed, strict mode: denying")
+                self._audit_admin_event("access_jwt_denied", "", "strict mode, invalid/missing JWT")
                 return False
         # Fall back to password session (or strict disabled).
         token = parse_cookie(self.headers.get("Cookie", ""))
         return verify_session_token(token, self.admin_secret())
+
+    def _audit_admin_event(self, event_type: str, actor: str, detail: str = "") -> None:
+        """Best-effort tamper-evident admin access log (never breaks requests)."""
+        try:
+            record_admin_event(
+                self.conn(),
+                event_type,
+                actor=actor,
+                path=urlparse(self.path).path,
+                ip_address=self.client_address[0],
+                detail=detail,
+            )
+        except Exception:
+            logger.warning("admin audit write failed (%s)", event_type, exc_info=True)
 
     def require_admin_html(self) -> bool:
         if self.is_admin_authenticated():
@@ -550,6 +590,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond_html(self.login_page(["invalid admin password"]), 401)
             return
         token = create_session_token(self.admin_secret())
+        self._audit_admin_event("password_login", "shared-admin")
         self.respond_redirect("/admin", [session_cookie(token, secure=self._cookie_secure())])
 
     def shopify_fields_from_form(self, form: dict[str, str], secret: str) -> dict[str, str] | None:

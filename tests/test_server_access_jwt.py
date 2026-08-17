@@ -14,7 +14,8 @@ from lead_ingest.server import Handler
 def access_patched(handler, enabled: bool, strict: bool, jwt_result):
     with patch("lead_ingest.server.access_is_enabled", return_value=enabled), \
          patch("lead_ingest.server.access_is_strict", return_value=strict), \
-         patch("lead_ingest.server.verify_assertion", return_value=jwt_result):
+         patch("lead_ingest.server.verify_or_none", return_value=jwt_result), \
+         patch.object(Handler, "_audit_admin_event", lambda self, *a, **k: None):
         yield handler
 
 

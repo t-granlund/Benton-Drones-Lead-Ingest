@@ -1,0 +1,13 @@
+# Cloudflare Pages header rules for the admin dashboard (ADR-001).
+# Layer 1 of non-indexability; the Access login gate is the actual wall
+# (noindex alone is NOT privacy — it just tells honest crawlers to skip).
+/*
+  X-Robots-Tag: noindex, nofollow
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store
+
+/static/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=86400

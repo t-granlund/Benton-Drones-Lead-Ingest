@@ -127,6 +127,15 @@ CREATE TABLE IF NOT EXISTS jira_tickets (
     created_at TEXT NOT NULL,
     FOREIGN KEY (signup_id) REFERENCES signups(id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS admin_audit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type TEXT NOT NULL,
+    actor TEXT DEFAULT '',
+    path TEXT DEFAULT '',
+    ip_address TEXT DEFAULT '',
+    detail TEXT DEFAULT '',
+    created_at TEXT NOT NULL
+);
 """
 
 
@@ -566,6 +575,46 @@ def get_export_rows(conn) -> list:
 def jira_idempotency_key(signup_id: int) -> str:
     """Stable per-signup idempotency key (retries of the same lead dedupe)."""
     return f"signup-{signup_id}"
+
+
+def record_admin_event(
+    conn,
+    event_type: str,
+    actor: str = "",
+    path: str = "",
+    ip_address: str = "",
+    detail: str = "",
+) -> int:
+    """Insert an admin-authentication/activity audit row.
+
+    Used for the Cloudflare Access tamper-evident log: every successful
+    Access JWT verification and every password login is recorded so
+    admin access is attributable.  Bounded volume: bytes-per-row ~200,
+    a two-admin operation lands a few hundred rows/day at worst.
+    Returns the row id.
+    """
+    cursor = conn.execute(
+        """
+        INSERT INTO admin_audit (event_type, actor, path, ip_address, detail, created_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (event_type, actor, path, ip_address, detail, utc_now_iso()),
+    )
+    conn.commit()
+    return cursor.lastrowid or 0
+
+
+def list_admin_events(conn, limit: int = 100) -> list:
+    """Most recent admin audit events, newest first."""
+    try:
+        return list(
+            conn.execute(
+                "SELECT * FROM admin_audit ORDER BY created_at DESC, id DESC LIMIT ?",
+                (limit,),
+            )
+        )
+    except Exception:
+        return []
 
 
 def queue_jira_ticket(conn, signup_id: int, error_message: str = "") -> int:
