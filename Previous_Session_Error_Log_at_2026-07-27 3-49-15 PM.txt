@@ -1,0 +1,515 @@
+[07/27/2026, 15:39:18]
+[07/27/2026, 15:39:18]  READ FILE  /Users/tygranlund/dev/Lead-Ingest/tests/e2e_manifest.json (lines 1-30)
+[07/27/2026, 15:39:18] 🔒 Protecting 95 recent messages (47444 tokens, limit: 50000)
+[07/27/2026, 15:39:18] 📝 Summarizing 26 older messages
+[07/27/2026, 15:39:18] Unexpected error: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:39:18] Exception:
+[07/27/2026, 15:39:18]   + Exception Group Traceback (most recent call last):
+[07/27/2026, 15:39:18]   |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 871, in run_agent_task
+[07/27/2026, 15:39:18]   |     except* Exception as other:
+[07/27/2026, 15:39:18]   |     ...<27 lines>...
+[07/27/2026, 15:39:18]   |             raise unexpected[0] from other
+[07/27/2026, 15:39:18]   | ExceptionGroup:  (1 sub-exception)
+[07/27/2026, 15:39:18]   +-+---------------- 1 ----------------
+[07/27/2026, 15:39:18]     | Traceback (most recent call last):
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1101, in interactive_mode
+[07/27/2026, 15:39:18]     |     result, current_agent_task = await run_prompt_with_attachments(
+[07/27/2026, 15:39:18]     |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |     ...<3 lines>...
+[07/27/2026, 15:39:18]     |     )
+[07/27/2026, 15:39:18]     |     ^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1370, in run_prompt_with_attachments
+[07/27/2026, 15:39:18]     |     return await _await_agent()
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1356, in _await_agent
+[07/27/2026, 15:39:18]     |     result = await agent_task
+[07/27/2026, 15:39:18]     |              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/base_agent.py", line 274, in run_with_mcp
+[07/27/2026, 15:39:18]     |     return await run_with_mcp(self, prompt, **kwargs)
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 634, in run_with_mcp
+[07/27/2026, 15:39:18]     |     return await _run_with_mcp_impl(
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |     ...<7 lines>...
+[07/27/2026, 15:39:18]     |     )
+[07/27/2026, 15:39:18]     |     ^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 1050, in _run_with_mcp_impl
+[07/27/2026, 15:39:18]     |     result = await agent_task
+[07/27/2026, 15:39:18]     |              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 899, in run_agent_task
+[07/27/2026, 15:39:18]     |     raise unexpected[0] from other
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 834, in run_agent_task
+[07/27/2026, 15:39:18]     |     return await _do_run(prompt_payload)
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 757, in _do_run
+[07/27/2026, 15:39:18]     |     result = await _call_with_exception_recovery()
+[07/27/2026, 15:39:18]     |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 737, in _call_with_exception_recovery
+[07/27/2026, 15:39:18]     |     return await _call()
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 432, in runner
+[07/27/2026, 15:39:18]     |     return await factory()
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 726, in _call
+[07/27/2026, 15:39:18]     |     return await pydantic_agent.run(
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |     ...<5 lines>...
+[07/27/2026, 15:39:18]     |     )
+[07/27/2026, 15:39:18]     |     ^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/agent/abstract.py", line 278, in run
+[07/27/2026, 15:39:18]     |     async with node.stream(agent_run.ctx) as stream:
+[07/27/2026, 15:39:18]     |                ~~~~~~~~~~~^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:39:18]     |     return await anext(self.gen)
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/_agent_graph.py", line 467, in stream
+[07/27/2026, 15:39:18]     |     async with ctx.deps.model.request_stream(
+[07/27/2026, 15:39:18]     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[07/27/2026, 15:39:18]     |         message_history, model_settings, model_request_parameters, run_context
+[07/27/2026, 15:39:18]     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |     ) as streamed_response:
+[07/27/2026, 15:39:18]     |     ^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:39:18]     |     return await anext(self.gen)
+[07/27/2026, 15:39:18]     |            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 644, in request_stream
+[07/27/2026, 15:39:18]     |     response = await self._completions_create(messages, True, model_settings_cast, model_request_parameters)
+[07/27/2026, 15:39:18]     |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 684, in _completions_create
+[07/27/2026, 15:39:18]     |     openai_messages = await self._map_messages(messages, model_request_parameters)
+[07/27/2026, 15:39:18]     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1071, in _map_messages
+[07/27/2026, 15:39:18]     |     async for item in self._map_user_message(message):
+[07/27/2026, 15:39:18]     |         openai_messages.append(item)
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1144, in _map_user_message
+[07/27/2026, 15:39:18]     |     assert_never(part)
+[07/27/2026, 15:39:18]     |     ~~~~~~~~~~~~^^^^^^
+[07/27/2026, 15:39:18]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/typing.py", line 2582, in assert_never
+[07/27/2026, 15:39:18]     |     raise AssertionError(f"Expected code to be unreachable, but got: {value}")
+[07/27/2026, 15:39:18]     | AssertionError: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:39:18]     +------------------------------------
+[07/27/2026, 15:39:18]
+[07/27/2026, 15:39:18] The above exception was the direct cause of the following exception:
+[07/27/2026, 15:39:18]
+[07/27/2026, 15:39:18] Traceback (most recent call last):
+[07/27/2026, 15:39:18]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1101, in interactive_mode
+[07/27/2026, 15:39:18]     result, current_agent_task = await run_prompt_with_attachments(
+[07/27/2026, 15:39:18]                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]     ...<3 lines>...
+[07/27/2026, 15:39:18]     )
+[07/27/2026, 15:39:18]     ^
+[07/27/2026, 15:39:18]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1370, in run_prompt_with_attachments
+[07/27/2026, 15:39:18]     return await _await_agent()
+[07/27/2026, 15:39:18]            ^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1356, in _await_agent
+[07/27/2026, 15:39:18]     result = await agent_task
+[07/27/2026, 15:39:18]              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:39:18]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/base_agent.py", line 274, in run_with_mcp
+[07/27/2026, 15:39:18]     return await run_with_mcp(self, prompt, **kwargs)
+[07/27/2026, 15:39:18]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:44]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 634, in run_with_mcp
+[07/27/2026, 15:48:44]     return await _run_with_mcp_impl(
+[07/27/2026, 15:48:44]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:44]     ...<7 lines>...
+[07/27/2026, 15:48:45]     )
+[07/27/2026, 15:48:45]     ^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 1050, in _run_with_mcp_impl
+[07/27/2026, 15:48:45]     result = await agent_task
+[07/27/2026, 15:48:45]              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 899, in run_agent_task
+[07/27/2026, 15:48:45]     raise unexpected[0] from other
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 834, in run_agent_task
+[07/27/2026, 15:48:45]     return await _do_run(prompt_payload)
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 757, in _do_run
+[07/27/2026, 15:48:45]     result = await _call_with_exception_recovery()
+[07/27/2026, 15:48:45]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 737, in _call_with_exception_recovery
+[07/27/2026, 15:48:45]     return await _call()
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 432, in runner
+[07/27/2026, 15:48:45]     return await factory()
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 726, in _call
+[07/27/2026, 15:48:45]     return await pydantic_agent.run(
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     ...<5 lines>...
+[07/27/2026, 15:48:45]     )
+[07/27/2026, 15:48:45]     ^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/agent/abstract.py", line 278, in run
+[07/27/2026, 15:48:45]     async with node.stream(agent_run.ctx) as stream:
+[07/27/2026, 15:48:45]                ~~~~~~~~~~~^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:45]     return await anext(self.gen)
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/_agent_graph.py", line 467, in stream
+[07/27/2026, 15:48:45]     async with ctx.deps.model.request_stream(
+[07/27/2026, 15:48:45]                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[07/27/2026, 15:48:45]         message_history, model_settings, model_request_parameters, run_context
+[07/27/2026, 15:48:45]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     ) as streamed_response:
+[07/27/2026, 15:48:45]     ^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:45]     return await anext(self.gen)
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 644, in request_stream
+[07/27/2026, 15:48:45]     response = await self._completions_create(messages, True, model_settings_cast, model_request_parameters)
+[07/27/2026, 15:48:45]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 684, in _completions_create
+[07/27/2026, 15:48:45]     openai_messages = await self._map_messages(messages, model_request_parameters)
+[07/27/2026, 15:48:45]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1071, in _map_messages
+[07/27/2026, 15:48:45]     async for item in self._map_user_message(message):
+[07/27/2026, 15:48:45]         openai_messages.append(item)
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1144, in _map_user_message
+[07/27/2026, 15:48:45]     assert_never(part)
+[07/27/2026, 15:48:45]     ~~~~~~~~~~~~^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/typing.py", line 2582, in assert_never
+[07/27/2026, 15:48:45]     raise AssertionError(f"Expected code to be unreachable, but got: {value}")
+[07/27/2026, 15:48:45] AssertionError: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:48:45]
+[07/27/2026, 15:48:45] 🐾 Auto-saved session: 96 messages (48266 tokens) | avg TTFT 1.72 s | avg TG 182.7 t/s
+[07/27/2026, 15:48:45]
+[07/27/2026, 15:48:45] > you errored out, try again
+[07/27/2026, 15:48:45] Unexpected error: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:48:45] Exception:
+[07/27/2026, 15:48:45]   + Exception Group Traceback (most recent call last):
+[07/27/2026, 15:48:45]   |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 871, in run_agent_task
+[07/27/2026, 15:48:45]   |     except* Exception as other:
+[07/27/2026, 15:48:45]   |     ...<27 lines>...
+[07/27/2026, 15:48:45]   |             raise unexpected[0] from other
+[07/27/2026, 15:48:45]   | ExceptionGroup:  (1 sub-exception)
+[07/27/2026, 15:48:45]   +-+---------------- 1 ----------------
+[07/27/2026, 15:48:45]     | Traceback (most recent call last):
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1101, in interactive_mode
+[07/27/2026, 15:48:45]     |     result, current_agent_task = await run_prompt_with_attachments(
+[07/27/2026, 15:48:45]     |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |     ...<3 lines>...
+[07/27/2026, 15:48:45]     |     )
+[07/27/2026, 15:48:45]     |     ^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1370, in run_prompt_with_attachments
+[07/27/2026, 15:48:45]     |     return await _await_agent()
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1356, in _await_agent
+[07/27/2026, 15:48:45]     |     result = await agent_task
+[07/27/2026, 15:48:45]     |              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/base_agent.py", line 274, in run_with_mcp
+[07/27/2026, 15:48:45]     |     return await run_with_mcp(self, prompt, **kwargs)
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 634, in run_with_mcp
+[07/27/2026, 15:48:45]     |     return await _run_with_mcp_impl(
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |     ...<7 lines>...
+[07/27/2026, 15:48:45]     |     )
+[07/27/2026, 15:48:45]     |     ^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 1050, in _run_with_mcp_impl
+[07/27/2026, 15:48:45]     |     result = await agent_task
+[07/27/2026, 15:48:45]     |              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 899, in run_agent_task
+[07/27/2026, 15:48:45]     |     raise unexpected[0] from other
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 834, in run_agent_task
+[07/27/2026, 15:48:45]     |     return await _do_run(prompt_payload)
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 757, in _do_run
+[07/27/2026, 15:48:45]     |     result = await _call_with_exception_recovery()
+[07/27/2026, 15:48:45]     |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 737, in _call_with_exception_recovery
+[07/27/2026, 15:48:45]     |     return await _call()
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 432, in runner
+[07/27/2026, 15:48:45]     |     return await factory()
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 726, in _call
+[07/27/2026, 15:48:45]     |     return await pydantic_agent.run(
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |     ...<5 lines>...
+[07/27/2026, 15:48:45]     |     )
+[07/27/2026, 15:48:45]     |     ^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/agent/abstract.py", line 278, in run
+[07/27/2026, 15:48:45]     |     async with node.stream(agent_run.ctx) as stream:
+[07/27/2026, 15:48:45]     |                ~~~~~~~~~~~^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:45]     |     return await anext(self.gen)
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/_agent_graph.py", line 467, in stream
+[07/27/2026, 15:48:45]     |     async with ctx.deps.model.request_stream(
+[07/27/2026, 15:48:45]     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[07/27/2026, 15:48:45]     |         message_history, model_settings, model_request_parameters, run_context
+[07/27/2026, 15:48:45]     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |     ) as streamed_response:
+[07/27/2026, 15:48:45]     |     ^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:45]     |     return await anext(self.gen)
+[07/27/2026, 15:48:45]     |            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 644, in request_stream
+[07/27/2026, 15:48:45]     |     response = await self._completions_create(messages, True, model_settings_cast, model_request_parameters)
+[07/27/2026, 15:48:45]     |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 684, in _completions_create
+[07/27/2026, 15:48:45]     |     openai_messages = await self._map_messages(messages, model_request_parameters)
+[07/27/2026, 15:48:45]     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1071, in _map_messages
+[07/27/2026, 15:48:45]     |     async for item in self._map_user_message(message):
+[07/27/2026, 15:48:45]     |         openai_messages.append(item)
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1144, in _map_user_message
+[07/27/2026, 15:48:45]     |     assert_never(part)
+[07/27/2026, 15:48:45]     |     ~~~~~~~~~~~~^^^^^^
+[07/27/2026, 15:48:45]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/typing.py", line 2582, in assert_never
+[07/27/2026, 15:48:45]     |     raise AssertionError(f"Expected code to be unreachable, but got: {value}")
+[07/27/2026, 15:48:45]     | AssertionError: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:48:45]     +------------------------------------
+[07/27/2026, 15:48:45]
+[07/27/2026, 15:48:45] The above exception was the direct cause of the following exception:
+[07/27/2026, 15:48:45]
+[07/27/2026, 15:48:45] Traceback (most recent call last):
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1101, in interactive_mode
+[07/27/2026, 15:48:45]     result, current_agent_task = await run_prompt_with_attachments(
+[07/27/2026, 15:48:45]                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]     ...<3 lines>...
+[07/27/2026, 15:48:45]     )
+[07/27/2026, 15:48:45]     ^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1370, in run_prompt_with_attachments
+[07/27/2026, 15:48:45]     return await _await_agent()
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1356, in _await_agent
+[07/27/2026, 15:48:45]     result = await agent_task
+[07/27/2026, 15:48:45]              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:45]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/base_agent.py", line 274, in run_with_mcp
+[07/27/2026, 15:48:45]     return await run_with_mcp(self, prompt, **kwargs)
+[07/27/2026, 15:48:45]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:46]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 634, in run_with_mcp
+[07/27/2026, 15:48:46]     return await _run_with_mcp_impl(
+[07/27/2026, 15:48:46]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:46]     ...<7 lines>...
+[07/27/2026, 15:48:46]     )
+[07/27/2026, 15:48:46]     ^
+[07/27/2026, 15:48:53]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 1050, in _run_with_mcp_impl
+[07/27/2026, 15:48:53]     result = await agent_task
+[07/27/2026, 15:48:59]              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 899, in run_agent_task
+[07/27/2026, 15:48:59]     raise unexpected[0] from other
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 834, in run_agent_task
+[07/27/2026, 15:48:59]     return await _do_run(prompt_payload)
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 757, in _do_run
+[07/27/2026, 15:48:59]     result = await _call_with_exception_recovery()
+[07/27/2026, 15:48:59]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 737, in _call_with_exception_recovery
+[07/27/2026, 15:48:59]     return await _call()
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 432, in runner
+[07/27/2026, 15:48:59]     return await factory()
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 726, in _call
+[07/27/2026, 15:48:59]     return await pydantic_agent.run(
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     ...<5 lines>...
+[07/27/2026, 15:48:59]     )
+[07/27/2026, 15:48:59]     ^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/agent/abstract.py", line 278, in run
+[07/27/2026, 15:48:59]     async with node.stream(agent_run.ctx) as stream:
+[07/27/2026, 15:48:59]                ~~~~~~~~~~~^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:59]     return await anext(self.gen)
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/_agent_graph.py", line 467, in stream
+[07/27/2026, 15:48:59]     async with ctx.deps.model.request_stream(
+[07/27/2026, 15:48:59]                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[07/27/2026, 15:48:59]         message_history, model_settings, model_request_parameters, run_context
+[07/27/2026, 15:48:59]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     ) as streamed_response:
+[07/27/2026, 15:48:59]     ^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:59]     return await anext(self.gen)
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 644, in request_stream
+[07/27/2026, 15:48:59]     response = await self._completions_create(messages, True, model_settings_cast, model_request_parameters)
+[07/27/2026, 15:48:59]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 684, in _completions_create
+[07/27/2026, 15:48:59]     openai_messages = await self._map_messages(messages, model_request_parameters)
+[07/27/2026, 15:48:59]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1071, in _map_messages
+[07/27/2026, 15:48:59]     async for item in self._map_user_message(message):
+[07/27/2026, 15:48:59]         openai_messages.append(item)
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1144, in _map_user_message
+[07/27/2026, 15:48:59]     assert_never(part)
+[07/27/2026, 15:48:59]     ~~~~~~~~~~~~^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/typing.py", line 2582, in assert_never
+[07/27/2026, 15:48:59]     raise AssertionError(f"Expected code to be unreachable, but got: {value}")
+[07/27/2026, 15:48:59] AssertionError: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59] 🐾 Auto-saved session: 97 messages (48286 tokens) | avg TTFT 1.72 s | avg TG 182.7 t/s
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59] > /m synthetic-hf-moonshotai-Kimi-K2.6
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59] Active agent reloaded
+[07/27/2026, 15:48:59] Active model set and loaded: synthetic-hf-moonshotai-Kimi-K2.6
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59] > you errored out , can you continue
+[07/27/2026, 15:48:59] Unexpected error: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:48:59] Exception:
+[07/27/2026, 15:48:59]   + Exception Group Traceback (most recent call last):
+[07/27/2026, 15:48:59]   |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 871, in run_agent_task
+[07/27/2026, 15:48:59]   |     except* Exception as other:
+[07/27/2026, 15:48:59]   |     ...<27 lines>...
+[07/27/2026, 15:48:59]   |             raise unexpected[0] from other
+[07/27/2026, 15:48:59]   | ExceptionGroup:  (1 sub-exception)
+[07/27/2026, 15:48:59]   +-+---------------- 1 ----------------
+[07/27/2026, 15:48:59]     | Traceback (most recent call last):
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1101, in interactive_mode
+[07/27/2026, 15:48:59]     |     result, current_agent_task = await run_prompt_with_attachments(
+[07/27/2026, 15:48:59]     |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |     ...<3 lines>...
+[07/27/2026, 15:48:59]     |     )
+[07/27/2026, 15:48:59]     |     ^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1370, in run_prompt_with_attachments
+[07/27/2026, 15:48:59]     |     return await _await_agent()
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1356, in _await_agent
+[07/27/2026, 15:48:59]     |     result = await agent_task
+[07/27/2026, 15:48:59]     |              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/base_agent.py", line 274, in run_with_mcp
+[07/27/2026, 15:48:59]     |     return await run_with_mcp(self, prompt, **kwargs)
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 634, in run_with_mcp
+[07/27/2026, 15:48:59]     |     return await _run_with_mcp_impl(
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |     ...<7 lines>...
+[07/27/2026, 15:48:59]     |     )
+[07/27/2026, 15:48:59]     |     ^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 1050, in _run_with_mcp_impl
+[07/27/2026, 15:48:59]     |     result = await agent_task
+[07/27/2026, 15:48:59]     |              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 899, in run_agent_task
+[07/27/2026, 15:48:59]     |     raise unexpected[0] from other
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 834, in run_agent_task
+[07/27/2026, 15:48:59]     |     return await _do_run(prompt_payload)
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 757, in _do_run
+[07/27/2026, 15:48:59]     |     result = await _call_with_exception_recovery()
+[07/27/2026, 15:48:59]     |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 737, in _call_with_exception_recovery
+[07/27/2026, 15:48:59]     |     return await _call()
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 432, in runner
+[07/27/2026, 15:48:59]     |     return await factory()
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 726, in _call
+[07/27/2026, 15:48:59]     |     return await pydantic_agent.run(
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |     ...<5 lines>...
+[07/27/2026, 15:48:59]     |     )
+[07/27/2026, 15:48:59]     |     ^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/agent/abstract.py", line 278, in run
+[07/27/2026, 15:48:59]     |     async with node.stream(agent_run.ctx) as stream:
+[07/27/2026, 15:48:59]     |                ~~~~~~~~~~~^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:59]     |     return await anext(self.gen)
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/_agent_graph.py", line 467, in stream
+[07/27/2026, 15:48:59]     |     async with ctx.deps.model.request_stream(
+[07/27/2026, 15:48:59]     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[07/27/2026, 15:48:59]     |         message_history, model_settings, model_request_parameters, run_context
+[07/27/2026, 15:48:59]     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |     ) as streamed_response:
+[07/27/2026, 15:48:59]     |     ^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:48:59]     |     return await anext(self.gen)
+[07/27/2026, 15:48:59]     |            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 644, in request_stream
+[07/27/2026, 15:48:59]     |     response = await self._completions_create(messages, True, model_settings_cast, model_request_parameters)
+[07/27/2026, 15:48:59]     |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 684, in _completions_create
+[07/27/2026, 15:48:59]     |     openai_messages = await self._map_messages(messages, model_request_parameters)
+[07/27/2026, 15:48:59]     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1071, in _map_messages
+[07/27/2026, 15:48:59]     |     async for item in self._map_user_message(message):
+[07/27/2026, 15:48:59]     |         openai_messages.append(item)
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1144, in _map_user_message
+[07/27/2026, 15:48:59]     |     assert_never(part)
+[07/27/2026, 15:48:59]     |     ~~~~~~~~~~~~^^^^^^
+[07/27/2026, 15:48:59]     |   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/typing.py", line 2582, in assert_never
+[07/27/2026, 15:48:59]     |     raise AssertionError(f"Expected code to be unreachable, but got: {value}")
+[07/27/2026, 15:48:59]     | AssertionError: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:48:59]     +------------------------------------
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59] The above exception was the direct cause of the following exception:
+[07/27/2026, 15:48:59]
+[07/27/2026, 15:48:59] Traceback (most recent call last):
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1101, in interactive_mode
+[07/27/2026, 15:48:59]     result, current_agent_task = await run_prompt_with_attachments(
+[07/27/2026, 15:48:59]                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]     ...<3 lines>...
+[07/27/2026, 15:48:59]     )
+[07/27/2026, 15:48:59]     ^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1370, in run_prompt_with_attachments
+[07/27/2026, 15:48:59]     return await _await_agent()
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/cli_runner.py", line 1356, in _await_agent
+[07/27/2026, 15:48:59]     result = await agent_task
+[07/27/2026, 15:48:59]              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:48:59]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/base_agent.py", line 274, in run_with_mcp
+[07/27/2026, 15:48:59]     return await run_with_mcp(self, prompt, **kwargs)
+[07/27/2026, 15:48:59]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:01]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 634, in run_with_mcp
+[07/27/2026, 15:49:01]     return await _run_with_mcp_impl(
+[07/27/2026, 15:49:01]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:01]     ...<7 lines>...
+[07/27/2026, 15:49:01]     )
+[07/27/2026, 15:49:01]     ^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 1050, in _run_with_mcp_impl
+[07/27/2026, 15:49:03]     result = await agent_task
+[07/27/2026, 15:49:03]              ^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 899, in run_agent_task
+[07/27/2026, 15:49:03]     raise unexpected[0] from other
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 834, in run_agent_task
+[07/27/2026, 15:49:03]     return await _do_run(prompt_payload)
+[07/27/2026, 15:49:03]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 757, in _do_run
+[07/27/2026, 15:49:03]     result = await _call_with_exception_recovery()
+[07/27/2026, 15:49:03]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 737, in _call_with_exception_recovery
+[07/27/2026, 15:49:03]     return await _call()
+[07/27/2026, 15:49:03]            ^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 432, in runner
+[07/27/2026, 15:49:03]     return await factory()
+[07/27/2026, 15:49:03]            ^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/code_puppy/agents/_runtime.py", line 726, in _call
+[07/27/2026, 15:49:03]     return await pydantic_agent.run(
+[07/27/2026, 15:49:03]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]     ...<5 lines>...
+[07/27/2026, 15:49:03]     )
+[07/27/2026, 15:49:03]     ^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/agent/abstract.py", line 278, in run
+[07/27/2026, 15:49:03]     async with node.stream(agent_run.ctx) as stream:
+[07/27/2026, 15:49:03]                ~~~~~~~~~~~^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:49:03]     return await anext(self.gen)
+[07/27/2026, 15:49:03]            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/_agent_graph.py", line 467, in stream
+[07/27/2026, 15:49:03]     async with ctx.deps.model.request_stream(
+[07/27/2026, 15:49:03]                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[07/27/2026, 15:49:03]         message_history, model_settings, model_request_parameters, run_context
+[07/27/2026, 15:49:03]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]     ) as streamed_response:
+[07/27/2026, 15:49:03]     ^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/contextlib.py", line 214, in __aenter__
+[07/27/2026, 15:49:03]     return await anext(self.gen)
+[07/27/2026, 15:49:03]            ^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 644, in request_stream
+[07/27/2026, 15:49:03]     response = await self._completions_create(messages, True, model_settings_cast, model_request_parameters)
+[07/27/2026, 15:49:03]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 684, in _completions_create
+[07/27/2026, 15:49:03]     openai_messages = await self._map_messages(messages, model_request_parameters)
+[07/27/2026, 15:49:03]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1071, in _map_messages
+[07/27/2026, 15:49:03]     async for item in self._map_user_message(message):
+[07/27/2026, 15:49:03]         openai_messages.append(item)
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/tools/code-puppy/lib/python3.14/site-packages/pydantic_ai/models/openai.py", line 1144, in _map_user_message
+[07/27/2026, 15:49:03]     assert_never(part)
+[07/27/2026, 15:49:03]     ~~~~~~~~~~~~^^^^^^
+[07/27/2026, 15:49:03]   File "/Users/tygranlund/.local/share/uv/python/cpython-3.14.2-macos-aarch64-none/lib/python3.14/typing.py", line 2582, in assert_never
+[07/27/2026, 15:49:03]     raise AssertionError(f"Expected code to be unreachable, but got: {value}")
+[07/27/2026, 15:49:03] AssertionError: Expected code to be unreachable, but got: TextPart(content='- User asked for a level-set on the repo and a working sandbox/demo instance to sh...
+[07/27/2026, 15:49:03]

@@ -438,6 +438,12 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Referrer-Policy", "no-referrer")
         if self._is_pii_path(urlparse(self.path).path.rstrip("/") or "/"):
             self.send_header("Cache-Control", "no-store")
+            # Admin routes and PII exports must never be indexed by search
+            # engines. This is layer 1 of 2: layer 2 is Cloudflare Access
+            # (the actual auth gate) once we move the admin UI to Pages.
+            # noindex alone is NOT privacy — it is a polite instruction to
+            # legitimate crawlers. Access is the hard wall.
+            self.send_header("X-Robots-Tag", "noindex, nofollow")
 
     def is_admin_authenticated(self) -> bool:
         token = parse_cookie(self.headers.get("Cookie", ""))

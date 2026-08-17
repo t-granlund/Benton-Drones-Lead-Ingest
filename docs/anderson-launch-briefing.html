@@ -88,6 +88,8 @@
   <a href="#future">8&nbsp;Future</a>
   <a href="#cost">9&nbsp;Cost</a>
   <a href="#today">10&nbsp;Today's Plan</a>
+  <a href="#cutover">10b&nbsp;Nameserver Cutover</a>
+  <a href="#pages-admin">10c&nbsp;Pages Admin</a>
 </nav>
 <main>
 
@@ -298,6 +300,43 @@ With <strong>$0/month more</strong> the system already runs a real business. Eve
   <li><strong>Waiver legal review</strong>: schedule it — it's the last real gate before fully public launch.</li>
 </ol>
 <p class="muted">Estimated total: about 90 minutes. When the smoke test on the branded domain passes end-to-end (signup → email → dashboard → export), the system is <strong>launched</strong>, and everything after that is optional improvement.</p>
+
+<!-- ========= 10b. NAMESERVER CUTOVER (ANDERSON LEADS THIS) ========= -->
+<h2 id="cutover">10b &middot; Namecheap &rarr; Cloudflare Nameserver Cutover &mdash; Anderson Leads This</h2>
+<p>In addition to the items above, one more piece of work needs Anderson's direct involvement because only they have the
+Namecheap and Google Workspace admin access: <strong>moving DNS management from Namecheap to Cloudflare</strong>.
+This is a <em>prerequisite</em> for the future Cloudflare Pages admin dashboard and Cloudflare Access security layer
+(described in the <a href="../research/cloudflare-pages-admin/ADR-001-cloudflare-pages-admin-dashboard.md">ADR-001 architecture document</a>).</p>
+<ol>
+  <li><strong>Anderson's job:</strong> follow <a href="anderson-nameserver-cutover-walkthrough.md">anderson-nameserver-cutover-walkthrough.md</a>
+    step-by-step. The walkthrough is designed to be followed alone with screenshots at every critical step. Estimated time: 60 minutes total
+    (30 min capture / 30 min Cloudflare setup + cutover).</li>
+  <li><strong>Why Cloudflare?</strong> free, faster, DDoS protection, and&mdash;most importantly&mdash;it lets us build the
+    future <strong>Cloudflare Pages admin dashboard</strong> with <strong>Cloudflare Access</strong> securing it behind Google login or one-time PIN.
+    That removes the shared password entirely and provides MFA-secured, identity-based access. All on the free tier.</li>
+  <li><strong>Email safety:</strong> the walkthrough includes explicit instructions to capture every MX, SPF, DKIM, and DMARC record <em>before</em>
+    touching nameservers, plus a rollback procedure if anything breaks. Google Workspace email will continue working without interruption.</li>
+</ol>
+<div class="infobox"><strong>Status:</strong> Waiting on Anderson. No code is blocked; this is pure account setup following the walkthrough.
+Once DNS lands on Cloudflare, the Pages admin dashboard build can proceed (see section 11).</div>
+
+<!-- ========= 10c. UPCOMING: ADMIN DASHBOARD ON CLOUDFLARE PAGES ========= -->
+<h2 id="pages-admin">10c &middot; Future: Admin Dashboard on Cloudflare Pages (No Password, Better Security)</h2>
+<p>After the nameserver cutover, the next architectural step is moving the admin dashboard from Render to <strong>Cloudflare Pages</strong>
+with <strong>Cloudflare Access</strong> in front of it. Highlights:</p>
+<ul>
+  <li><strong>Faster:</strong> the UI shell loads instantly from Cloudflare's edge&mdash;eliminates the ~50s Render cold start on admin visits.</li>
+  <li><strong>More secure:</strong> Google OAuth or email one-time PIN login (with MFA), replacing the shared password. Full audit log of every admin login.</li>
+  <li><strong>Non-indexed:</strong> combined with the <code>X-Robots-Tag: noindex</code> header we just added to the backend's admin/export routes, plus a strict
+    <code>robots.txt</code> on the Pages site, the admin surface is formally non-indexable. (Important note: <code>noindex</code> alone is not privacy&mdash;it only tells
+    legitimate crawlers to skip us. The <strong>Access login gate</strong> is the actual wall that keeps PII safe.)</li>
+  <li><strong>Zero cost:</strong> Cloudflare Free + Pages Free + Zero Trust Free. No upgrade from Render/Neon needed.</li>
+</ul>
+<p>The detailed architecture, alternatives considered, step-by-step build plan, and security analysis are all in
+<a href="../research/cloudflare-pages-admin/ADR-001-cloudflare-pages-admin-dashboard.md">ADR-001: Cloudflare Pages Admin Dashboard</a>.</p>
+<div class="okbox"><strong>What's already done for this:</strong> the <code>X-Robots-Tag: noindex, nofollow</code> header was just added to all admin and export routes
+on the Render backend, so the admin surface is <em>already marked non-indexable</em> at the application layer, independent of the future Pages migration.
+The header ships with the next deploy.</div>
 
 <p style="margin-top:40px;">
   <a class="btn" href="https://t-granlund.github.io/Benton-Drones-Lead-Ingest/docs/friend-guide.html">Anderson's Guide</a>

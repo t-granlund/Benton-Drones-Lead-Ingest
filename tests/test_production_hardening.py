@@ -175,6 +175,30 @@ class TestSecurityHeaders(HardeningServerBase):
         self.assertEqual(response.getheader("X-Content-Type-Options"), "nosniff")
         self.assertEqual(response.getheader("Cache-Control"), "no-store")
 
+    def test_admin_pages_have_noindex_header(self):
+        """Admin/auth routes must emit X-Robots-Tag: noindex, nofollow.
+
+        This is layer 1 of the 'non-indexed' requirement.  Layer 2 is the
+        Cloudflare Access gate once the admin UI moves to Pages (ADR-001).
+        noindex alone is NOT privacy — it is a polite instruction to legal
+        crawlers.  The auth gate is the hard wall.
+        """
+        cookie = self.login_cookie()
+        for path in ("/admin", "/export/csv", "/admin-login"):
+            with self.subTest(path=path):
+                response, _ = self.request("GET", path, headers={"Cookie": cookie})
+                tag = response.getheader("X-Robots-Tag", "")
+                self.assertIn("noindex", tag)
+                self.assertIn("nofollow", tag)
+
+    def test_public_pages_do_not_have_noindex(self):
+        """Public signup and marketing routes must NOT be noindexed."""
+        for path in ("/signup", "/landing-page.html", "/healthz"):
+            with self.subTest(path=path):
+                response, _ = self.request("GET", path)
+                tag = response.getheader("X-Robots-Tag", "") or ""
+                self.assertNotIn("noindex", tag)
+
 
 # -----------------------------------------------------------------------
 # Cookie security
