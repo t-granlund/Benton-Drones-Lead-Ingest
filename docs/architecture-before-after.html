@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Benton Drones — Architecture: Before &amp; After</title>
-  <meta name="description" content="Visual before-and-after architecture comparison for the Benton Drones lead ingest system: the old Google Forms / PDFfiller / Sheets / manual Earth workflow versus the new self-owned Render + Neon pipeline.">
+  <meta name="description" content="Visual before-and-after architecture comparison for the Benton Drones lead ingest system: the old Google Forms / PDFfiller / Sheets / manual Earth workflow versus the new self-owned Render + Neon pipeline, plus a live current-state map of what is built and what is remaining.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -30,6 +30,8 @@
       --cream: #fffce7;
       --pale-blue: #e7ecff;
       --warn: #e8893a;
+      --amber: #c98a2b;
+      --gray: #6b7280;
       --el-1: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.06);
       --el-2: 0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(0,0,0,0.07);
       --el-3: 0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08);
@@ -52,7 +54,7 @@
       position: sticky; top: 0; z-index: 100;
     }
     .benton-nav .logo img { height: 44px; width: auto; }
-    .benton-nav .nav-links { display: flex; gap: 4px; }
+    .benton-nav .nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
     .benton-nav .nav-links a {
       color: var(--md-sys-color-on-surface-variant); text-decoration: none;
       font-weight: 600; text-transform: uppercase; font-size: 0.78rem;
@@ -62,49 +64,139 @@
     .benton-nav .nav-links a:hover { background: var(--md-sys-color-primary-container); color: var(--olive-deep); }
     .hero {
       background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
-      color: var(--md-sys-color-on-primary); padding: 64px 24px 72px; text-align: center;
+      color: var(--md-sys-color-on-primary); padding: 56px 24px 64px; text-align: center;
       box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
-    .hero img { height: 60px; width: auto; margin-bottom: 20px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); }
-    .hero .eyebrow { display: block; margin-bottom: 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.82; }
-    .hero h1 { margin: 0 0 14px; font-size: 2.4rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
-    .hero p { margin: 0 auto; max-width: 700px; opacity: 0.92; font-size: 1.1rem; font-weight: 500; line-height: 1.55; }
-    main { max-width: 1080px; margin: 0 auto; padding: 48px 24px 80px; }
+    .hero img { height: 56px; width: auto; margin-bottom: 16px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.22)); }
+    .hero .eyebrow { display: block; margin-bottom: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; opacity: 0.82; }
+    .hero h1 { margin: 0 0 12px; font-size: 2.3rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.15; }
+    .hero p { margin: 0 auto; max-width: 720px; opacity: 0.92; font-size: 1.08rem; font-weight: 500; line-height: 1.55; }
+    main { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
     h2 {
       color: var(--md-sys-color-primary); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01rem; line-height: 1.2;
       border-bottom: 1px solid var(--md-sys-color-outline); padding-bottom: 8px; margin-top: 48px;
     }
+    h2:first-of-type { margin-top: 0; }
     h3 { color: var(--olive-deep); font-size: 1.15rem; font-weight: 700; margin: 0 0 10px; }
     .card {
       background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
       border-radius: 16px; padding: 28px; margin: 24px 0; box-shadow: var(--el-1);
-      transition: transform 0.22s ease, box-shadow 0.22s ease;
     }
-    .card:hover { transform: translateY(-2px); box-shadow: var(--el-2); }
-    .panel-label {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 16px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; border: 1.5px solid;
+    /* ---- status band ---- */
+    .status-band {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 28px 0 8px;
     }
-    .panel-label.before { background: var(--md-sys-color-error-container); color: #8e1c1c; border-color: var(--md-sys-color-error); }
-    .panel-label.after { background: var(--md-sys-color-primary-container); color: #3d4d1f; border-color: var(--olive); }
-    .panel-label .dot { width: 9px; height: 9px; border-radius: 50%; }
-    .panel-label.before .dot { background: var(--md-sys-color-error); }
-    .panel-label.after .dot { background: var(--olive); }
-    .diagram-wrap { background: var(--md-sys-color-surface-container-low); border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px; padding: 18px; margin: 14px 0 6px; overflow-x: auto; }
-    .svg-diagram { display: block; width: 100%; height: auto; margin: 0 auto; }
-    .svg-diagram text { font-family: 'Jost', sans-serif; }
-    .diagram-caption { text-align: center; font-size: 0.84rem; color: var(--md-sys-color-on-surface-variant); margin-top: 10px; }
-    .vs-band {
-      display: flex; align-items: center; justify-content: center; gap: 18px; margin: 40px 0;
+    .status-chip {
+      display: flex; align-items: flex-start; gap: 12px; padding: 16px 18px; border-radius: 14px;
+      border: 1.5px solid; background: var(--md-sys-color-surface); box-shadow: var(--el-1);
     }
-    .vs-band .line { flex: 1; height: 1px; background: var(--md-sys-color-outline); }
-    .vs-band .vs {
-      width: 64px; height: 64px; border-radius: 50%; flex: none;
-      background: linear-gradient(135deg, var(--olive) 0%, var(--olive-dark) 100%);
-      color: #fff; display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 1.2rem; letter-spacing: 0.04em; box-shadow: var(--el-2);
+    .status-chip svg { flex: none; margin-top: 2px; }
+    .status-chip.chip-live { border-color: var(--olive); background: var(--md-sys-color-primary-container); }
+    .status-chip.chip-anderson { border-color: var(--amber); background: #fdf4e7; }
+    .status-chip.chip-next { border-color: var(--gray); background: var(--md-sys-color-surface-container); }
+    .status-chip .num { display: block; font-size: 1.6rem; font-weight: 700; line-height: 1; }
+    .chip-live .num { color: var(--olive-deep); }
+    .chip-anderson .num { color: var(--amber); }
+    .chip-next .num { color: var(--gray); }
+    .status-chip .lbl { display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--md-sys-color-on-surface-variant); }
+    .status-chip .sub { display: block; font-size: 0.86rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.4; margin-top: 2px; }
+    /* ---- legend ---- */
+    .legend {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      margin: 20px 0 4px; padding: 12px 18px; border-radius: 999px;
+      background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
+      width: fit-content; box-shadow: var(--el-1);
     }
+    .legend .key { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 3px 11px 3px 6px; border-radius: 999px;
+      font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border: 1.5px solid;
+      white-space: nowrap;
+    }
+    .badge.badge-live { background: var(--olive); border-color: var(--olive-deep); color: #fff; }
+    .badge.badge-anderson { background: var(--amber); border-color: #a86e1c; color: #fff; }
+    .badge.badge-next { background: var(--gray); border-color: #4b5563; color: #fff; }
+    .badge svg { flex: none; width: 12px !important; height: 12px !important; display: inline-block; }
+    .cs-frame > .badge {
+      font-size: 0.68rem; padding: 3px 10px 3px 5px; line-height: 1;
+      box-shadow: var(--el-2); transform: translateY(-50%);
+    }
+    /* ---- before/after slider ---- */
+    .ba-wrap { margin-top: 6px; }
+    .ba-frame {
+      position: relative; border-radius: 14px; border: 1px solid var(--md-sys-color-outline);
+      background: var(--md-sys-color-surface-container-low); overflow: hidden; box-shadow: var(--el-1);
+      touch-action: none; user-select: none;
+    }
+    .ba-panel { display: block; width: 100%; height: auto; }
+    .ba-before-layer {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      clip-path: inset(0 50% 0 0); /* controlled by range */
+      z-index: 2; background: var(--md-sys-color-surface-container-low);
+    }
+    .ba-after-layer { position: relative; z-index: 1; display: block; width: 100%; }
+    .ba-divider {
+      position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: var(--olive);
+      transform: translateX(-50%); z-index: 3; pointer-events: none;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.7);
+    }
+    .ba-divider::after {
+      content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 44px; height: 44px; border-radius: 50%; background: var(--olive);
+      border: 3px solid #fff; box-shadow: var(--el-2);
+    }
+    .ba-handle-arrows {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 4; pointer-events: none;
+    }
+    .ba-tag {
+      position: absolute; top: 14px; padding: 5px 14px; border-radius: 999px; font-size: 0.74rem;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; z-index: 4; pointer-events: none;
+      box-shadow: var(--el-1); border: 1.5px solid;
+    }
+    .ba-tag.tag-before { left: 14px; background: var(--md-sys-color-error-container); color: #8e1c1c; border-color: var(--md-sys-color-error); }
+    .ba-tag.tag-after { right: 14px; background: var(--md-sys-color-primary-container); color: #3d4d1f; border-color: var(--olive); }
+    .ba-range {
+      /* accessible cover: sits on top, invisible, receives all pointer/keyboard input */
+      -webkit-appearance: none; appearance: none; position: absolute; inset: 0; width: 100%; height: 100%;
+      margin: 0; background: transparent; z-index: 5; cursor: ew-resize;
+    }
+    .ba-range:focus-visible { outline: none; }
+    .ba-range::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 44px; height: 100%;
+      background: transparent; cursor: ew-resize;
+    }
+    .ba-range::-moz-range-thumb { width: 44px; height: 100%; background: transparent; border: none; cursor: ew-resize; }
+    /* focus ring shown on the divider grip through :focus-within (2.4.11) */
+    .ba-frame:focus-within { outline: 3px solid var(--md-sys-color-secondary); outline-offset: 2px; }
+    .ba-fallback-note { display: none; }
+    /* zero-JS fallback: when JS disabled, radios toggle clip-path states */
+    .ba-nojs { display: none; }
+    .ba-cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 0.84rem; color: var(--md-sys-color-on-surface-variant); }
+    .ba-cap .hint { display: inline-flex; align-items: center; gap: 6px; }
+    .ba-cap kbd {
+      font-family: inherit; background: var(--md-sys-color-surface-container); border: 1px solid var(--md-sys-color-outline);
+      border-bottom-width: 2px; border-radius: 6px; padding: 0 7px; font-size: 0.78rem;
+    }
+    /* ---- current state annotations ---- */
+    .cs-frame {
+      position: relative; border-radius: 14px; border: 1px solid var(--md-sys-color-outline);
+      background: var(--md-sys-color-surface-container-low); padding: 22px; box-shadow: var(--el-1);
+      margin-top: 6px;
+    }
+    .cs-frame svg { display: block; width: 100%; height: auto; max-width: 100%; }
+    html, body { overflow-x: clip; }
+    .ba-panel { max-width: 100%; }
+    .cs-note {
+      display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; padding: 14px 16px;
+      border-radius: 12px; background: var(--md-sys-color-primary-container); border-left: 4px solid var(--olive);
+      font-size: 0.94rem; color: var(--md-sys-color-on-surface); line-height: 1.5;
+    }
+    .cs-note.warn-note { background: #fdf4e7; border-left-color: var(--amber); }
+    .cs-note.gray-note { background: var(--md-sys-color-surface-container); border-left-color: var(--gray); }
+    .cs-note b { color: var(--olive-deep); }
+    .cs-note.warn-note b { color: #8a5a10; }
+    .cs-note.gray-note b { color: var(--gray); }
+    /* ---- win grid ---- */
     .win-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 18px; }
     .win {
       background: var(--md-sys-color-surface); border: 1px solid var(--md-sys-color-outline);
@@ -112,15 +204,32 @@
     }
     .win b { color: var(--olive-deep); display: block; margin-bottom: 6px; }
     .win p { margin: 0; font-size: 0.92rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.5; }
+    /* ---- misc ---- */
+    .diagram-caption { text-align: center; font-size: 0.84rem; color: var(--md-sys-color-on-surface-variant); margin-top: 10px; }
+    .visually-hidden {
+      position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+    }
+    .callout-card {
+      background: var(--pale-blue); border: 1px solid #6184d8; border-radius: 16px; padding: 24px; margin: 24px 0;
+    }
+    .callout-card h3 { color: #1a2a5a; }
+    .callout-card p { margin: 0; color: var(--md-sys-color-on-surface-variant); }
     footer { text-align: center; padding: 40px 20px 48px; color: var(--md-sys-color-on-surface-variant); font-size: 0.85rem; }
     footer a { margin: 0 12px; font-weight: 700; color: var(--md-sys-color-primary); }
-    @media (max-width: 640px) {
-      .benton-nav { height: 60px; padding: 0 16px; }
-      .hero { padding: 48px 16px 56px; }
-      .hero h1 { font-size: 1.8rem; }
-      main { padding: 32px 16px 64px; }
+    @media (max-width: 720px) {
+      .benton-nav { height: auto; min-height: 60px; padding: 8px 16px; flex-wrap: wrap; }
+      .hero { padding: 44px 16px 52px; }
+      .hero h1 { font-size: 1.75rem; }
+      main { padding: 28px 16px 64px; }
+      .status-band { grid-template-columns: 1fr; }
+      .cs-frame { padding: 12px; margin-left: -4px; margin-right: -4px; }
+      .badge { font-size: 0.66rem; padding: 2px 8px 2px 5px; }
+      .ba-tag { font-size: 0.66rem; padding: 4px 10px; }
     }
-    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+    }
   </style>
 </head>
 <body>
@@ -137,210 +246,369 @@
 
   <header class="hero">
     <img src="https://www.bentondrones.com/cdn/shop/files/BENTON_DRONES_WEBSITE_LOGO.png?v=1715201940&width=500" alt="Benton Drones logo" loading="lazy">
-    <span class="eyebrow">Architecture Evolution</span>
-    <h1>Before &amp; After</h1>
-    <p>A visual comparison of the old manual workflow and the new self-owned lead ingest pipeline. No code, no jargon — just the shape of the system.</p>
+    <span class="eyebrow">Architecture · August 17, 2026</span>
+    <h1>How It's Built — The Visual Story</h1>
+    <p>Drag the slider to see the old workflow versus the new system, then scroll to the live current-state map: green is working today, amber is Anderson's homework, gray is what Tyler flips after DNS moves.</p>
   </header>
 
   <main>
-    <!-- ===================== BEFORE ===================== -->
-    <section class="card" id="before">
-      <span class="panel-label before"><span class="dot"></span>Before — the old way</span>
-      <h3>Four disconnected tools, manual glue, scattered data</h3>
-      <p style="margin-top:0;color:var(--md-sys-color-on-surface-variant)">
-        Every lead used to bounce through four separate services. A human had to copy information between them by hand.
-        Customer data lived in several places at once, and there was no single place to see the whole picture.
-      </p>
-      <div class="diagram-wrap">
-        <svg class="svg-diagram" viewBox="0 0 980 430" role="img" aria-label="Old workflow: a visitor fills a Google Form, a person copies it into PDFfiller for the waiver, results land in Google Sheets, and someone manually plots addresses in Google Earth. Each step is disconnected and requires manual copying.">
-          <!-- Visitor -->
-          <rect x="30" y="180" width="150" height="70" rx="35" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
-          <text x="105" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Visitor</text>
-          <text x="105" y="230" text-anchor="middle" font-size="11.5" fill="#44464f">wants to sign up</text>
-
-          <!-- Google Forms -->
-          <rect x="240" y="40" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
-          <text x="340" y="70" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">Google Forms</text>
-          <text x="340" y="90" text-anchor="middle" font-size="11.5" fill="#44464f">raw responses</text>
-          <text x="340" y="106" text-anchor="middle" font-size="11" fill="#8e1c1c">no waiver signing</text>
-
-          <!-- PDFfiller -->
-          <rect x="240" y="180" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
-          <text x="340" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">PDFfiller</text>
-          <text x="340" y="230" text-anchor="middle" font-size="11.5" fill="#44464f">waiver by hand</text>
-          <text x="340" y="246" text-anchor="middle" font-size="11" fill="#8e1c1c">manual per lead</text>
-
-          <!-- Google Sheets -->
-          <rect x="240" y="320" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
-          <text x="340" y="350" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">Google Sheets</text>
-          <text x="340" y="370" text-anchor="middle" font-size="11.5" fill="#44464f">copy-paste tracking</text>
-          <text x="340" y="386" text-anchor="middle" font-size="11" fill="#8e1c1c">error-prone</text>
-
-          <!-- Google Earth -->
-          <rect x="560" y="180" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
-          <text x="660" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118">Google Earth</text>
-          <text x="660" y="230" text-anchor="middle" font-size="11.5" fill="#44464f">addresses typed by hand</text>
-          <text x="660" y="246" text-anchor="middle" font-size="11" fill="#8e1c1c">manual planning</text>
-
-          <!-- Manual person -->
-          <rect x="800" y="170" width="150" height="90" rx="45" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
-          <text x="875" y="205" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00">A person</text>
-          <text x="875" y="224" text-anchor="middle" font-size="11.5" fill="#5b3a00">copies everything</text>
-          <text x="875" y="240" text-anchor="middle" font-size="11.5" fill="#5b3a00">between tools</text>
-
-          <!-- Arrows: visitor -> forms -->
-          <line x1="180" y1="200" x2="232" y2="90" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
-          <polygon points="228,84 240,80 236,94" fill="#c62828"/>
-          <!-- forms -> person -->
-          <line x1="440" y1="78" x2="806" y2="180" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
-          <polygon points="798,174 812,180 800,190" fill="#c62828"/>
-          <!-- person -> pdffiller -->
-          <line x1="800" y1="215" x2="448" y2="218" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
-          <polygon points="456,212 442,218 456,224" fill="#c62828"/>
-          <!-- person -> sheets -->
-          <line x1="806" y1="245" x2="448" y2="350" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
-          <polygon points="454,344 442,352 456,356" fill="#c62828"/>
-          <!-- person -> earth -->
-          <line x1="800" y1="205" x2="766" y2="212" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
-          <polygon points="774,206 760,212 774,218" fill="#c62828"/>
-
-          <!-- Scattered data callout -->
-          <text x="340" y="160" text-anchor="middle" font-size="11.5" font-style="italic" fill="#8e1c1c">data copied by hand, step to step</text>
-        </svg>
+    <!-- ===================== AT-A-GLANCE STATUS BAND ===================== -->
+    <div class="status-band" role="region" aria-label="Build status at a glance">
+      <div class="status-chip chip-live">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#809948"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><span class="num">8</span><span class="lbl">Live and working today</span><span class="sub">Signup, waiver, dashboard, maps, exports, geocoding, spam protection, docs site</span></div>
       </div>
-      <p class="diagram-caption">The old workflow: four separate tools, no connection between them, and a person manually moving data at every step.</p>
-    </section>
-
-    <!-- ===================== VS divider ===================== -->
-    <div class="vs-band" aria-hidden="true">
-      <span class="line"></span>
-      <span class="vs">VS</span>
-      <span class="line"></span>
+      <div class="status-chip chip-anderson">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10h-4a6 6 0 1 1-6-6z" fill="#c98a2b"/><circle cx="12" cy="12" r="2.2" fill="#c98a2b"/></svg>
+        <div><span class="num">4</span><span class="lbl">Waiting on Anderson</span><span class="sub">Nameserver cutover, email password, waiver legal review, admin password handoff (2 hrs)</span></div>
+      </div>
+      <div class="status-chip chip-next">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9.2" stroke="#6b7280" stroke-width="2"/><path d="M12 7v5.5l3.5 2" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/></svg>
+        <div><span class="num">3</span><span class="lbl">Tyler flips after cutover</span><span class="sub">leads.bentondrones.com, admin.bentondrones.com dashboard, uptime monitoring</span></div>
+      </div>
     </div>
 
-    <!-- ===================== AFTER ===================== -->
-    <section class="card" id="after">
-      <span class="panel-label after"><span class="dot"></span>After — the new way</span>
-      <h3>One pipeline, automatic steps, all data in one place</h3>
-      <p style="margin-top:0;color:var(--md-sys-color-on-surface-variant)">
-        Now the visitor does everything in a single branded form. The system handles the waiver, signature, storage,
-        mapping, and exports automatically. No copying, no re-typing, no scattered spreadsheets.
-      </p>
-      <div class="diagram-wrap">
-        <svg class="svg-diagram" viewBox="0 0 980 470" role="img" aria-label="New workflow: a visitor uses the branded signup form on the Render app. The app stores the lead, consent, and signature in the Neon database, creates a JIRA ticket, and the admin sees everything on one dashboard with a map and one-click exports.">
-          <!-- Visitor -->
-          <rect x="30" y="200" width="140" height="70" rx="35" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
-          <text x="100" y="228" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a">Visitor</text>
-          <text x="100" y="248" text-anchor="middle" font-size="11.5" fill="#44464f">fills one form</text>
+    <div class="legend" aria-label="Legend of status badges used in the diagrams below">
+      <span class="key">Legend:</span>
+      <span class="badge badge-live"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live today</span>
+      <span class="badge badge-anderson"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10h-4.5a5.5 5.5 0 1 1-5.5-5.5z" fill="#fff"/></svg>On Anderson</span>
+      <span class="badge badge-next"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2.6" fill="none"/></svg>After cutover</span>
+    </div>
 
-          <!-- Signup form -->
-          <rect x="230" y="195" width="180" height="80" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
-          <text x="320" y="224" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Signup Form</text>
-          <text x="320" y="243" text-anchor="middle" font-size="11.5" fill="#44464f">waiver + typed</text>
-          <text x="320" y="259" text-anchor="middle" font-size="11.5" fill="#44464f">signature built in</text>
-
-          <!-- Render app -->
-          <rect x="470" y="60" width="200" height="90" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
-          <text x="570" y="88" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Render App</text>
-          <text x="570" y="107" text-anchor="middle" font-size="11.5" fill="#44464f">checks &amp; validates</text>
-          <text x="570" y="123" text-anchor="middle" font-size="11.5" fill="#44464f">auto-geocodes address</text>
-          <text x="570" y="139" text-anchor="middle" font-size="11" fill="#3d4d1f">spam &amp; bot protection</text>
-
-          <!-- Neon DB (cylinder) -->
-          <ellipse cx="570" cy="225" rx="95" ry="18" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
-          <path d="M475 225 V 300 a 95 18 0 0 0 190 0 V 225" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
-          <text x="570" y="258" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Neon Database</text>
-          <text x="570" y="276" text-anchor="middle" font-size="11.5" fill="#44464f">leads + consent + signatures</text>
-          <text x="570" y="292" text-anchor="middle" font-size="11" fill="#3d4d1f">one safe home for data</text>
-
-          <!-- JIRA -->
-          <rect x="470" y="370" width="200" height="64" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
-          <text x="570" y="396" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">JIRA Ticket</text>
-          <text x="570" y="415" text-anchor="middle" font-size="11.5" fill="#44464f">created automatically</text>
-
-          <!-- Admin dashboard -->
-          <rect x="760" y="60" width="190" height="90" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
-          <text x="855" y="88" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">Admin Dashboard</text>
-          <text x="855" y="107" text-anchor="middle" font-size="11.5" fill="#44464f">map + analytics</text>
-          <text x="855" y="123" text-anchor="middle" font-size="11.5" fill="#44464f">every lead in one view</text>
-          <text x="855" y="139" text-anchor="middle" font-size="11" fill="#3d4d1f">password protected</text>
-
-          <!-- Exports -->
-          <rect x="760" y="200" width="190" height="80" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
-          <text x="855" y="228" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b">One-Click Exports</text>
-          <text x="855" y="247" text-anchor="middle" font-size="11.5" fill="#44464f">CSV spreadsheet</text>
-          <text x="855" y="263" text-anchor="middle" font-size="11.5" fill="#44464f">GeoJSON / KML for maps</text>
-
-          <!-- Arrows -->
-          <line x1="170" y1="235" x2="222" y2="235" stroke="#809948" stroke-width="2.5"/>
-          <polygon points="218,229 232,235 218,241" fill="#809948"/>
-
-          <line x1="410" y1="220" x2="464" y2="130" stroke="#809948" stroke-width="2.5"/>
-          <polygon points="458,136 466,124 470,138" fill="#809948"/>
-
-          <line x1="570" y1="150" x2="570" y2="200" stroke="#809948" stroke-width="2.5"/>
-          <polygon points="564,196 570,208 576,196" fill="#809948"/>
-
-          <line x1="620" y1="150" x2="640" y2="364" stroke="#809948" stroke-width="2.5"/>
-          <polygon points="636,358 642,370 646,356" fill="#809948"/>
-
-          <line x1="665" y1="245" x2="752" y2="240" stroke="#809948" stroke-width="2.5"/>
-          <polygon points="746,234 760,240 746,246" fill="#809948"/>
-
-          <line x1="670" y1="105" x2="752" y2="105" stroke="#809948" stroke-width="2.5"/>
-          <polygon points="746,99 760,105 746,111" fill="#809948"/>
-
-          <!-- Automatic note -->
-          <text x="320" y="300" text-anchor="middle" font-size="11.5" font-style="italic" fill="#3d4d1f">everything after the form is automatic</text>
-        </svg>
+    <!-- ===================== BEFORE/AFTER SLIDER ===================== -->
+    <h2 id="slider-title">Drag to compare: before &amp; after</h2>
+    <p style="margin:6px 0 14px;color:var(--md-sys-color-on-surface-variant)">
+      Slide the handle left and right. White signposts on either side of the divider keep the two worlds labeled.
+      Keyboard users: focus the slider and use the arrow keys.
+    </p>
+    <div class="ba-wrap">
+      <div class="ba-frame" id="ba-frame">
+        <!-- AFTER (right side / beneath) -->
+        <div class="ba-after-layer">
+          <svg class="ba-panel" viewBox="0 0 980 470" role="img" aria-labelledby="after-title after-desc">
+            <title id="after-title">The new system</title>
+            <desc id="after-desc">A visitor uses one branded form on the Render app. The app validates, geocodes, and stores the lead with consent and signature in the Neon database, queues a JIRA ticket, and the admin sees everything on one dashboard with a map and one-click exports.</desc>
+            <!-- visitor -->
+            <rect x="30" y="200" width="140" height="70" rx="35" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+            <text x="100" y="228" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a" font-family="Jost,sans-serif">Visitor</text>
+            <text x="100" y="248" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">fills one form</text>
+            <!-- signup -->
+            <rect x="230" y="195" width="180" height="80" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+            <text x="320" y="224" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Signup Form</text>
+            <text x="320" y="243" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">waiver + typed</text>
+            <text x="320" y="259" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">signature built in</text>
+            <!-- render app -->
+            <rect x="470" y="60" width="200" height="90" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+            <text x="570" y="88" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Render App</text>
+            <text x="570" y="107" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">checks &amp; validates</text>
+            <text x="570" y="123" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">auto-geocodes address</text>
+            <text x="570" y="139" text-anchor="middle" font-size="11" fill="#3d4d1f" font-family="Jost,sans-serif">spam &amp; bot protection</text>
+            <!-- neon -->
+            <ellipse cx="570" cy="225" rx="95" ry="18" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+            <path d="M475 225 V 300 a 95 18 0 0 0 190 0 V 225" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+            <text x="570" y="258" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Neon Database</text>
+            <text x="570" y="276" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">leads + consent + signatures</text>
+            <text x="570" y="292" text-anchor="middle" font-size="11" fill="#3d4d1f" font-family="Jost,sans-serif">one safe home for data</text>
+            <!-- jira -->
+            <rect x="470" y="370" width="200" height="64" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+            <text x="570" y="396" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">JIRA Ticket</text>
+            <text x="570" y="415" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">created automatically</text>
+            <!-- admin -->
+            <rect x="760" y="60" width="190" height="90" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+            <text x="855" y="88" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Admin Dashboard</text>
+            <text x="855" y="107" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">map + analytics</text>
+            <text x="855" y="123" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">every lead in one view</text>
+            <text x="855" y="139" text-anchor="middle" font-size="11" fill="#3d4d1f" font-family="Jost,sans-serif">password protected</text>
+            <!-- exports -->
+            <rect x="760" y="200" width="190" height="80" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+            <text x="855" y="228" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">One-Click Exports</text>
+            <text x="855" y="247" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">CSV spreadsheet</text>
+            <text x="855" y="263" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">GeoJSON / KML for maps</text>
+            <!-- arrows -->
+            <line x1="170" y1="235" x2="222" y2="235" stroke="#809948" stroke-width="2.5"/>
+            <polygon points="218,229 232,235 218,241" fill="#809948"/>
+            <line x1="410" y1="220" x2="464" y2="130" stroke="#809948" stroke-width="2.5"/>
+            <polygon points="458,136 466,124 470,138" fill="#809948"/>
+            <line x1="570" y1="150" x2="570" y2="200" stroke="#809948" stroke-width="2.5"/>
+            <polygon points="564,196 570,208 576,196" fill="#809948"/>
+            <line x1="620" y1="150" x2="640" y2="364" stroke="#809948" stroke-width="2.5"/>
+            <polygon points="636,358 642,370 646,356" fill="#809948"/>
+            <line x1="665" y1="245" x2="752" y2="240" stroke="#809948" stroke-width="2.5"/>
+            <polygon points="746,234 760,240 746,246" fill="#809948"/>
+            <line x1="670" y1="105" x2="752" y2="105" stroke="#809948" stroke-width="2.5"/>
+            <polygon points="746,99 760,105 746,111" fill="#809948"/>
+            <text x="320" y="300" text-anchor="middle" font-size="11.5" font-style="italic" fill="#3d4d1f" font-family="Jost,sans-serif">everything after the form is automatic</text>
+          </svg>
+        </div>
+        <!-- BEFORE (left side / clipped overlay) -->
+        <div class="ba-before-layer" id="ba-before-layer">
+          <svg class="ba-panel" viewBox="0 0 980 430" role="img" aria-labelledby="before-title before-desc" preserveAspectRatio="xMidYMax slice">
+            <title id="before-title">The old way</title>
+            <desc id="before-desc">A visitor fills a Google Form, a person copies it into PDFfiller for the waiver, results land in Google Sheets, and someone manually plots addresses in Google Earth. Each step is disconnected.</desc>
+            <!-- subtle background vertical padding band so both svgs occupy same ratio -->
+            <rect x="0" y="430" width="980" height="40" fill="none"/>
+            <rect x="30" y="180" width="150" height="70" rx="35" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+            <text x="105" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#1a2a5a" font-family="Jost,sans-serif">Visitor</text>
+            <text x="105" y="230" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">wants to sign up</text>
+            <rect x="240" y="40" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+            <text x="340" y="70" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118" font-family="Jost,sans-serif">Google Forms</text>
+            <text x="340" y="90" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">raw responses</text>
+            <text x="340" y="106" text-anchor="middle" font-size="11" fill="#8e1c1c" font-family="Jost,sans-serif">no waiver signing</text>
+            <rect x="240" y="180" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+            <text x="340" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118" font-family="Jost,sans-serif">PDFfiller</text>
+            <text x="340" y="230" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">waiver by hand</text>
+            <text x="340" y="246" text-anchor="middle" font-size="11" fill="#8e1c1c" font-family="Jost,sans-serif">manual per lead</text>
+            <rect x="240" y="320" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+            <text x="340" y="350" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118" font-family="Jost,sans-serif">Google Sheets</text>
+            <text x="340" y="370" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">copy-paste tracking</text>
+            <text x="340" y="386" text-anchor="middle" font-size="11" fill="#8e1c1c" font-family="Jost,sans-serif">error-prone</text>
+            <rect x="560" y="180" width="200" height="76" rx="12" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+            <text x="660" y="210" text-anchor="middle" font-size="15" font-weight="600" fill="#5f1118" font-family="Jost,sans-serif">Google Earth</text>
+            <text x="660" y="230" text-anchor="middle" font-size="11.5" fill="#44464f" font-family="Jost,sans-serif">addresses typed by hand</text>
+            <text x="660" y="246" text-anchor="middle" font-size="11" fill="#8e1c1c" font-family="Jost,sans-serif">manual planning</text>
+            <rect x="800" y="170" width="150" height="90" rx="45" fill="#fffce7" stroke="#e8893a" stroke-width="2"/>
+            <text x="875" y="205" text-anchor="middle" font-size="15" font-weight="600" fill="#5b3a00" font-family="Jost,sans-serif">A person</text>
+            <text x="875" y="224" text-anchor="middle" font-size="11.5" fill="#5b3a00" font-family="Jost,sans-serif">copies everything</text>
+            <text x="875" y="240" text-anchor="middle" font-size="11.5" fill="#5b3a00" font-family="Jost,sans-serif">between tools</text>
+            <line x1="180" y1="200" x2="232" y2="90" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+            <polygon points="228,84 240,80 236,94" fill="#c62828"/>
+            <line x1="440" y1="78" x2="806" y2="180" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+            <polygon points="798,174 812,180 800,190" fill="#c62828"/>
+            <line x1="800" y1="215" x2="448" y2="218" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+            <polygon points="456,212 442,218 456,224" fill="#c62828"/>
+            <line x1="806" y1="245" x2="448" y2="350" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+            <polygon points="454,344 442,352 456,356" fill="#c62828"/>
+            <line x1="800" y1="205" x2="766" y2="212" stroke="#c62828" stroke-width="2" stroke-dasharray="5 4"/>
+            <polygon points="774,206 760,212 774,218" fill="#c62828"/>
+            <text x="340" y="160" text-anchor="middle" font-size="11.5" font-style="italic" fill="#8e1c1c" font-family="Jost,sans-serif">data copied by hand, step to step</text>
+          </svg>
+        </div>
+        <div class="ba-divider" id="ba-divider" aria-hidden="true"></div>
+        <div class="ba-handle-arrows" aria-hidden="true">
+          <svg width="60" height="24" viewBox="0 0 60 24"><path d="M18 4l-8 8 8 8M42 4l8 8-8 8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="ba-tag tag-before" aria-hidden="true">Before</span>
+        <span class="ba-tag tag-after" aria-hidden="true">After</span>
+        <label class="visually-hidden" for="ba-slider">Comparison slider. Use left and right arrow keys to reveal more of the before or after view.</label>
+        <input class="ba-range" id="ba-slider" type="range" min="0" max="100" value="50" step="1"
+               aria-label="Before and after comparison slider. 0 shows the new system, 100 shows the old manual workflow."
+               aria-valuetext="50 percent split between old and new">
       </div>
-      <p class="diagram-caption">The new workflow: one form, then the system does the rest — storage, mapping, ticketing, and exports all happen automatically.</p>
-    </section>
+      <div class="ba-cap">
+        <span class="hint">Tip: drag the green handle, or focus the slider and press <kbd>←</kbd> / <kbd>→</kbd></span>
+        <span aria-hidden="true">LEFT = old manual workflow · RIGHT = new automated pipeline</span>
+      </div>
+    </div>
+
+    <!-- ===================== CURRENT STATE (annotated) ===================== -->
+    <h2 id="current-state">Current state — what's actually live right now</h2>
+    <p style="margin:6px 0 14px;color:var(--md-sys-color-on-surface-variant)">
+      This is the system as it exists today, August 17 2026. <b>Green badges</b> are running in production right now.
+      <b>Amber badges</b> are the four things only Anderson can do (walkthrough email + briefing sent).
+      <b>Gray badges</b> are what Tyler flips the moment Anderson's DNS cutover finishes.
+    </p>
+
+    <div class="cs-frame" role="img" aria-labelledby="cs-title cs-desc">
+      <span class="visually-hidden" id="cs-title">Current-state architecture with status badges</span>
+      <span class="visually-hidden" id="cs-desc">
+        Live today: the public signup form with waiver and e-signature, the admin dashboard with a live lead map, one-click exports, automatic address geocoding, spam protection, PDF consent forms, the JIRA ticket queue with automatic replay, and the docs site.
+        Waiting on Anderson: moving DNS from Namecheap to Cloudflare, creating the email app password so confirmations can send, legal review of the waiver text, and receiving the admin password.
+        After cutover, Tyler flips the custom domain leads dot benton drones dot com, the admin dot benton drones dot com dashboard behind secure sign-in, and uptime monitoring.
+      </span>
+      <svg viewBox="0 0 1080 620">
+        <!-- ===== external column ===== -->
+        <!-- Shopify storefront -->
+        <g>
+          <rect x="30" y="190" width="150" height="70" rx="35" fill="#e7ecff" stroke="#6184d8" stroke-width="2"/>
+          <text x="105" y="218" text-anchor="middle" font-size="14.5" font-weight="600" fill="#1a2a5a" font-family="Jost,sans-serif">Visitor arrives</text>
+          <text x="105" y="238" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">via link or CTA</text>
+        </g>
+        <!-- ===== pipeline core ===== -->
+        <!-- signup -->
+        <g>
+          <rect x="230" y="60" width="210" height="86" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="335" y="86" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Signup Form</text>
+          <text x="335" y="104" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">waiver + e-signature +</text>
+          <text x="335" y="120" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">consent audit trail</text>
+          <text x="335" y="137" text-anchor="middle" font-size="10.5" fill="#3d4d1f" font-family="Jost,sans-serif">benton-drones-lead-ingest.onrender.com</text>
+        </g>
+        <!-- render app stack -->
+        <g>
+          <rect x="490" y="30" width="240" height="200" rx="14" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="610" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#1b1b1b" font-family="Jost,sans-serif">Render App (live)</text>
+          <rect x="505" y="70" width="210" height="30" rx="8" fill="#ffffff" stroke="#809948" stroke-width="1.4"/>
+          <text x="610" y="89" text-anchor="middle" font-size="11" fill="#1b1b1b" font-family="Jost,sans-serif">real geocoding (Census + Nominatim)</text>
+          <rect x="505" y="106" width="210" height="30" rx="8" fill="#ffffff" stroke="#809948" stroke-width="1.4"/>
+          <text x="610" y="125" text-anchor="middle" font-size="11" fill="#1b1b1b" font-family="Jost,sans-serif">persistent rate limiting + spam guard</text>
+          <rect x="505" y="142" width="210" height="30" rx="8" fill="#ffffff" stroke="#809948" stroke-width="1.4"/>
+          <text x="610" y="161" text-anchor="middle" font-size="11" fill="#1b1b1b" font-family="Jost,sans-serif">security headers + noindex</text>
+          <rect x="505" y="178" width="210" height="30" rx="8" fill="#ffffff" stroke="#809948" stroke-width="1.4"/>
+          <text x="610" y="197" text-anchor="middle" font-size="11" fill="#1b1b1b" font-family="Jost,sans-serif">PDF consent form per lead</text>
+        </g>
+        <!-- neon db -->
+        <g>
+          <ellipse cx="610" cy="290" rx="100" ry="18" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <path d="M510 290 V 366 a 100 18 0 0 0 200 0 V 290" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="610" y="322" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Neon Postgres</text>
+          <text x="610" y="340" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">leads + consent + signatures + queue</text>
+          <text x="610" y="357" text-anchor="middle" font-size="10.5" fill="#3d4d1f" font-family="Jost,sans-serif">live on Render · free tier · $0/mo</text>
+        </g>
+        <!-- side automations -->
+        <!-- jira queue -->
+        <g>
+          <rect x="490" y="410" width="240" height="60" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="610" y="435" text-anchor="middle" font-size="14" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">JIRA queue + auto-replay</text>
+          <text x="610" y="453" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">tickets recreate themselves on retry</text>
+        </g>
+        <!-- admin + exports -->
+        <g>
+          <rect x="790" y="60" width="250" height="92" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="915" y="86" text-anchor="middle" font-size="15" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Admin Dashboard</text>
+          <text x="915" y="104" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">live lead map + analytics</text>
+          <text x="915" y="120" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">per-lead drill-down</text>
+          <text x="915" y="137" text-anchor="middle" font-size="10.5" fill="#3d4d1f" font-family="Jost,sans-serif">password protected today</text>
+        </g>
+        <g>
+          <rect x="790" y="176" width="250" height="60" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="915" y="199" text-anchor="middle" font-size="14" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">One-click exports</text>
+          <text x="915" y="217" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">CSV · GeoJSON · KML for Google Earth</text>
+        </g>
+        <!-- docs site -->
+        <g>
+          <rect x="790" y="260" width="250" height="60" rx="12" fill="#f0f7f4" stroke="#809948" stroke-width="2"/>
+          <text x="915" y="283" text-anchor="middle" font-size="14" font-weight="600" fill="#1b1b1b" font-family="Jost,sans-serif">Docs site</text>
+          <text x="915" y="301" text-anchor="middle" font-size="11" fill="#44464f" font-family="Jost,sans-serif">briefing, guides, this diagram</text>
+        </g>
+        <!-- waiting on anderson -->
+        <g>
+          <rect x="230" y="360" width="210" height="120" rx="12" fill="#fdf4e7" stroke="#c98a2b" stroke-width="2" stroke-dasharray="6 4"/>
+          <text x="335" y="386" text-anchor="middle" font-size="14" font-weight="700" fill="#8a5a10" font-family="Jost,sans-serif">Anderson's 4 tasks</text>
+          <text x="335" y="404" text-anchor="middle" font-size="10.5" fill="#5b3a00" font-family="Jost,sans-serif">nameservers → Cloudflare</text>
+          <text x="335" y="420" text-anchor="middle" font-size="10.5" fill="#5b3a00" font-family="Jost,sans-serif">email app password</text>
+          <text x="335" y="436" text-anchor="middle" font-size="10.5" fill="#5b3a00" font-family="Jost,sans-serif">waiver legal review</text>
+          <text x="335" y="452" text-anchor="middle" font-size="10.5" fill="#5b3a00" font-family="Jost,sans-serif">password by text/call</text>
+        </g>
+        <!-- after cutover -->
+        <g>
+          <rect x="230" y="500" width="810" height="90" rx="14" fill="#f5f5f0" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 4"/>
+          <text x="635" y="526" text-anchor="middle" font-size="14" font-weight="700" fill="#4b5563" font-family="Jost,sans-serif">After cutover (Tyler flips — everything here is already built and tested)</text>
+          <rect x="260" y="540" width="240" height="36" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.4"/>
+          <text x="380" y="563" text-anchor="middle" font-size="11.5" fill="#1b1b1b" font-family="Jost,sans-serif">leads.bentondrones.com</text>
+          <rect x="520" y="540" width="240" height="36" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.4"/>
+          <text x="640" y="563" text-anchor="middle" font-size="11.5" fill="#1b1b1b" font-family="Jost,sans-serif">admin.bentondrones.com (pages-admin ready)</text>
+          <rect x="780" y="540" width="240" height="36" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.4"/>
+          <text x="900" y="563" text-anchor="middle" font-size="11.5" fill="#1b1b1b" font-family="Jost,sans-serif">email notifications + uptime monitor</text>
+        </g>
+        <!-- arrows -->
+        <line x1="180" y1="225" x2="222" y2="150" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="216,156 224,144 228,158" fill="#809948"/>
+        <line x1="440" y1="103" x2="482" y2="103" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="476,97 490,103 476,109" fill="#809948"/>
+        <line x1="610" y1="230" x2="610" y2="266" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="604,262 610,274 616,262" fill="#809948"/>
+        <line x1="610" y1="366" x2="610" y2="402" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="604,398 610,410 616,398" fill="#809948"/>
+        <line x1="710" y1="308" x2="782" y2="290" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="776,283 790,288 776,296" fill="#809948"/>
+        <line x1="710" y1="250" x2="782" y2="205" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="776,198 790,203 776,211" fill="#809948"/>
+        <line x1="710" y1="106" x2="782" y2="106" stroke="#809948" stroke-width="2.5"/>
+        <polygon points="776,100 790,106 776,112" fill="#809948"/>
+        <!-- anderson feeds the cutover -->
+        <line x1="335" y1="480" x2="335" y2="492" stroke="#c98a2b" stroke-width="2" stroke-dasharray="5 4"/>
+        <polygon points="329,488 335,500 341,488" fill="#c98a2b"/>
+        <!-- status pins (HTML positioned overlay is used instead for real badges; here we draw legends inline) -->
+      </svg>
+      <!-- ===== status badges as positioned overlays ===== -->
+      <span class="badge badge-live" style="position:absolute; top:6%; left:21.5%;" role="img" aria-label="Signup form: live today"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live</span>
+      <span class="badge badge-live" style="position:absolute; top:2.5%; left:45.5%;" role="img" aria-label="Render app stack: live today"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live</span>
+      <span class="badge badge-live" style="position:absolute; top:41%; left:55%;" role="img" aria-label="Neon Postgres: live today"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live</span>
+      <span class="badge badge-live" style="position:absolute; top:61%; left:50%;" role="img" aria-label="JIRA queue with auto-replay: live today"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live</span>
+      <span class="badge badge-live" style="position:absolute; top:7%; left:74.5%;" role="img" aria-label="Admin dashboard: live today"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live</span>
+      <span class="badge badge-live" style="position:absolute; top:26%; left:74.5%;" role="img" aria-label="Exports: live today"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live</span>
+      <span class="badge badge-live" style="position:absolute; top:39.5%; left:74.5%;" role="img" aria-label="Docs site: live today"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Live</span>
+      <span class="badge badge-anderson" style="position:absolute; top:56%; left:21.5%;" role="img" aria-label="Anderson four tasks: nameservers, email password, waiver review, password handoff"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10h-4.5a5.5 5.5 0 1 1-5.5-5.5z" fill="#fff"/></svg>Anderson</span>
+      <span class="badge badge-next" style="position:absolute; top:79%; left:49%;" role="img" aria-label="After cutover: custom domains, admin portal, notifications and monitoring"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2.6" fill="none"/></svg>Post-cutover</span>
+    </div>
+    <p class="diagram-caption">
+      Live view of the Benton Drones lead system as it runs today. <b>Green</b> = in production now ·
+      <b>Amber</b> = Anderson's tasklist (sent in his kickoff email) · <b>Gray</b> = Tyler flips after the DNS cutover.
+      The pages-admin dashboard bundle is already built — it just needs Cloudflare to exist.
+    </p>
+
+    <!-- ===== note cards ===== -->
+    <div class="cs-note">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="10" fill="#809948"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><b>Green, already working:</b> visitors can sign up right now, every lead gets a live map pin automatically, the dashboard shows everything, and exports download in one click. 402 automated tests all passing, plus 57 HTTP end-to-end and 12 real-browser tests.</div>
+    </div>
+    <div class="cs-note warn-note">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex:none"><path d="M12 2a10 10 0 1 0 10 10h-4a6 6 0 1 1-6-6z" fill="#c98a2b"/><circle cx="12" cy="12" r="2.2" fill="#c98a2b"/></svg>
+      <div><b>Amber, only Anderson can do it:</b> the nameserver cutover walks through moving DNS from Namecheap to Cloudflare with a screenshot-first safety net — that unlocks literally everything gray below. The email app password turns on customer confirmations. Legal just needs to read the waiver. Full step-by-step guides are in the kickoff email.</div>
+    </div>
+    <div class="cs-note gray-note">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="9.2" stroke="#6b7280" stroke-width="2"/><path d="M12 7v5.5l3.5 2" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/></svg>
+      <div><b>Gray, already built and waiting:</b> the code for the secure admin portal (Cloudflare Pages + Access login), the custom domain hooks, JWT verification, and email notifications is 100% written and committed. Tyler enables it the moment Anderson's DNS cutover lands — no more engineering to do.</div>
+    </div>
 
     <!-- ===================== What improved ===================== -->
     <h2>What actually improved</h2>
     <div class="win-grid">
-      <div class="win">
-        <b>No more manual copying</b>
-        <p>The waiver, signature, and address are captured once in the form and stored directly. Nobody re-types anything.</p>
-      </div>
-      <div class="win">
-        <b>One home for data</b>
-        <p>Leads, consent records, and signatures live together in one database instead of being scattered across forms, PDFs, and spreadsheets.</p>
-      </div>
-      <div class="win">
-        <b>Automatic mapping</b>
-        <p>Addresses are geocoded and placed on a live map automatically — no more typing addresses into Google Earth by hand.</p>
-      </div>
-      <div class="win">
-        <b>Instant exports</b>
-        <p>CSV, GeoJSON, and KML come straight from the dashboard with one click, ready for spreadsheets or Google Earth.</p>
-      </div>
-      <div class="win">
-        <b>Built-in legal trail</b>
-        <p>Every signup records the exact waiver text, the typed signature, and a timestamp — automatically, every time.</p>
-      </div>
-      <div class="win">
-        <b>Owned, not rented</b>
-        <p>The whole pipeline runs on infrastructure Benton Drones controls, rather than depending on four separate third-party tools.</p>
-      </div>
+      <div class="win"><b>No more manual copying</b><p>The waiver, signature, and address are captured once in the form and stored directly. Nobody re-types anything.</p></div>
+      <div class="win"><b>One home for data</b><p>Leads, consent records, and signatures live together in one database instead of being scattered across forms, PDFs, and spreadsheets.</p></div>
+      <div class="win"><b>Automatic mapping</b><p>Addresses are geocoded and placed on a live map automatically — no more typing addresses into Google Earth by hand.</p></div>
+      <div class="win"><b>Instant exports</b><p>CSV, GeoJSON, and KML come straight from the dashboard with one click, ready for spreadsheets or Google Earth.</p></div>
+      <div class="win"><b>Built-in legal trail</b><p>Every signup records the exact waiver text, the typed signature, and a timestamp — automatically, every time.</p></div>
+      <div class="win"><b>Owned, not rented</b><p>The whole pipeline runs on infrastructure Benton Drones controls, rather than depending on four separate third-party tools.</p></div>
     </div>
 
-    <div class="card" style="background:var(--pale-blue);border-color:#6184d8">
-      <h3 style="color:#1a2a5a">Want the technical version?</h3>
-      <p style="margin:0;color:var(--md-sys-color-on-surface-variant)">
+    <div class="callout-card">
+      <h3>Want the technical version?</h3>
+      <p>
         This page is the plain-language overview. For the full component-by-component diagram with status badges and the
         data-flow walkthrough, see the <a href="architecture-diagram.html">detailed architecture diagram</a>.
-        To run the system yourself, start with the <a href="friend-guide.html">setup guide</a>.
+        For Anderson's exact to-do list and guides, open the <a href="anderson-launch-briefing.html">launch briefing</a>.
       </p>
     </div>
   </main>
 
   <footer>
     <a href="friend-guide.html">Setup Guide</a>
-    <a href="training-guide.html">Training Guide</a>
+    <a href="anderson-launch-briefing.html">Launch Briefing</a>
     <a href="architecture-diagram.html">Detailed Diagram</a>
-    <p>© 2026 Benton Drones · Architecture: Before &amp; After · Fully visual, no code</p>
+    <p>© 2026 Benton Drones · Architecture: Before &amp; After · Current state: August 17, 2026</p>
   </footer>
+
+  <script>
+    // Before/After slider: single range input drives clip-path on the BEFORE layer.
+    // Native input gives drag, click-to-position, arrow keys, Home/End for free (WCAG 2.5.7).
+    (function () {
+      var slider  = document.getElementById('ba-slider');
+      var layer   = document.getElementById('ba-before-layer');
+      var divider = document.getElementById('ba-divider');
+      var arrows  = document.querySelector('.ba-handle-arrows');
+      function paint() {
+        var v = Number(slider.value); // 0..100, percent of frame where BEFORE ends
+        layer.style.clipPath = 'inset(0 ' + (100 - v) + '% 0 0)';
+        divider.style.left = v + '%';
+        arrows.style.left = v + '%';
+        slider.setAttribute('aria-valuetext',
+          v <= 12 ? 'Showing the new system'
+        : v >= 88 ? 'Showing the old manual workflow'
+        : v + ' percent split between old and new');
+      }
+      slider.addEventListener('input', paint);
+      paint();
+    })();
+  </script>
+  <noscript>
+    <style>
+      /* zero-JS fallback: show both panels side by side */
+      .ba-frame .ba-before-layer { position: static; clip-path: none; }
+      .ba-frame .ba-divider, .ba-handle-arrows, .ba-range { display: none; }
+      .ba-after-layer, .ba-before-layer { display: block; }
+      .ba-tag.tag-after { position: static; display: inline-block; margin: 8px; }
+      .ba-tag.tag-before { position: static; display: inline-block; margin: 8px; }
+    </style>
+  </noscript>
 </body>
 </html>
