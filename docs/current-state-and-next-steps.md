@@ -3,7 +3,7 @@
 > **Companion doc:** for the printable, Anderson-facing version of everything below, see
 > `docs/anderson-launch-briefing.html` (the live, verified level set).
 
-Last updated: August 10, 2026 (verified live against production).
+Last updated: **August 17, 2026** (re-verified live against production; kickoff email sent to Anderson).
 
 ## Big picture
 
@@ -31,7 +31,7 @@ The plan:
 | JIRA queue replay | built-in | Active (grabs on admin view) |
 | Docs site | `https://t-granlund.github.io/Benton-Drones-Lead-Ingest/` | Live |
 
-**Tests:** 429 green (360 unit + 57 HTTP E2E + 12 browser Playwright), 3× consecutive, CI gated.
+**Tests:** 402 unit/integration + 57 HTTP E2E verified green locally today (459 total, +12 browser Playwright = 471 with browser). CI gated.
 
 ## What is built but not switched on
 
@@ -39,13 +39,25 @@ The plan:
 |---|---|---|
 | Email notifications | Code done, judge PASS | Google Workspace SMTP app password |
 | External uptime monitor + backup evidence | Code+docs done, judge PASS | UptimeRobot (free) + Neon console values |
+| Cloudflare Access JWT verification | Code done (`lead_ingest/access_jwt.py`), env-gated | Cloudflare Zero Trust + Access app (post-cutover) → set `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD` |
+| JSON admin API + CORS (`/admin/api/*`) | Live, 403 unauthenticated verified | `CORS_ADMIN_ORIGIN=https://admin.bentondrones.com` (post-cutover) |
+| pages-admin/ static dashboard | Bundle complete, 7/7 assets serve locally | Cloudflare Pages project (post-cutover) |
 
 ## What is not live yet
 
-- Custom domain `leads.bentondrones.com` — needs CNAME (one record) + Render "Add Custom Domain"
+- Custom domain `leads.bentondrones.com` — needs Cloudflare cutover **then** Render "Add Custom Domain"
+- `admin.bentondrones.com` — Cloudflare Pages + Access app (post-cutover)
 - Shopify landing-page CTA link to the signup
-- Waiver text is still the placeholder — needs legal review
+- Waiver text is real (extracted from the actual consent PDF) but still needs legal review
 - Post-launch: G7 Shopify App Proxy, G8 internal map UI
+
+## Kickoff status (2026-08-17)
+
+- **Launch email sent to Anderson** — all live links, the 5-item action list (~2 hrs), Tyler's handle-list, and offline copies of the briefing + nameserver walkthrough attached.
+- Anderson is reviewing the **Launch Briefing** (`docs/anderson-launch-briefing.html`) now.
+- Mail.app + Mail evidence path verified end-to-end; draft created and sent by Tyler.
+- **Anderson's lane:** (1) read briefing, (2) nameserver walkthrough (~60 min, screenshot current DNS first), (3) Workspace SMTP app password, (4) waiver legal review, (5) ask Tyler for admin password by text/call.
+- **Tyler's lane** (after cutover): Cloudflare account + Zero Trust config, `leads.bentondrones.com` custom domain on Render, Cloudflare Pages project for `admin.bentondrones.com`, uptime monitor.
 
 ## The one remaining human session (~90 min)
 
@@ -76,26 +88,28 @@ The plan:
 | Polished startup (Render Starter + monitor + domain) | ~$7 | redirect steps only |
 | Growth (+ Neon Launch DB) | ~$26 | one env var |
 
-## ADR-001 implementation status (2026-08-17)
+## ADR-001 implementation status (2026-08-17, shipped)
 
-Ready-to-flip (code complete, env-gated, waiting on Cloudflare/Zones setup):
+Backend assets **shipped and live-verified** (commit `9937e1d` + `814b2e9`); Cloudflare-side setup remains human-gated:
 
-- **Access JWT verification** — `lead_ingest/access_jwt.py`; Render envs `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, optional `CF_ACCESS_STRICT=1`
-- **JSON admin API + CORS** — `/admin/api/summary|leads|lead/<id>|audit` + OPTIONS preflight; Render env `CORS_ADMIN_ORIGIN=https://admin.bentondrones.com`
-- **Admin audit trail** — `admin_audit` table; password logins and Access JWT auths recorded
-- **Static Pages dashboard** — `pages-admin/` in repo root (deploy steps in `pages-admin/README.md`)
-- **noindex headers** — X-Robots-Tag on all admin/export/API routes (live after this deploy)
-- **Bug fix** — `is_admin_authenticated` now uses `verify_or_none` (missing JWT previously raised inside the request handler)
+- **Access JWT verification** — `lead_ingest/access_jwt.py`; activate on Render post-cutover with `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, optional `CF_ACCESS_STRICT=1`
+- **JSON admin API + CORS** — `/admin/api/summary|leads|lead/<id>|audit` return 403 unauthenticated pre-activation; OPTIONS 204. Set `CORS_ADMIN_ORIGIN=https://admin.bentondrones.com` post-cutover
+- **Admin audit trail** — `admin_audit` table recording password logins and Access JWT auths
+- **Static Pages dashboard** — `pages-admin/` in repo root, all 7 assets verified locally (index.html, config.js, dashboard.js, Leaflet ×2, robots.txt, _headers); deploy steps in `pages-admin/README.md`
+- **noindex headers** — `X-Robots-Tag: noindex, nofollow` live on all admin/export/API routes (verified in production)
+- **Bug fix** — `is_admin_authenticated` uses `verify_or_none` (missing JWT previously raised inside the handler)
 
-Remaining human-gated: nameserver cutover (Anderson walkthrough ready), Cloudflare Pages + Zero Trust config, Render env vars, custom `leads` CNAME.
+Historical note (pre-ship planning state, kept for context):
+
+Remaining human-gated: nameserver cutover (Anderson owns it, walkthrough sent), Cloudflare Pages + Zero Trust config, Render env vars, custom `leads` CNAME.
 
 ## How to run locally / test
 
 ```bash
 python scripts/init_db.py
 python -m lead_ingest.server
-python -m unittest discover -s tests        # 360 unit
-make test-e2e                                # 57 HTTP E2E
+python -m unittest discover -s tests        # 402 unit/integration
+make test-e2e                                # 57 HTTP E2E (459 total without browser)
 ```
 
 ## Files to read for more detail

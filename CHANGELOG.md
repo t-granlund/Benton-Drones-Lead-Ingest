@@ -8,7 +8,46 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 
 ---
 
-## [Unreleased]
+## [Unreleased] — 2026-08-17 launch-readiness snapshot
+
+### Added
+- **Cloudflare Access JWT verification** (`lead_ingest/access_jwt.py`) — JWKS fetch
+  + iss/aud/exp verification on admin routes, env-gated by `CF_ACCESS_TEAM_DOMAIN`
+  and `CF_ACCESS_AUD`, optional `CF_ACCESS_STRICT=1`. Dormant until Cloudflare
+  Zero Trust exists (post-cutover). Part of ADR-001.
+- **JSON admin API + CORS** (`lead_ingest/admin_api.py`) —
+  `/admin/api/summary|leads|lead/<id>|audit`, OPTIONS 204 preflight, origin gate
+  via `CORS_ADMIN_ORIGIN`, 403 for unauthenticated API access (verified live).
+- **Admin audit trail** — `admin_audit` table records password logins and,
+  post-cutover, Cloudflare Access JWT auths.
+- **Static Pages admin dashboard** (`pages-admin/`) — self-contained bundle
+  (index.html, config.js, dashboard.js, vendored Leaflet, `robots.txt`,
+  `_headers` with noindex) ready to deploy as a Cloudflare Pages project at
+  `admin.bentondrones.com` once the Cloudflare zone exists. Deploy steps in
+  `pages-admin/README.md`.
+- **noindex headers** — `X-Robots-Tag: noindex, nofollow, nosniff` + `DENY` +
+  `no-referrer` + `no-store` on all admin/export/API routes (verified live).
+- **Anderson kickoff** — launch email sent 2026-08-17 with live links, the
+  5-item Anderson action list, and offline copies of the briefing + nameserver
+  cutover walkthrough attached.
+
+### Fixed
+- **`RETURNING *` Postgres insert bug** — signup 502 on the Neon path; audit
+  insert now uses `RETURNING *`.
+- **Postgres init DDL translation** — deploy crash on first boot fixed in
+  `scripts/init_db.py` / `db.py` (SQLite-flavored DDL is translated for Postgres).
+- **`is_admin_authenticated` JWT raise** — a missing Access JWT previously raised
+  inside the request handler; now uses `verify_or_none`.
+- **Briefing walkthrough link** — pointed the launch briefing at the rendered
+  GitHub blob view of the markdown walkthrough instead of raw `.md`.
+
+### Changed
+- Test posture recounted: **402 unit/integration + 57 HTTP E2E = 459 verified
+  green locally** (+12 Playwright browser E2E = 471 with browser).
+
+---
+
+## Earlier additions (pre-2026-08-17)
 
 ### Added
 - **Real geocoder chain** (`lead_ingest/geocoding.py`) — US Census Geocoder primary
@@ -102,13 +141,14 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 
 ## Test posture
 
-**429 tests, all passing** — 360 unit/integration, 57 HTTP end-to-end, and 12
-real-browser (Playwright) end-to-end.
+**471 tests, all passing** — 402 unit/integration, 57 HTTP end-to-end, and 12
+real-browser (Playwright) end-to-end (459 non-browser verified locally on
+2026-08-17).
 
 Run them with:
 
 ```bash
-make test              # 360 unit/integration
+make test              # 402 unit/integration
 make test-e2e          # 57 HTTP E2E
 make test-e2e-browser  # 12 browser E2E (needs Playwright Chromium)
 ```

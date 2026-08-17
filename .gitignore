@@ -33,3 +33,7 @@ dist/
 build/
 *.egg-info/
 uv.lock
+
+# Local run/session logs (transient, never commit)
+LATEST-RUN-LOGS-*.md
+Previous_Session_Error_Log*.txt

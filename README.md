@@ -115,10 +115,10 @@ If JIRA env vars are not set, signups are queued in `jira_queue` and replayed au
 ## Testing
 
 ```bash
-make test               # python -m unittest discover -s tests (360 tests)
+make test               # python -m unittest discover -s tests (402 tests)
 make test-e2e           # python -m unittest discover -s tests/e2e -t tests/e2e (57 tests)
-make test-all           # both suites in sequence (417 tests)
-make test-e2e-browser   # 12 real-browser Playwright tests (429 total)
+make test-all           # both suites in sequence (459 tests)
+make test-e2e-browser   # 12 real-browser Playwright tests (471 total)
 ```
 
 Tests use in-memory or temp databases — no `data/` directory needed.
@@ -184,7 +184,7 @@ For the full step-by-step guide, environment variable reference, Neon setup, and
 
 1. Fork the repo.
 2. Create a feature branch.
-3. Run `make test-all` and ensure all 417 tests pass (429 with the browser suite).
+3. Run `make test-all` and ensure all 459 tests pass (471 with the browser suite).
 4. Keep the core app stdlib-only — no new required pip dependencies.
 5. Optional deps go in `requirements.txt` and `pyproject.toml` under `[project.optional-dependencies]`.
 6. Submit a pull request.

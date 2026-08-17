@@ -2,6 +2,15 @@
 
 > **Architectural decision:** `research/cloudflare-pages-admin/ADR-001-cloudflare-pages-admin-dashboard.md` (Option B)
 > **Updated by:** planning-agent-083bcd on 2026-08-17
+>
+> **Readiness update (2026-08-17, post-ship):** all agent-buildable prerequisites
+> are DONE and live-verified: `pages-admin/` static bundle (7/7 assets serve),
+> Access JWT verification code (`lead_ingest/access_jwt.py`, env-gated), JSON
+> admin API + CORS (`/admin/api/*`, 403 unauthenticated, OPTIONS 204),
+> `admin_audit` table, and `X-Robots-Tag: noindex` on all admin/export/API routes
+> (verified in production). What remains is the Cloudflare-side setup: Pages
+> project, Zero Trust + Access applications, and the custom domains — all gated
+> on Anderson's nameserver cutover. Evidence: `EVID-API-001`, `EVID-QA-005`.
 
 ## Pass criteria
 

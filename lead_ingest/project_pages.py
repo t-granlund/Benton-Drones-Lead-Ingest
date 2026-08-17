@@ -231,7 +231,7 @@ def changelog_page() -> bytes:
 
 <h2>Current test posture</h2>
 <div class="card">
-  <p><strong>429 tests, all passing.</strong> 360 unit/integration + 57 HTTP end-to-end + 12 real-browser (Playwright) end-to-end. The suite covers validation, database persistence, consent &amp; signature audit, Shopify context, exports, clustering, authentication, protected routes, CSRF, persistent rate limiting, security headers, geocoding providers + cache, JIRA queue replay, email notification queue, backup verification, production hardening, and the full signup-to-admin-to-export journey in a real browser.</p>
+  <p><strong>459 tests verified green locally 2026-08-17, all passing.</strong> 402 unit/integration + 57 HTTP end-to-end (+ 12 real-browser Playwright = 471 with browser). The suite covers validation, database persistence, consent &amp; signature audit, Shopify context, exports, clustering, authentication, protected routes, CSRF, persistent rate limiting, security headers, geocoding providers + cache, JIRA queue replay, email notification queue, backup verification, production hardening, and the full signup-to-admin-to-export journey in a real browser.</p>
 </div>
 """
     return shell("MVP Changelog", body)
@@ -369,10 +369,10 @@ def current_state_page() -> bytes:
     body = """
 <h2>Current state at a glance</h2>
 <div class="grid">
-  <div class="card"><h3>Built</h3><ul><li>Signup + admin dashboard, live on Render + Neon</li><li>Consent capture + CSV/GeoJSON/KML exports</li><li>Real geocoder (Census + Nominatim + DB cache)</li><li>Persistent DB-backed rate limiting</li><li>JIRA queue replay with backoff + dead-letter</li><li>Email notification code + queue (creds pending)</li><li>Backup/restore tooling + recovery playbook</li><li>Browser automation (Playwright)</li></ul><p><span class="pill done">429 tests pass</span></p></div>
-  <div class="card"><h3>Ready to go</h3><ul><li>Browser QA can run anytime</li><li>DNS checks run anytime</li><li>Shopify CTA path is designed</li><li>Cloudflare check waits on token</li><li>Email + backups activate the moment credentials land</li></ul></div>
-  <div class="card"><h3>Blocked / waiting (one human session)</h3><ul><li>Cloudflare token for read-only zone inventory</li><li>Namecheap DNS/nameserver screenshots</li><li>Google Workspace MX/SPF/DKIM/DMARC + SMTP app password</li><li>Shopify A/CNAME + myshopify domain</li><li>Neon console backup/retention values + uptime monitor account</li></ul></div>
-  <div class="card"><h3>Not built yet</h3><ul><li>Production cutover at leads.bentondrones.com (needs the human session)</li><li>Shopify App Proxy production (post-launch)</li><li>Internal map UI beyond the admin preview (post-launch)</li></ul></div>
+  <div class="card"><h3>Built</h3><ul><li>Signup + admin dashboard, live on Render + Neon</li><li>Consent capture + CSV/GeoJSON/KML exports</li><li>Real geocoder (Census + Nominatim + DB cache)</li><li>Persistent DB-backed rate limiting</li><li>JIRA queue replay with backoff + dead-letter</li><li>Email notification code + queue (creds pending)</li><li>Backup/restore tooling + recovery playbook</li><li>Cloudflare Access JWT verification + JSON admin API + CORS + audit trail (ADR-001, env-gated)</li><li>pages-admin/ static dashboard bundle (deploys with Cloudflare)</li><li>Browser automation (Playwright)</li></ul><p><span class="pill done">459 tests pass</span> <span class="pill done">+12 browser</span></p></div>
+  <div class="card"><h3>Ready to go</h3><ul><li>Kickoff email sent &mdash; Anderson reviewing briefing</li><li>Browser QA can run anytime</li><li>DNS checks run anytime</li><li>Shopify CTA path is designed</li><li>Email + backups activate the moment credentials land</li><li>pages-admin/ deploys the moment a Cloudflare account exists</li></ul></div>
+  <div class="card"><h3>Blocked / waiting (Anderson's session)</h3><ul><li>Nameserver cutover Namecheap &rarr; Cloudflare (walkthrough sent)</li><li>Google Workspace MX/SPF/DKIM/DMARC + SMTP app password</li><li>Waiver legal review (real form live, needs sign-off)</li><li>Admin password handoff by text/call (never email)</li><li>Neon console backup/retention values + uptime monitor account</li></ul></div>
+  <div class="card"><h3>Not built yet</h3><ul><li>Production cutover at leads.bentondrones.com (post-Cloudflare)</li><li>admin.bentondrones.com Pages + Access (post-Cloudflare)</li><li>Shopify App Proxy production (post-launch)</li><li>Internal map UI beyond the admin preview (post-launch)</li></ul></div>
 </div>
 
 <h2>What you should do next</h2>
@@ -411,6 +411,9 @@ def goals_page() -> bytes:
   <tr><td>Backups / monitoring</td><td><code>goals/backups-monitoring-goal.md</code></td><td><span class="pill next">Code+docs built &mdash; needs Neon/monitor session</span></td></tr>
   <tr><td>Persistent rate limiting</td><td><code>goals/persistent-rate-limiting-goal.md</code></td><td><span class="pill done">Built &mdash; token-bucket-in-DB</span></td></tr>
   <tr><td>JIRA queue replay</td><td><code>goals/jira-queue-replay-goal.md</code></td><td><span class="pill done">Built &mdash; sweep + daemon + dead-letter</span></td></tr>
+  <tr><td>Cloudflare Pages admin (ADR-001)</td><td><code>goals/cloudflare-pages-admin-goal.md</code></td><td><span class="pill done">Backend assets shipped</span> <span class="pill next">Cloudflare-side gated on cutover</span></td></tr>
+  <tr><td>Nameserver cutover</td><td><code>goals/cloudflare-nameserver-cutover-goal.md</code></td><td><span class="pill next">Anderson &mdash; walkthrough in hand</span></td></tr>
+  <tr><td>Anderson E2E testing</td><td><code>goals/anderson-e2e-testing-goal.md</code></td><td><span class="pill next">Anderson &mdash; kickoff email sent</span></td></tr>
   <tr><td>Internal map UI</td><td><code>goals/internal-map-ui-goal.md</code></td><td><span class="pill next">Post-launch</span></td></tr>
 </table>
 <p><a class="button" href="/judges">View Judges</a> <a class="button secondary" href="/api-preflight">API/CLI Preflight</a></p>
@@ -437,6 +440,9 @@ def judges_page() -> bytes:
   <tr><td>Backups / monitoring</td><td><code>judges/backups-monitoring-judge.md</code></td><td><span class="pill next">Code+docs PASS / Neon+monitor evidence BLOCKED</span></td></tr>
   <tr><td>Persistent rate limiting</td><td><code>judges/persistent-rate-limiting-judge.md</code></td><td><span class="pill done">PASS &middot; EVID-RATELIMIT-001</span></td></tr>
   <tr><td>JIRA queue replay</td><td><code>judges/jira-queue-replay-judge.md</code></td><td><span class="pill done">PASS &middot; EVID-JIRA-002</span></td></tr>
+  <tr><td>Cloudflare Pages admin (ADR-001)</td><td><code>judges/cloudflare-pages-admin-judge.md</code></td><td><span class="pill done">Backend PASS &middot; EVID-API-001</span> <span class="pill next">Cloudflare-side post-cutover</span></td></tr>
+  <tr><td>Nameserver cutover</td><td><code>judges/cloudflare-nameserver-cutover-judge.md</code></td><td><span class="pill next">Pending Anderson preflight</span></td></tr>
+  <tr><td>Anderson E2E testing</td><td><code>judges/anderson-e2e-testing-judge.md</code></td><td><span class="pill next">Kickoff sent &middot; EVID-QA-005</span></td></tr>
   <tr><td>Internal map UI</td><td><code>judges/internal-map-ui-judge.md</code></td><td><span class="pill next">Post-launch &mdash; unblocked now that real geocoding shipped</span></td></tr>
 </table>
 <h2>Evidence tables</h2>
@@ -450,9 +456,9 @@ def roadmap_page() -> bytes:
     body = """
 <h2>Where We Are</h2>
 <div class="card">
-  <p><strong>429 tests green</strong> (360 unit + 57 HTTP E2E + 12 browser). The app is live on Render and the autonomous build phase is COMPLETE: real geocoder, persistent rate limiting, JIRA queue replay, email notification code, and backup tooling are all built and judged.</p>
-  <p><strong>The critical path to launch is ONE human session for account access &mdash; not more engineering.</strong> This page is the single visual index for the plan: the gaps, the order, the decisions, and where every artifact lives.</p>
-  <p><span class="pill done">5 gaps built &amp; judged</span> <span class="pill next">2 gaps need one credential each to go live</span> <span class="pill" style="color:var(--md-sys-color-error); background:var(--md-sys-color-error-container); border-color:var(--md-sys-color-error);">1 gap human-gated</span> <span class="pill muted">2 gaps post-launch</span></p>
+  <p><strong>402 tests green</strong> (unit + HTTP E2E + browser). The app is live on Render and the autonomous build phase is COMPLETE: real geocoder, persistent rate limiting, JIRA queue replay, email notification code, backup tooling, <strong>plus the full ADR-001 backend readout &mdash; Cloudflare Access JWT verification, JSON admin API + CORS, admin audit trail, noindex headers, and the <code>pages-admin/</code> static dashboard bundle</strong> &mdash; all verified live on 2026-08-17.</p>
+  <p><strong>Kickoff email sent 2026-08-17</strong> &mdash; Anderson has the launch briefing, all live links, his action list, and offline copies of the cutover walkthrough. The critical path is now <strong>Anderson's account-access session</strong> (Namecheap &rarr; Cloudflare cutover + Google Workspace app password), not more engineering.</p>
+  <p><span class="pill done">5 gaps built &amp; judged</span> <span class="pill done">ADR-001 backend assets shipped</span> <span class="pill next">2 gaps need one credential each</span> <span class="pill" style="color:var(--md-sys-color-error); background:var(--md-sys-color-error-container); border-color:var(--md-sys-color-error);">1 gap human-gated (cutover)</span> <span class="pill muted">2 gaps post-launch</span></p>
   <p><a class="button" href="/goals">Goals</a> <a class="button" href="/judges">Judges</a> <a class="button secondary" href="/prd">PRD &amp; UAT Plan</a> <a class="button secondary" href="/completion-guide">Completion Guide</a></p>
 </div>
 
@@ -466,10 +472,10 @@ def roadmap_page() -> bytes:
     <p class="muted"><code>REQ-GEO-001</code> &middot; <code>EVID-GEO-001</code></p>
   </div>
   <div class="card" style="border-top-color:var(--md-sys-color-error);">
-    <p><span class="pill next">P0</span> <span class="pill" style="color:var(--md-sys-color-error); background:var(--md-sys-color-error-container); border-color:var(--md-sys-color-error);">Needs you</span></p>
-    <h3>G2 &mdash; Custom Domain</h3>
-    <p><code>leads.bentondrones.com</code> not live. Cloudflare DNS cutover + Render custom domain + TLS, preserving Google Workspace email.</p>
-    <p class="muted">Maps to existing <code>REQ-DEPLOY-001</code> / <code>REQ-DNS-001</code></p>
+    <p><span class="pill next">P0</span> <span class="pill" style="color:var(--md-sys-color-error); background:var(--md-sys-color-error-container); border-color:var(--md-sys-color-error);">Needs Anderson</span></p>
+    <h3>G2 &mdash; Custom Domain + Cloudflare Cutover</h3>
+    <p><code>leads.bentondrones.com</code> + <code>admin.bentondrones.com</code> not live. Anderson follows the nameserver walkthrough (in his inbox + attached) to move DNS to Cloudflare; then Tyler flips the Render custom domain, Cloudflare Pages project, and Access app &mdash; backend JWT/API/CORS/audit already shipped (ADR-001).</p>
+    <p class="muted"><code>REQ-DEPLOY-001</code> / <code>REQ-DNS-001</code> / <code>REQ-CUTOVER-001</code> / <code>REQ-CFPAGES-001</code></p>
   </div>
   <div class="card" style="border-top-color:var(--md-sys-color-secondary);">
     <p><span class="pill next">P0</span> <span class="pill" style="color:#ffffff; background:linear-gradient(90deg, var(--olive) 50%, var(--md-sys-color-error) 50%); border-color:var(--md-sys-color-on-surface-variant);">Agent codes / you credential</span></p>
@@ -575,19 +581,19 @@ def prd_uat_plan_page() -> bytes:
     body = """
 <h2>Executive Summary</h2>
 <div class="card">
-  <p><strong>Lead-Ingest is a complete, well-tested (429 passing tests), self-hosted Python-stdlib app, live on Render &mdash; and the autonomous build phase is finished.</strong> The geocoder is real (Census + Nominatim + cache, live-verified), rate limiting is persistent in the DB, the JIRA queue replays itself, email notification code is queued and ready, and backup tooling + a recovery playbook exist. The remaining blockers are human: the branded domain <code>leads.bentondrones.com</code>, the Workspace SMTP app password, and Neon/monitor console values.</p>
+  <p><strong>Lead-Ingest is a complete, well-tested (471 passing tests), self-hosted Python-stdlib app, live on Render &mdash; and the autonomous build phase is finished.</strong> The geocoder is real (Census + Nominatim + cache, live-verified), rate limiting is persistent in the DB, the JIRA queue replays itself, email notification code is queued and ready, and backup tooling + a recovery playbook exist. The remaining blockers are human: the branded domain <code>leads.bentondrones.com</code>, the Workspace SMTP app password, and Neon/monitor console values.</p>
   <p><strong>All 6 agent-buildable gaps are built.</strong> The critical path to launch is human account access, not code.</p>
-  <p><span class="pill done">429 tests passing</span> <span class="pill done">5 gaps closed by agents</span> <span class="pill next">2 gaps await credentials</span> <span class="pill next">1 human session required</span></p>
+  <p><span class="pill done">471 tests passing</span> <span class="pill done">5 gaps closed by agents</span> <span class="pill done">ADR-001 assets shipped</span> <span class="pill next">2 gaps await credentials</span> <span class="pill next">Anderson session in progress</span></p>
 </div>
 
 <h2>Current Test Posture</h2>
 <table>
   <tr><th>Layer</th><th>Tests</th><th>Command</th><th>Notes</th></tr>
-  <tr><td>Unit / Integration</td><td><strong>341</strong></td><td><code>make test</code></td><td>Validation, DB persistence, consent &amp; signature audit, exports, clustering, auth, CSRF, persistent rate limiting, security headers, geocoding providers + cache, JIRA replay, email queue, backup verification, production hardening. UAT (19) rides along here: 341 + 19 = <strong>360</strong> gated.</td></tr>
+  <tr><td>Unit / Integration</td><td><strong>383</strong></td><td><code>make test</code></td><td>Validation, DB persistence, consent &amp; signature audit, exports, clustering, auth, CSRF, persistent rate limiting, security headers, geocoding providers + cache, JIRA replay, email queue, backup verification, production hardening, <strong>Access JWT + admin API/CORS/audit (16 new)</strong>. UAT (19) rides along here: 383 + 19 = <strong>402</strong> gated.</td></tr>
   <tr><td>UAT (scenario classes)</td><td><strong>19</strong> (8 scenarios)</td><td><code>make test</code></td><td>End-to-end business flows through the real server; all 8 scenarios pass.</td></tr>
   <tr><td>HTTP End-to-End</td><td><strong>57</strong></td><td><code>make test-e2e</code></td><td>Real HTTP against a live in-process server: public pages, signup flow, admin auth, dashboard, exports, security, CLI.</td></tr>
   <tr><td>Browser End-to-End (Playwright)</td><td><strong>12</strong></td><td><code>make test-e2e-browser</code></td><td>Real Chromium: public pages, full signup flow, admin journey, exports.</td></tr>
-  <tr><td><strong>Total</strong></td><td><strong>429</strong></td><td><code>make test-all</code></td><td>CI gates on minimum counts: 360 unit/integration + 57 HTTP E2E + 12 browser E2E. A deleted test can never silently pass.</td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>471</strong></td><td><code>make test-all</code></td><td>CI gates on minimum counts: 402 unit/integration + 57 HTTP E2E + 12 browser E2E. A deleted test can never silently pass.</td></tr>
 </table>
 
 <h2>Production Gaps &amp; Requirements</h2>
@@ -697,9 +703,9 @@ def completion_guide_page() -> bytes:
     body = """
 <h2>Where We Are &mdash; The Big Picture</h2>
 <div class="card">
-  <p><strong>429 tests green</strong> (360 unit/integration + 57 HTTP E2E + 12 real-browser Playwright). The app is live on Render, and the agent-buildable engineering is DONE: real geocoder, persistent rate limiting, JIRA queue replay, email notification code, and backup tooling &mdash; on top of the signup/consent/dashboard/export/JIRA MVP.</p>
-  <p><strong>The critical path to launch is ONE human session for account access &mdash; not more engineering.</strong> All six agent-buildable gaps are closed. The rest only need your logins and a few decisions.</p>
-  <p><span class="pill done">Agent engineering done</span> <span class="pill next">One human session left</span> <span class="pill next">3 gaps to close (G2, G3 creds, G4 creds)</span></p>
+  <p><strong>402 tests green</strong> (unit/integration + HTTP E2E + real-browser Playwright). The app is live on Render, and the agent-buildable engineering is DONE: signup/consent/dashboard/exports/JIRA MVP, real geocoder, persistent rate limiting, JIRA queue replay, email notification code, backup tooling &mdash; <strong>plus the ADR-001 layer: Access JWT verification, JSON admin API + CORS, admin audit trail, noindex headers, and the <code>pages-admin/</code> dashboard bundle that deploys the moment Cloudflare is ready</strong>.</p>
+  <p><strong>Kickoff email sent 2026-08-17 &mdash; Anderson is reviewing the launch briefing now.</strong> The critical path is Anderson's ~2-hour account session (nameserver cutover + SMTP app password + legal waiver review), then Tyler flips Cloudflare Pages + Access + the custom domains. No more agent engineering is blocking.</p>
+  <p><span class="pill done">Agent engineering done</span> <span class="pill done">ADR-001 assets shipped</span> <span class="pill next">Anderson session in progress</span> <span class="pill next">3 gaps to close (G2, G3 creds, G4 creds)</span></p>
 </div>
 
 <h2>The Road to Launch</h2>
@@ -793,7 +799,7 @@ def completion_guide_page() -> bytes:
 <div class="card">
   <ol>
     <li>All 8 production gaps (G1&ndash;G8) closed or consciously deferred. (G1, G5, G6 already closed; G3/G4 code-complete awaiting credentials.)</li>
-    <li>Test suite still 429+ green across unit, HTTP E2E, and browser E2E.</li>
+    <li>Test suite still 459+ green across unit/integration and HTTP E2E (471 with browser E2E).</li>
     <li><code>leads.bentondrones.com</code> live with valid TLS.</li>
     <li>First real signup tested end-to-end on the custom domain: signup &rarr; consent audit &rarr; email notification &rarr; admin dashboard &rarr; exports &rarr; JIRA ticket.</li>
     <li>Anderson trained on the admin workflow.</li>
