@@ -12,3 +12,9 @@ psycopg2-binary>=2.9.0
 # Browser automation E2E tests (Playwright + Chromium).
 # Core app remains stdlib-only; this is only needed to run browser journeys.
 playwright>=1.45.0
+
+# Cloudflare Access JWT validation (for future Cloudflare Pages admin dashboard).
+# When CF_ACCESS_TEAM_DOMAIN + CF_ACCESS_AUD env vars are set, /admin/* and
+# /export/* requests require a valid Cf-Access-Jwt-Assertion header signed by
+# Cloudflare Access.  When unset, the existing password login applies unchanged.
+pyjwt[crypto]>=2.8.0  # includes cryptography for RS256 signature verification

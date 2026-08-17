@@ -79,6 +79,14 @@ from lead_ingest.shopify_security import (
     verify_context_token,
     verify_hmac,
 )
+from lead_ingest.access_jwt import (
+    AccessJwtError,
+    assertion_header,
+    config_from_env as access_config_from_env,
+    is_enabled as access_is_enabled,
+    is_strict as access_is_strict,
+    verify_assertion,
+)
 from lead_ingest.validation import ValidationError
 
 HOST = "127.0.0.1"
@@ -232,7 +240,13 @@ class Handler(BaseHTTPRequestHandler):
         elif path in {"/completion-guide", "/finish"}:
             self.respond_html(completion_guide_page())
         elif path == "/admin-login":
-            self.respond_html(self.login_page())
+            if access_is_strict():
+                self.respond_html(
+                    branded_page("Access Denied", "<p>Admin login is managed by Cloudflare Access. Navigate to the protected app to authenticate.</p>"),
+                    403,
+                )
+            else:
+                self.respond_html(self.login_page())
         elif path == "/admin-logout":
             self.respond_redirect("/admin-login", [expired_session_cookie(secure=self._cookie_secure())])
         elif path == "/healthz":
@@ -446,12 +460,30 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("X-Robots-Tag", "noindex, nofollow")
 
     def is_admin_authenticated(self) -> bool:
+        """True when request is authenticated via either password session or Cloudflare Access.
+
+        Requires Access JWT for /admin/* and /export/* ONLY when CF_ACCESS_TEAM_DOMAIN+CF_ACCESS_AUD
+        are set. In strict mode (CF_ACCESS_STRICT=1) the password cookie is ignored entirely.
+        """
+        headers = {k: v for k, v in self.headers.items()}
+        if access_is_enabled():
+            claims = verify_assertion(headers)
+            if claims:
+                self.log_message("Access JWT authenticated: %s", claims.email)
+                return True
+            if access_is_strict():
+                self.log_message("Access JWT verification failed, strict mode: denying")
+                return False
+        # Fall back to password session (or strict disabled).
         token = parse_cookie(self.headers.get("Cookie", ""))
         return verify_session_token(token, self.admin_secret())
 
     def require_admin_html(self) -> bool:
         if self.is_admin_authenticated():
             return True
+        if access_is_strict():
+            self.respond_html(branded_page("Access Denied", "<p>Access restricted by Cloudflare Access.</p>"), 403)
+            return False
         self.respond_redirect("/admin-login")
         return False
 
@@ -501,6 +533,12 @@ class Handler(BaseHTTPRequestHandler):
         return create_csrf_token(secret, action)
 
     def handle_login(self, form: dict[str, str]) -> None:
+        if access_is_strict():
+            self.respond_html(
+                branded_page("Access Denied", "<p>Admin login is managed by Cloudflare Access. Navigate to the protected app to authenticate.</p>"),
+                403,
+            )
+            return
         if not self.valid_csrf(form, "admin-login"):
             self.respond_html(self.login_page(["invalid CSRF token"]), 400)
             return
