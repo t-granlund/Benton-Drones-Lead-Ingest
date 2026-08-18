@@ -53,8 +53,9 @@ The plan:
 
 ## Kickoff status (2026-08-17)
 
-- **Launch email sent to Anderson** — all live links, the 5-item action list (~2 hrs), Tyler's handle-list, and offline copies of the briefing + nameserver walkthrough attached.
-- Anderson is reviewing the **Launch Briefing** (`docs/anderson-launch-briefing.html`) now.
+- **Launch email sent to Anderson** (1:42 PM CDT) — all live links, the 5-item action list (~2 hrs), Tyler's handle-list, and offline copies of the briefing + nameserver walkthrough attached.
+- **Follow-up email sent** (5:28 PM CDT) — new interactive architecture before/after slider + annotated current-state diagram, status recap, and cutover tips. Anderson contact: anderson.ta@me.com.
+- Anderson is reviewing the **Launch Briefing** (`docs/anderson-launch-briefing.html`) plus the architecture page.
 - Mail.app + Mail evidence path verified end-to-end; draft created and sent by Tyler.
 - **Anderson's lane:** (1) read briefing, (2) nameserver walkthrough (~60 min, screenshot current DNS first), (3) Workspace SMTP app password, (4) waiver legal review, (5) ask Tyler for admin password by text/call.
 - **Tyler's lane** (after cutover): Cloudflare account + Zero Trust config, `leads.bentondrones.com` custom domain on Render, Cloudflare Pages project for `admin.bentondrones.com`, uptime monitor.
